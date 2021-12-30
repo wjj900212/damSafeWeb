@@ -1,0 +1,202 @@
+[
+	{
+		"icon": "home",
+		"path": "/",
+		"component": "HomePageView",
+		"name": "首页-大屏",
+		"hidden": null,
+		"isItem": "",
+		"meta": {
+			"closeable": false,
+			"isShow": true
+		},
+		"type": "",
+		"redirect": "",
+		"children": [],
+		"hasParent": false,
+		"hasChildren": false
+	},
+	{
+		"icon": "none",
+		"path": "/reservoir",
+		"component": "MenuView",
+		"name": "水库信息",
+		"hidden": null,
+		"isItem": "",
+		"meta": null,
+		"type": "",
+		"redirect": "/reservoir/reservoir/reservoir",
+		"children": [
+			{
+				"icon": "home",
+				"path": "/",
+				"component": "HomePageView",
+				"name": "首页一张图",
+				"hidden": null,
+				"isItem": "",
+				"meta": {
+					"closeable": false,
+					"isShow": true
+				},
+				"type": "",
+				"redirect": "/home",
+				"children": [],
+				"hasParent": false,
+				"hasChildren": false
+			},
+			{
+				"icon": "appstore-o",
+				"path": "/reservoir/reservoir",
+				"component": "LeftPageView",
+				"name": "水库信息",
+				"hidden": false,
+				"isItem": "0",
+				"meta": {
+					"closeable": true,
+					"isShow": true
+				},
+				"type": "0",
+				"redirect": "",
+				"children": [
+					{
+						"icon": "audit",
+						"path": "/reservoir/reservoir/reservoir",
+						"component": "reservoir/reservoir/reservoir",
+						"name": "水库介绍",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					}
+				],
+				"hasParent": false,
+				"hasChildren": false
+			}
+		],
+		"hasParent": false,
+		"hasChildren": false
+	},
+	{
+		"icon": "none",
+		"path": "/system",
+		"component": "MenuView",
+		"name": "系统管理",
+		"hidden": null,
+		"isItem": "",
+		"meta": null,
+		"type": "",
+		"redirect": "/system/user/User",
+		"children": [
+			{
+				"icon": "home",
+				"path": "/",
+				"component": "HomePageView",
+				"name": "首页一张图",
+				"hidden": null,
+				"isItem": "",
+				"meta": {
+					"closeable": false,
+					"isShow": true
+				},
+				"type": "",
+				"redirect": "/home",
+				"children": [],
+				"hasParent": false,
+				"hasChildren": false
+			},
+			{
+				"icon": "appstore-o",
+				"path": "/system/reservoir",
+				"component": "LeftPageView",
+				"name": "水库管理",
+				"hidden": false,
+				"isItem": "0",
+				"meta": {
+					"closeable": true,
+					"isShow": true
+				},
+				"type": "0",
+				"redirect": "",
+				"children": [
+					{
+						"icon": "audit",
+						"path": "/system/reservoir/reservoir",
+						"component": "system/reservoir/reservoir",
+						"name": "水库管理",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					}
+				],
+				"hasParent": false,
+				"hasChildren": false
+			},
+			{
+				"icon": "appstore-o",
+				"path": "/system/user",
+				"component": "LeftPageView",
+				"name": "用户管理",
+				"hidden": false,
+				"isItem": "0",
+				"meta": {
+					"closeable": true,
+					"isShow": true
+				},
+				"type": "0",
+				"redirect": "",
+				"children": [
+					{
+						"icon": "audit",
+						"path": "/system/user/User",
+						"component": "system/user/User",
+						"name": "用户管理",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					}
+				],
+				"hasParent": false,
+				"hasChildren": false
+			}
+		],
+		"hasParent": false,
+		"hasChildren": false
+	},
+	{
+		"icon": "",
+		"path": "*",
+		"component": "error/404",
+		"name": "404",
+		"hidden": null,
+		"isItem": "",
+		"meta": null,
+		"type": "",
+		"redirect": "",
+		"children": [],
+		"hasParent": false,
+		"hasChildren": false
+	}
+]
