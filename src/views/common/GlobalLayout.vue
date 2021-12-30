@@ -115,7 +115,7 @@ export default {
     }
   },
   beforeCreate () {
-    let routers = this.$db.get('USER_ROUTER')
+    // let routers = this.$db.get('USER_ROUTER')
     // menuData = routers.find((item) => item.path === '/').children.filter((menu) => {
     //   let meta = menu.meta
     //   if (typeof meta.isShow === 'undefined' || meta.isShow == null) {
