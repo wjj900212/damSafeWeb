@@ -18,11 +18,6 @@
             { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
           ]}]"/>
       </a-form-item>
-      <a-form-item label='密码' v-bind="formItemLayout">
-        <a-tooltip title='新用户默认密码为 1234qwer'>
-          <a-input type='password' readOnly :value="defaultPassword"/>
-        </a-tooltip>
-      </a-form-item>
       <a-form-item label='角色' v-bind="formItemLayout">
         <a-select
           mode="multiple"
