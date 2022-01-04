@@ -11,7 +11,7 @@
           <a-icon type="user"/>
           <span>个人中心</span>
         </a-menu-item>
-        <a-menu-item @click="updatePassword">
+        <!--<a-menu-item @click="updatePassword">
           <a-icon type="key"/>
           <span>密码修改</span>
         </a-menu-item>
@@ -19,7 +19,7 @@
         <a-menu-item @click="handleSettingClick">
           <a-icon type="setting"/>
           <span>系统定制</span>
-        </a-menu-item>
+        </a-menu-item>-->
         <a-menu-divider></a-menu-divider>
         <a-menu-item @click="logout">
           <a-icon type="logout"/>
@@ -27,25 +27,32 @@
         </a-menu-item>
       </a-menu>
     </a-dropdown>
-    <update-password
+    <!--<update-password
       @success="handleUpdate"
       @cancel="handleCancelUpdate"
       :user="user"
       :updatePasswordModelVisible="updatePasswordModelVisible">
-    </update-password>
+    </update-password>-->
+    <user-info
+      :userInfoVisiable="userInfoVisiable"
+      :userInfoData="user"
+      @onClose="()=>{userInfoVisiable=false}"
+    ></user-info>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapState } from 'vuex'
 import UpdatePassword from '../personal/UpdatePassword'
+import UserInfo from '../system/user/UserInfo'
 
 export default {
   name: 'HeaderAvatar',
-  components: {UpdatePassword},
+  components: {UpdatePassword, UserInfo},
   data () {
     return {
-      updatePasswordModelVisible: false
+      updatePasswordModelVisible: false,
+      userInfoVisiable: false
     }
   },
   computed: {
@@ -62,7 +69,8 @@ export default {
       this.setSettingBar(!this.settingBar)
     },
     openProfile () {
-      this.$router.push('/profile')
+      this.userInfoVisiable = true
+     // this.$router.push('/profile')
     },
     updatePassword () {
       this.updatePasswordModelVisible = true

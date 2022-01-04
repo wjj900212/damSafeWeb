@@ -59,23 +59,11 @@ export default {
       },
       set: function () {
       }
-    },
-    sex () {
-      switch (this.userInfoData.ssex) {
-        case '0':
-          return '男'
-        case '1':
-          return '女'
-        case '2':
-          return '保密'
-        default:
-          return this.userInfoData.ssex
-      }
     }
   },
   methods: {
     handleCancleClick () {
-      this.$emit('close')
+      this.$emit('onClose')
     }
   }
 }

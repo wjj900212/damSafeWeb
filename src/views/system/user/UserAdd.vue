@@ -9,7 +9,7 @@
     :visible="userAddVisiable"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
-      <a-form-item label='用户名'
+      <a-form-item label='姓名'
                    v-bind="formItemLayout"
                    :validateStatus="validateStatus"
                    :help="help">
@@ -37,13 +37,6 @@
             { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
           ]}]"/>
       </a-form-item>
-      <a-form-item label='姓名'
-                   v-bind="formItemLayout"
-                   :validateStatus="validateStatus"
-                   >
-        <a-input v-model="user.realName"
-                v-decorator="['realName']"/>
-      </a-form-item>
       <a-form-item label='角色' v-bind="formItemLayout">
         <a-select
           mode="multiple"
@@ -61,7 +54,7 @@
         <a-input type='password' v-model="user.followPswd"
                 v-decorator="['followPswd']"/>
       </a-form-item> -->
-      <a-form-item label='部门' v-bind="formItemLayout">
+      <a-form-item label='职位' v-bind="formItemLayout">
         <a-tree-select
           :allowClear="true"
           :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
@@ -70,49 +63,18 @@
           v-model="user.deptId">
         </a-tree-select>
       </a-form-item>
-      <a-form-item label='状态' v-bind="formItemLayout">
-        <a-radio-group
-          v-model="user.status"
-          v-decorator="['status',{rules: [{ required: true, message: '请选择状态'}]}]">
-          <a-radio value="0">锁定</a-radio>
-          <a-radio value="1">有效</a-radio>
-        </a-radio-group>
-      </a-form-item>
-      <a-form-item label='性别' v-bind="formItemLayout">
-        <a-radio-group
-          v-model="user.ssex"
-          v-decorator="['ssex',{rules: [{ required: true, message: '请选择性别' }]}]">
-          <a-radio value="0">男</a-radio>
-          <a-radio value="1">女</a-radio>
-          <a-radio value="2">保密</a-radio>
-        </a-radio-group>
-      </a-form-item>
-      <a-form-item label='备注' v-bind="formItemLayout">
-        <a-textarea
-          :rows="3"
-          v-model="user.description"
-          v-decorator="[
-          'description',
-          {rules: [
-            { max: 50, message: '长度不能超过50个字符'}
-          ]}]">
-        </a-textarea>
-      </a-form-item>
-      <!-- <a-form-item label='关注我的项目' v-bind="formItemLayout">
+      <a-form-item label='水库权限' v-bind="formItemLayout">
         <a-select
           mode="multiple"
           :allowClear="true"
-          v-model="user.projs"
+          v-model="user.role"
           style="width: 100%"
           v-decorator="['proj']">
-          <a-select-option v-for="r in projData" :key="r.projBasicId">{{r.projBasicName}}</a-select-option>
+          <a-select-option v-for="r in projData" :key="r.key">{{r.value}}</a-select-option>
         </a-select>
-      </a-form-item> -->
+      </a-form-item>
     </a-form>
       <div class="drawer-bootom-button">
-        <!-- <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">
-          <a-button style="margin-right: .8rem">取消</a-button>
-        </a-popconfirm> -->
         <a-button @click="onClose" type="primary">取消</a-button>
         <a-button @click="handleSubmit" type="primary" :loading="loading">提交</a-button>
       </div>
@@ -141,7 +103,10 @@ export default {
       loading: false,
       roleData: [],
       deptTreeData: [],
-      projData: [],
+      projData: [
+        {key: '0', value: '密云水库'},
+        {key: '1', value: '延庆水库'}
+      ],
       formItemLayout,
       defaultPassword: '1234qwer',
       form: this.$form.createForm(this),

@@ -4,24 +4,24 @@
       <!-- 搜索区域 -->
       <a-form layout="horizontal">
         <a-row >
-        <div :class="advanced ? null: 'fold'">
+          <div :class="advanced ? null: 'fold'">
             <a-col :md="12" :sm="24" >
               <a-form-item
-                label="用户名"
+                label="水库名称"
                 :labelCol="{span: 4}"
                 :wrapperCol="{span: 18, offset: 2}">
                 <a-input v-model="queryParams.username" placeholder="请输入"/>
               </a-form-item>
             </a-col>
-          <a-col :md="12" :sm="24" >
-            <a-form-item
-              label="水库"
-              :labelCol="{span: 4}"
-              :wrapperCol="{span: 18, offset: 2}">
-              <a-input v-model="queryParams.shuiku" placeholder="请输入"/>
-            </a-form-item>
-          </a-col>
-        </div>
+            <a-col :md="12" :sm="24" >
+              <a-form-item
+                label="所在地区"
+                :labelCol="{span: 4}"
+                :wrapperCol="{span: 18, offset: 2}">
+                <a-input v-model="queryParams.shuiku" placeholder="请输入"/>
+              </a-form-item>
+            </a-col>
+          </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
@@ -44,38 +44,14 @@
                @change="handleTableChange">
       </a-table>
     </div>
-    <!-- 用户信息查看 -->
-    <user-info
-      :userInfoData="userInfo.data"
-      :userInfoVisiable="userInfo.visiable"
-      @close="handleUserInfoClose">
-    </user-info>
-    <!-- 新增用户 -->
-    <user-add
-      @close="handleUserAddClose"
-      @success="handleUserAddSuccess"
-      :userAddVisiable="userAdd.visiable">
-    </user-add>
-    <!-- 修改用户 -->
-    <user-edit
-      ref="userEdit"
-      @close="handleUserEditClose"
-      @success="handleUserEditSuccess"
-      :userEditVisiable="userEdit.visiable">
-    </user-edit>
   </a-card>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import UserInfo from './UserInfo'
-import RangeDate from '@/components/datetime/RangeDate'
-import UserAdd from './UserAdd'
-import UserEdit from './UserEdit'
-
 export default {
-  name: 'User',
-  components: {UserInfo, UserAdd, UserEdit, RangeDate},
+  name: 'reservoir',
+  components: {},
   data () {
     return {
       advanced: false,
@@ -117,64 +93,85 @@ export default {
         title: '序号',
         customRender: (text, record, index) => `${index + 1}`
       }, {
-        title: '姓名',
-        dataIndex: 'username',
-        width: '10%'
+        title: '水库名称',
+        dataIndex: 'username'
       }, {
-        title: '角色',
+        title: '地址',
+        dataIndex: 'roleName3'
+      }, {
+        title: '管理单位',
+        dataIndex: 'roleName2'
+      }, {
+        title: '安全状态',
         dataIndex: 'roleId',
-        width: '10%',
         customRender: (text) => {
           switch (text) {
             case '0':
-              return '主管部门'
+              return '无风险'
             case '1':
-              return '水库管理员'
-            case '2':
-              return '运维人员'
+              return '有风险'
           }
         },
         filters: [
           {
-            text: '主管部门',
+            text: '无风险',
             value: '0'
           },
           {
-            text: '水库管理员',
+            text: '有风险',
             value: '1'
-          },
-          {
-            text: '运维人员',
-            value: '2'
           }],
         filterMultiple: true,
         filteredValue: filteredInfo.roleId || null,
         onFilter: (value, record) => record.roleId.includes(value)
       }, {
-        title: '职位',
-        dataIndex: 'roleName',
-        width: '20%'
+        title: '监测场景',
+        dataIndex: 'roleName1'
       },
       {
-        title: '水库权限',
+        title: '水库规模',
         dataIndex: 'userProjCount',
-        width: '10%'
+        customRender: (text) => {
+          switch (text) {
+            case '0':
+              return '大(1)型'
+            case '1':
+              return '大(2)型'
+            case '2':
+              return '中型'
+            case '3':
+              return '小(1)型'
+            case '4':
+              return '小(2)型'
+          }
+        },
+        filters: [
+          {text: '大(1)型', value: '0'},
+          {text: '大(2)型', value: '1'},
+          {text: '中型', value: '2'},
+          {text: '小(1)型', value: '3'},
+          {text: '小(2)型', value: '4'}
+        ],
+        filterMultiple: true,
+        filteredValue: filteredInfo.userProjCount || null,
+        onFilter: (value, record) => record.userProjCount.includes(value)
       }, {
-        title: '创建时间',
-        width: '10%',
+        title: '水库类型',
         dataIndex: 'userFollowCount'
       },
       {
-        title: '最近登录时间',
-        dataIndex: 'lastLoginTime',
-        width: '17%'
+        title: '创建时间',
+        dataIndex: 'lastLoginTime'
       }, {
         title: '操作',
         dataIndex: 'operation',
-        customRender: (text,record) => (
-          <div>
-            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" onClick={()=>{this.edit(record)}} title="编辑"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#42b983" onClick={()=>{this.userDelete(record)}} title="删除"></a-icon>
+        customRender: (text, record) => (
+          <div class="icons-list">
+            <a-icon type="warning" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.edit(record) }} title="监测场景"></a-icon>
+            <a-icon type="info-circle" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.userDelete(record) }} title="监测点"></a-icon>
+            <a-icon type="user" onClick={() => { this.userDelete(record) }} title="用户"></a-icon>
+            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.userDelete(record) }} title="删除"></a-icon>
           </div>
         )
       }]
@@ -296,5 +293,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import "../../../../static/less/Common";
+  @import "../../../../static/less/Common";
+  .icons-list /deep/ .anticon {
+    margin-right: 10px;
+    font-size: 18px;
+  }
 </style>

@@ -12,7 +12,7 @@ export default {
     isMobile: false,
     theme: db.get('THEME', 'light'),
     layout: db.get('LAYOUT', 'side'),
-    systemName: '智慧水库安全监测预警服务平台',
+    systemName: '中小型水库雨水情测报和大坝安全监测系统',
     // copyright: `${new Date().getFullYear()} <a href="#" target="_blank">北京中关村智连安全科学研究院有限公司</a>`,
     copyright: '北京中关村智连安全科学研究院有限公司',
     multipage: getBooleanValue(db.get('MULTIPAGE'), true),

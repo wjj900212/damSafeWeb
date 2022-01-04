@@ -87,7 +87,7 @@ export default {
             // let name = this.form.getFieldValue('name')
             // let password = this.form.getFieldValue('password')
             this.saveLoginData({
-              token: '1.1640826558.1640830158.a559ea20e11ff1837a3235ac533cf8a0',
+              token: '1.1640913844.1640917444.0734a1543e30c450e8164c903049fbd4',
               config: {
                 color: 'rgb(24, 144, 255)',
                 fixHeader: '1',
@@ -97,7 +97,7 @@ export default {
                 theme: 'dark',
                 userId: '1'
               },
-              exipreTime: '20211230170918',
+              exipreTime: '20220122170918',
               roles: [],
               permissions: [],
               user: {

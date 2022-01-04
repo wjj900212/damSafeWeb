@@ -50,10 +50,12 @@ MK_REQUEST.interceptors.response.use((config) => {
 }, (error) => {
   if (error.response) {
     let errorMessage = error.response.data === null ? '系统内部异常，请联系网站管理员' : error.response.data.message
+    // const key = 'updatable'
     switch (error.response.status) {
       case 404:
         notification.error({
           message: '系统提示',
+          // key,
           description: '很抱歉，资源未找到',
           duration: 4
         })
@@ -62,9 +64,14 @@ MK_REQUEST.interceptors.response.use((config) => {
       case 401:
         notification.warn({
           message: '系统提示',
+          // key,
           description: '很抱歉，您无法访问该资源，可能是因为没有相应权限或者登录已失效',
           duration: 4
         })
+        /* setTimeout(() => {
+          db.clear()
+          location.reload()
+        }, 1000) */
         break
       default:
         notification.error({
@@ -72,6 +79,7 @@ MK_REQUEST.interceptors.response.use((config) => {
           description: errorMessage,
           duration: 4
         })
+        // console.log(errorMessage)
         break
     }
   }
