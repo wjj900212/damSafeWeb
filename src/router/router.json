@@ -78,7 +78,76 @@
 				],
 				"hasParent": false,
 				"hasChildren": false
-			}
+			},
+      {
+        "icon": "appstore-o",
+        "path": "/reservoir/warn",
+        "component": "LeftPageView",
+        "name": "预警管理",
+        "hidden": false,
+        "isItem": "0",
+        "meta": {
+          "closeable": true,
+          "isShow": true
+        },
+        "type": "0",
+        "redirect": "",
+        "children": [
+          {
+            "icon": "audit",
+            "path": "/reservoir/warn/message",
+            "component": "reservoir/warn/message/message",
+            "name": "预警消息",
+            "hidden": false,
+            "isItem": "0",
+            "meta": {
+              "closeable": true,
+              "isShow": true
+            },
+            "type": "0",
+            "redirect": "",
+            "children": [],
+            "hasParent": true,
+            "hasChildren": false
+          },
+          {
+            "icon": "audit",
+            "path": "/reservoir/warn/config",
+            "component": "reservoir/warn/config/config",
+            "name": "预警设置",
+            "hidden": false,
+            "isItem": "0",
+            "meta": {
+              "closeable": true,
+              "isShow": true
+            },
+            "type": "0",
+            "redirect": "",
+            "children": [],
+            "hasParent": true,
+            "hasChildren": false
+          },
+          {
+            "icon": "audit",
+            "path": "/reservoir/warn/safety",
+            "component": "reservoir/warn/safety/safety",
+            "name": "安全管理预案",
+            "hidden": false,
+            "isItem": "0",
+            "meta": {
+              "closeable": true,
+              "isShow": true
+            },
+            "type": "0",
+            "redirect": "",
+            "children": [],
+            "hasParent": true,
+            "hasChildren": false
+          }
+        ],
+        "hasParent": false,
+        "hasChildren": false
+      }
 		],
 		"hasParent": false,
 		"hasChildren": false
