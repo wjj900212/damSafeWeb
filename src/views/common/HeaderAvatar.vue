@@ -70,7 +70,7 @@ export default {
     },
     openProfile () {
       this.userInfoVisiable = true
-     // this.$router.push('/profile')
+      // this.$router.push('/profile')
     },
     updatePassword () {
       this.updatePasswordModelVisible = true

@@ -171,10 +171,10 @@ export default {
       }, {
         title: '操作',
         dataIndex: 'operation',
-        customRender: (text,record) => (
+        customRender: (text, record) => (
           <div>
-            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" onClick={()=>{this.edit(record)}} title="编辑"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#42b983" onClick={()=>{this.userDelete(record)}} title="删除"></a-icon>
+            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#42b983" onClick={() => { this.userDelete(record) }} title="删除"></a-icon>
           </div>
         )
       }]

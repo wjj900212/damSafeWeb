@@ -55,6 +55,7 @@
 
 <script>
 import {mapMutations} from 'vuex'
+import moment from 'moment'
 // var LdapClient = require('node-ldap')
 export default {
   name: 'Login',
@@ -78,6 +79,7 @@ export default {
     this.$router.options.routes = []
   },
   methods: {
+    moment,
     doLogin () {
       if (this.activeKey === '1') {
         // 用户名密码登录
@@ -86,6 +88,7 @@ export default {
             this.loading = true
             // let name = this.form.getFieldValue('name')
             // let password = this.form.getFieldValue('password')
+            const exipreTime = moment().add('hours', 9).format('YYYY-MM-DD HH:mm:ss')
             this.saveLoginData({
               token: '1.1640913844.1640917444.0734a1543e30c450e8164c903049fbd4',
               config: {
@@ -97,7 +100,7 @@ export default {
                 theme: 'dark',
                 userId: '1'
               },
-              exipreTime: '20220122170918',
+              exipreTime: exipreTime,
               roles: [],
               permissions: [],
               user: {
@@ -124,7 +127,7 @@ export default {
             })
             setTimeout(() => {
               this.loading = false
-              this.$router.push('/')
+              this.$router.push('/system/user/User')
             }, 500)
             // var client = new LdapClient({
             //     ldapUrl: 'ldap://192.168.70.4:389',
