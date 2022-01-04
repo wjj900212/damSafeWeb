@@ -131,7 +131,7 @@
 						"component": "system/reservoir/reservoir",
 						"name": "水库管理",
 						"hidden": false,
-						"isItem": "0",
+						"isItem": "1",
 						"meta": {
 							"closeable": true,
 							"isShow": true
@@ -141,6 +141,21 @@
 						"children": [],
 						"hasParent": true,
 						"hasChildren": false
+					},
+					{
+						"children": [],
+						"component": "system/reservoir/reservoir_add",
+						"path": "/system/reservoir/reservoir/reservoir_add",
+						"name": "添加水库",
+						"hasChildren": false,
+						"hasParent": true,
+						"hidden": true,
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"isItem": "0",
+						"type": "1"
 					}
 				],
 				"hasParent": false,
