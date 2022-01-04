@@ -11,7 +11,15 @@
         <i-menu style="height: 64px; line-height: 64px;" class="system-top-menu" :theme="theme" mode="horizontal" :menuData="menuData" @select="onSelect"/>
       </div>
       <div :class="['global-header-right', theme]">
+          <div @click="() => { isShowList = !isShowList }" style="float: left;margin-right: 10px;cursor: pointer;"><a-icon type="bars" /></div>
           <header-avatar class="header-item"/>
+      </div>
+      <div v-show="isShowList" class="buttonlist">
+        <a-list bordered :data-source="data">
+          <a-list-item style="cursor: pointer;" @click="() => { $router.push(item.path); isShowList = false }" slot="renderItem" slot-scope="item">
+            {{ item.name }}
+          </a-list-item>
+        </a-list>
       </div>
     </div>
   </a-layout-header>
@@ -26,6 +34,15 @@ export default {
   name: 'GlobalHeader',
   components: {IMenu, HeaderAvatar},
   props: ['collapsed', 'menuData'],
+  data () {
+    return {
+      isShowList: false,
+      data: [
+        {name: '水库管理', path: '/reservoir/reservoir/reservoir'},
+        {name: '系统管理', path: '/system/user/User'}
+      ]
+    }
+  },
   computed: {
     ...mapState({
       isMobile: state => state.setting.isMobile,
@@ -39,6 +56,7 @@ export default {
     }
   },
   methods: {
+    showList () {},
     toggleCollapse () {
       this.$emit('toggleCollapse')
     },
@@ -50,6 +68,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .buttonlist {
+    width: 110px;
+    z-index: 10;
+    position: absolute;
+    right: 120px;
+    background: white;
+    top: 60px;
+  }
   .trigger {
     font-size: 20px;
     line-height: 64px;
