@@ -102,16 +102,16 @@ export default {
   watch: {
     '$route' (to, from) {
       console.log('11111111111')
-      // let topath = to.path
-      // let toarr = topath.split('/')
-      // let topathname = this.getFirstValue(toarr)
-      // let frompath = from.path
-      // let fromarr = frompath.split('/')
-      // let frompathname = this.getFirstValue(fromarr)
-      // console.log(topathname, frompathname)
-      // if (topathname !== frompathname) {
-      //   this.setRoute()
-      // }
+      /* let topath = to.path
+      let toarr = topath.split('/')
+      let topathname = this.getFirstValue(toarr)
+      let frompath = from.path
+      let fromarr = frompath.split('/')
+      let frompathname = this.getFirstValue(fromarr)
+      console.log(topathname, frompathname)
+      if (topathname !== frompathname) {
+        this.setRoute()
+      } */
     }
   },
   beforeCreate () {

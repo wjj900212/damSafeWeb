@@ -33,8 +33,8 @@
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
             <a-icon type="warning" theme="twoTone" twoToneColor="#4a9ff5" title="监测场景" @click="$router.push('/system/reservoir/reservoir/scene')"></a-icon>
-            <a-icon type="info-circle" theme="twoTone" twoToneColor="#4a9ff5" title="监测点"></a-icon>
-            <a-icon type="user" title="用户"></a-icon>
+            <a-icon type="info-circle" theme="twoTone" twoToneColor="#4a9ff5" title="监测点" @click="goReservoirMonitoringPoint(record)"></a-icon>
+            <a-icon type="user" title="用户" @click="goReservoirUser"></a-icon>
             <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="编辑"></a-icon>
             <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="userDelete(record)" title="删除">
             </a-icon>
@@ -180,7 +180,13 @@ export default {
   methods: {
     // 添加水库
     goAdd () {
-      this.$router.push('/system/reservoir/reservoir/reservoir_add')
+      this.$router.push('/system/reservoir/reservoir_add')
+    },
+    goReservoirUser () {
+      this.$router.push('/system/reservoir/user')
+    },
+    goReservoirMonitoringPoint (record) {
+      this.$router.push('/system/reservoir/monitoring_point?reservoirName=' + record.name)
     },
     userDelete (record) {
       let that = this
@@ -213,8 +219,8 @@ export default {
   @import "../../../../static/less/Common";
 
   .icons-list /deep/ .anticon {
-    margin-right: 10px;
-    font-size: 18px;
+    margin-right: 0.5rem;
+    font-size: 1.6rem;
   }
 
 </style>

@@ -161,7 +161,7 @@
 		"isItem": "",
 		"meta": null,
 		"type": "",
-		"redirect": "/system/user/User",
+		"redirect": "/system/reservoir/reservoir",
 		"children": [
 			{
 				"icon": "home",
@@ -214,7 +214,7 @@
 					{
 						"children": [],
 						"component": "system/reservoir/reservoir_add",
-						"path": "/system/reservoir/reservoir/reservoir_add",
+						"path": "/system/reservoir/reservoir_add",
 						"name": "添加水库",
 						"hasChildren": false,
 						"hasParent": true,
@@ -225,7 +225,37 @@
 						},
 						"isItem": "0",
 						"type": "1"
-					}
+					},
+          {
+            "children": [],
+            "path": "/system/reservoir/user",
+            "component": "system/reservoir/user",
+            "name": "用户",
+            "hasChildren": false,
+            "hasParent": true,
+            "hidden": true,
+            "meta": {
+              "closeable": true,
+              "isShow": false
+            },
+            "isItem": "0",
+            "type": "1"
+          },
+          {
+            "children": [],
+            "path": "/system/reservoir/monitoring_point",
+            "component": "system/reservoir/monitoring_point",
+            "name": "监测点",
+            "hasChildren": false,
+            "hasParent": true,
+            "hidden": true,
+            "meta": {
+              "closeable": true,
+              "isShow": false
+            },
+            "isItem": "0",
+            "type": "1"
+          }
 				],
 				"hasParent": false,
 				"hasChildren": false

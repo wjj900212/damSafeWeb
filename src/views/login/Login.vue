@@ -127,7 +127,7 @@ export default {
             })
             setTimeout(() => {
               this.loading = false
-              this.$router.push('/system/user/User')
+              this.$router.push('/system/reservoir/reservoir')
             }, 500)
             // var client = new LdapClient({
             //     ldapUrl: 'ldap://192.168.70.4:389',
