@@ -5,7 +5,7 @@
         <div class="block">设备类型：<a href="#">{{data.devModelName}}</a></div>
         <div style="margin-left:auto;"><a  @click="recoveryThreshold">恢复默认</a></div>
       </div>
-      <a-table ref="TableInfo"
+      <a-table ref="TableEdit"
                :columns="columns"
                :dataSource="dataSource"
                :pagination="pagination"
@@ -49,11 +49,16 @@
           <a-checkbox v-else checked @change="onDisplayChange(record.sort,$event)"></a-checkbox>
         </template>
       </a-table>
+      <!--警示信息-->
+      <config-warn-msg
+        :visible="isShowConfigMsg"
+        @onClose="()=>{isShowConfigMsg=false}"
+      ></config-warn-msg>
     </div>
 </template>
 
 <script>
-// import EditableCell from '../EditableCell'
+  import ConfigWarnMsg from '../configWarnMsg'
 export default {
   name: 'third',
   data () {
@@ -61,9 +66,12 @@ export default {
       loading: false,
       selectedRowKeys: [],
       pagination: false,
-      dataSource: [],
+      dataSource: [
+        {targetName: '瞬时降水量', warnBlue: '1', warnBlueMsg: '', warnYellow: '2', warnYellowMsg: '', warnOrange: '3', warnOrangeMsg: '', warnRed: '4', warnRedMsg: ''}
+      ],
       editable: false,
-      flag: 0
+      flag: 0,
+      isShowConfigMsg: false
     }
   },
   props: {
@@ -84,7 +92,7 @@ export default {
     }
   },
   components: {
-    // EditableCell
+    ConfigWarnMsg
   },
   computed: {
     columns () {
@@ -95,57 +103,73 @@ export default {
       }, {
         title: '蓝色预警阈值',
         dataIndex: 'warnBlue',
-        width: '13%',
+        width: '11%',
         scopedSlots: {customRender: 'warnBlue'}
       }, {
         title: '蓝色警示信息',
         dataIndex: 'warnBlueMsg',
-        width: '13%',
-        scopedSlots: {customRender: 'warnBlueMsg'}
+        width: '11%',
+        customRender: (text, record) => (
+          <div>
+            <a-icon type="form" style="font-size:1.6rem;" onClick={() => this.addWarnMsg(record)}/>
+          </div>
+        )
       }, {
         title: '黄色预警阈值',
         dataIndex: 'warnYellow',
-        width: '13%',
+        width: '11%',
         scopedSlots: {customRender: 'warnYellow'}
       }, {
         title: '黄色警示信息',
         dataIndex: 'warnYellowMsg',
-        width: '13%',
-        scopedSlots: {customRender: 'warnYellowMsg'}
+        width: '11%',
+        customRender: (text, record) => (
+          <div>
+            <a-icon type="form" style="font-size:1.6rem;"/>
+          </div>
+        )
       }, {
         title: '橙色预警阈值',
         dataIndex: 'warnOrange',
-        width: '13%',
+        width: '11%',
         scopedSlots: {customRender: 'warnOrange'}
       }, {
         title: '橙色警示信息',
         dataIndex: 'warnOrangeMsg',
-        width: '13%',
-        scopedSlots: {customRender: 'warnOrangeMsg'}
+        width: '11%',
+        customRender: (text, record) => (
+          <div>
+            <a-icon type="form" style="font-size:1.6rem;" />
+          </div>
+        )
       }, {
         title: '红色预警阈值',
         dataIndex: 'warnRed',
-        width: '13%',
+        width: '11%',
         scopedSlots: {customRender: 'warnRed'}
       }, {
         title: '红色警示信息',
         dataIndex: 'warnRedMsg',
-        width: '13%',
-        scopedSlots: {customRender: 'warnRedMsg'}
+        width: '11%',
+        customRender: (text, record) => (
+          <div>
+            <a-icon type="form" style="font-size:1.6rem;" />
+          </div>
+        )
       }, {
         title: '操作',
         dataIndex: 'operation',
-        width: '10%',
+        width: '11%',
         scopedSlots: { customRender: 'operation' }
       }]
     }
   },
   mounted () {
-    this.dataSource = this.data.targetList
+    // this.dataSource = this.data.targetList
   },
   watch: {
     data (newVal) {
-      this.dataSource = newVal.targetList
+      // this.dataSource = newVal.targetList
     }
   },
   methods: {
@@ -166,6 +190,10 @@ export default {
         this.flag = 1
         this.$emit('getFlag', this.flag)
       }
+    },
+    // 添加警示信息
+    addWarnMsg(record){
+      this.isShowConfigMsg = true
     },
     onDisplayChange (key, e) {
       const dataSource = [...this.dataSource]

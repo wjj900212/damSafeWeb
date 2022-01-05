@@ -147,6 +147,7 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
+      isShowDevWarning: false,
       warnDetailData: {}
     }
   },

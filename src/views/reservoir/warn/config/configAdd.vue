@@ -2,12 +2,9 @@
   <a-modal
     title="添加预警规则"
     :visible="visible"
-    width="750px"
+    width="1200px"
     @cancel="handleCancel"
   >
-    <!--<a-steps :current="current">
-      <a-step v-for="item in steps" :key="item.title" :title="item.title" />
-    </a-steps>-->
     <div class="steps-content">
       <first @updateThresholdDev="updateThresholdDev" :thresholdEditMoreObj="thresholdEditMoreObj" :typeList="typeList" v-if="steps[current].index === '1'"></first>
       <second @updateThresholdTag="updateThresholdTag" :thresholdEditMoreObj="thresholdEditMoreObj" :projList="projList" v-if="steps[current].index === '2'"></second>
@@ -214,7 +211,6 @@ export default {
 
 <style lang="less" scoped>
   .steps-content {
-    margin-top: 16px;
     border: 1px dashed #e9e9e9;
     border-radius: 6px;
     background-color: #fafafa;

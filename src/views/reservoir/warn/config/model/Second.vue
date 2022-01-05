@@ -113,7 +113,7 @@ export default {
         }
       }
     }
-    this.onSearch()
+   // this.onSearch()
   },
   watch: {
     projList (newVal) {

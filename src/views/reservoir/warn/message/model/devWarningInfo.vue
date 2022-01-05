@@ -2,7 +2,7 @@
   <a-modal
     :footer="null"
     :visible="visible"
-    :width="750"
+    :width="1200"
     :mask="true"
     @cancel="cancelModal"
   >
@@ -17,10 +17,10 @@
         警示等级
       </a-col>
       <a-col :span="3" :order="4" class="info-content">
-        <span v-if="warnDetailData.warnLevel===4" style="color:#FF3C1C;font-size:1.4rem;font-family: 'Microsoft YaHei UI';font-weight: 400;">红色预警</span>
-        <span v-if="warnDetailData.warnLevel===3" style="color:#FF6C00;font-size:1.4rem;font-family: 'Microsoft YaHei UI';font-weight: 400;">橙色预警</span>
-        <span v-if="warnDetailData.warnLevel===2" style="color:#FFD800;font-size:1.4rem;font-family: 'Microsoft YaHei UI';font-weight: 400;">黄色预警</span>
-        <span v-if="warnDetailData.warnLevel===1" style="color:#12A8F6;font-size:1.4rem;font-family: 'Microsoft YaHei UI';font-weight: 400;">蓝色预警</span>
+        <span v-if="warnDetailData.devCode==='3'" style="color:#FF3C1C;font-size:1.4rem;font-family: 'Microsoft YaHei UI';font-weight: 400;">红色预警</span>
+        <span v-if="warnDetailData.devCode==='2'" style="color:#FF6C00;font-size:1.4rem;font-family: 'Microsoft YaHei UI';font-weight: 400;">橙色预警</span>
+        <span v-if="warnDetailData.devCode==='1'" style="color:#FFD800;font-size:1.4rem;font-family: 'Microsoft YaHei UI';font-weight: 400;">黄色预警</span>
+        <span v-if="warnDetailData.devCode==='0'" style="color:#12A8F6;font-size:1.4rem;font-family: 'Microsoft YaHei UI';font-weight: 400;">蓝色预警</span>
       </a-col>
       <a-col :span="3" :order="5" class="info-label">
         预警阈值

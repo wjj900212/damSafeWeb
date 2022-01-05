@@ -37,22 +37,32 @@
         :visible="isShowConfigAdd"
         @onClose="()=>{isShowConfigAdd=false}"
       ></config-add>
+      <!--编辑预警规则-->
+      <config-edit
+        :visible="isShowConfigEdit"
+        @onClose="()=>{isShowConfigEdit=false}"
+      ></config-edit>
     </div>
 </template>
 
 <script>
 import TableList from '@/components/table/TableList'
 import ConfigAdd from './configAdd'
+import ConfigEdit from './configEdit'
 export default {
   name: 'config',
   components: {
     TableList,
-    ConfigAdd
+    ConfigAdd,
+    ConfigEdit
   },
   data () {
     return {
       paginationInfo: null,
-      dataSource: [],
+      dataSource: [
+        {devCode: '雨情测报站-01', devStatus: '翻斗式雨量计-01', devModelName: '翻斗式雨量计', secureKey: '202101100045', devOnline: '0'},
+        {devCode: '雨情测报站-02', devStatus: '翻斗式雨量计-02', devModelName: '翻斗式雨量计', secureKey: '202101100046', devOnline: '0'}
+      ],
       loading: false,
       pagination: {
         pageSizeOptions: ['10', '20', '30', '40', '100'],
@@ -62,7 +72,8 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      isShowConfigAdd: false
+      isShowConfigAdd: false,
+      isShowConfigEdit: false
     }
   },
   computed: {
@@ -74,30 +85,26 @@ export default {
         title: '监测点',
         dataIndex: 'devStatus'
       }, {
-        title: '设备ID',
+        title: '设备类型',
         dataIndex: 'devModelName'
       }, {
-        title: '预警等级',
+        title: '设备ID',
         dataIndex: 'secureKey'
       }, {
-        title: '指标',
-        dataIndex: 'devOnline'
-      }, {
-        title: '阈值',
-        dataIndex: 'projBasicName'
-      }, {
-        title: '警示信息',
-        dataIndex: 'itemNum',
-        width: '25%',
-        ellipsis: true
+        title: '预警规则',
+        dataIndex: 'devOnline',
+        customRender: (text, record) => (
+          <div>
+            <a>点击查看</a>
+          </div>
+        )
       }, {
         title: '操作',
-        fixed: 'right',
         dataIndex: 'operation',
         customRender: (text, record) => (
           <div>
-            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.userDelete(record) }} title="删除"></a-icon>
+            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" style="font-size:1.6rem;" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" style="font-size:1.6rem;" onClick={() => { this.configDelete(record) }} title="删除"></a-icon>
           </div>
         )
       }]
@@ -109,6 +116,13 @@ export default {
     },
     addConfig () {
       this.isShowConfigAdd = true
+    },
+    edit (record) {
+      this.isShowConfigEdit = true
+      // this.getThresholdDetail(record.devCode)
+    },
+    configDelete(){
+
     }
   }
 }
