@@ -103,8 +103,8 @@ export default {
         dataIndex: 'operation',
         customRender: (text, record) => (
           <div>
-            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" style="font-size:1.6rem;" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" style="font-size:1.6rem;" onClick={() => { this.configDelete(record) }} title="删除"></a-icon>
+            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" class="icon-size" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" class="icon-size" onClick={() => { this.configDelete(record) }} title="删除"></a-icon>
           </div>
         )
       }]
@@ -121,7 +121,7 @@ export default {
       this.isShowConfigEdit = true
       // this.getThresholdDetail(record.devCode)
     },
-    configDelete(){
+    configDelete () {
 
     }
   }

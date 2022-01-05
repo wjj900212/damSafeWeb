@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <a-card :bordered="false" class="card-area">
     <div :class="advanced ? 'search' : null">
@@ -173,8 +174,8 @@ export default {
         dataIndex: 'operation',
         customRender: (text, record) => (
           <div>
-            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#42b983" onClick={() => { this.userDelete(record) }} title="删除"></a-icon>
+            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" class="icon-size" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#42b983" class="icon-size" onClick={() => { this.userDelete(record) }} title="删除"></a-icon>
           </div>
         )
       }]
