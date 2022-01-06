@@ -38,8 +38,8 @@ export default {
     return {
       isShowList: false,
       data: [
-        {name: '水库管理', path: '/reservoir/reservoir/reservoir'},
-        {name: '系统管理', path: '/system/reservoir/reservoir'}
+        {name: '水库管理', path: '/reservoir/reservoir/generalview'},
+        {name: '系统管理', path: '/system/user/User'}
       ]
     }
   },

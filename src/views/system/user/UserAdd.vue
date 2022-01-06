@@ -13,64 +13,38 @@
                    v-bind="formItemLayout"
                    :validateStatus="validateStatus"
                    :help="help">
-        <a-input v-model="user.username"
-                 @blur="handleUserNameBlur"
-                 v-decorator="['username',{rules: [{ required: true, message: '用户名不能为空'}]}]"/>
+        <a-input v-model="user.userName"
+                 v-decorator="['userName',{rules: [{ required: true, message: '用户名不能为空'}]}]"/>
       </a-form-item>
-      <a-form-item label='密码' v-bind="formItemLayout">
-        <a-tooltip title='新用户默认密码为 1234qwer'>
-          <a-input type='password' readOnly :value="defaultPassword"/>
-        </a-tooltip>
-      </a-form-item>
-      <!-- <a-form-item label='邮箱' v-bind="formItemLayout">
-        <a-input
-          v-model="user.email"
-          v-decorator="['email',{rules: [
-            { type: 'email', message: '请输入正确的邮箱' },
-            { max: 50, message: '长度不能超过50个字符'}
-          ]}]"/>
-      </a-form-item> -->
-      <a-form-item label="手机" v-bind="formItemLayout">
+      <a-form-item label="手机号" v-bind="formItemLayout">
         <a-input
           v-model="user.mobile"
           v-decorator="['mobile', {rules: [
-            { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
+            {required: true, pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
           ]}]"/>
+      </a-form-item>
+      <a-form-item label='密码' v-bind="formItemLayout">
+        <a-tooltip title='新用户默认密码为 手机号后6位'>
+          <a-input type='password'  v-model="user.password" v-decorator="['password', validatorRules.password]" />
+        </a-tooltip>
       </a-form-item>
       <a-form-item label='角色' v-bind="formItemLayout">
         <a-select
-          mode="multiple"
           :allowClear="true"
           v-model="user.roleId"
           style="width: 100%"
-          v-decorator="['role',{rules: [{ required: true, message: '请选择角色' }]}]">
+          v-decorator="['roleId',{rules: [{ required: true, message: '请选择角色' }]}]">
           <a-select-option v-for="r in roleData" :key="r.roleId">{{r.roleName}}</a-select-option>
         </a-select>
-      </a-form-item>
-      <!-- <a-form-item label='关注密码'
-                   v-bind="formItemLayout"
-                   :validateStatus="validateStatus"
-                   >
-        <a-input type='password' v-model="user.followPswd"
-                v-decorator="['followPswd']"/>
-      </a-form-item> -->
-      <a-form-item label='职位' v-bind="formItemLayout">
-        <a-tree-select
-          :allowClear="true"
-          :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
-          :treeData="deptTreeData"
-          v-decorator="['deptId']"
-          v-model="user.deptId">
-        </a-tree-select>
       </a-form-item>
       <a-form-item label='水库权限' v-bind="formItemLayout">
         <a-select
           mode="multiple"
           :allowClear="true"
-          v-model="user.role"
+          v-model="user.reservoirIds"
           style="width: 100%"
-          v-decorator="['proj']">
-          <a-select-option v-for="r in projData" :key="r.key">{{r.value}}</a-select-option>
+          v-decorator="['reservoirIds']">
+          <a-select-option v-for="r in reservoirData" :key="r.reservoirId">{{r.reservoirName}}</a-select-option>
         </a-select>
       </a-form-item>
     </a-form>
@@ -96,22 +70,24 @@ export default {
   },
   data () {
     return {
-      user: {
-        username: '',
-        type: '1'
-      },
+      user: {},
       loading: false,
-      roleData: [],
-      deptTreeData: [],
-      projData: [
-        {key: '0', value: '密云水库'},
-        {key: '1', value: '延庆水库'}
-      ],
       formItemLayout,
-      defaultPassword: '1234qwer',
+      defaultPassword: '',
       form: this.$form.createForm(this),
-      validateStatus: '',
-      help: ''
+      validateStatus: 'success',
+      help: '',
+      roleData: [],
+      reservoirData: [],
+      validatorRules: {
+        password: {
+          initialValue: '',
+          rules: [
+            {message: '请输入密码'},
+            {pattern: /^[0-9a-zA-Z_]{6,}$/, message: '密码不能少于6位,包含数字、字母、下划线'}
+          ]
+        }
+      }
     }
   },
   computed: {
@@ -121,9 +97,8 @@ export default {
   },
   methods: {
     reset () {
-      this.validateStatus = ''
+      this.user = {}
       this.help = ''
-      this.user.username = ''
       this.loading = false
       this.form.resetFields()
     },
@@ -131,24 +106,35 @@ export default {
       this.reset()
       this.$emit('close')
     },
+    // 角色列表
+    getRoleList () {
+      this.$get('web/user/getRoleList').then((r) => {
+        this.roleData = r.data.data
+      })
+    },
+    // 水库列表
+    getReservoirList () {
+      this.$get('web/hidden/getReservoirList').then((r) => {
+        this.reservoirData = r.data.data
+      })
+    },
     handleSubmit () {
-      if (this.validateStatus !== 'success') {
+      /* if (this.validateStatus !== 'success') {
         this.handleUserNameBlur()
-      }
+      } */
       this.form.validateFields((err, values) => {
         if (!err && this.validateStatus === 'success') {
           this.loading = true
-          this.user.roleId = this.user.roleId.join(',')
-          if (this.user.projs && this.user.projs !== null && this.user.projs !== '') {
-            this.user.followProjId = this.user.projs.join(',')
-          }
-          this.user.createUserId = this.currentUser.userId
-          this.$post('server/user.php', {
-            ...this.user,
-            action: 'insertUser'
+          this.user.reservoirIds = this.user.reservoirIds.join(',')
+          this.$post('web/user/addUser', {
+            ...this.user
           }).then((r) => {
-            this.reset()
-            this.$emit('success')
+            if (r.data.code === 1) {
+              this.reset()
+              this.$emit('success')
+            } else {
+              this.$message.error(r.data.msg)
+            }
           }).catch(() => {
             this.loading = false
           })
@@ -183,21 +169,10 @@ export default {
     }
   },
   watch: {
-    userAddVisiable () {
-      if (this.userAddVisiable) {
-        this.$get('server/role.php?action=list').then((r) => {
-          this.roleData = r.data
-        })
-        this.$get('server/dept.php?action=depttree').then((r) => {
-          this.deptTreeData = r.data.rows.children
-        })
-        // let projBasic = {}
-        // projBasic.projBasicCreateUser = this.currentUser.userId
-        // this.$get('admin/proj/list', {
-        //   ...projBasic
-        // }).then((r) => {
-        //   this.projData = r.data
-        // })
+    userAddVisiable (newVal) {
+      if (newVal) {
+        this.getRoleList()
+        this.getReservoirList()
       }
     }
   }
