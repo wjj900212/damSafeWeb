@@ -5,9 +5,7 @@
     <a-form-item label="场景类型" v-bind="formItemLayout">
       <a-select show-search placeholder="请选择" option-filter-prop="children" :filter-option="filterOption" v-decorator="[
           'projId',{ rules: [{ required: true, message: '请选择场景类型' }] }]">
-        <a-select-option value="jack">Jack</a-select-option>
-        <a-select-option value="lucy">Lucy</a-select-option>
-        <a-select-option value="tom">Tom</a-select-option>
+        <a-select-option v-for="scene in sceneTypeList" :key="scene.ID">{{scene.NAME}}</a-select-option>
       </a-select>
     </a-form-item>
     <a-form-item label="场景名称" v-bind="formItemLayout">
@@ -15,8 +13,11 @@
           'username',{ rules: [{ required: true, message: '请填写场景名称' }] }]" placeholder="请填写场景名称" />
     </a-form-item>
     <a-form-item label="所在区县" v-bind="formItemLayout">
-      <a-cascader :options="cityArr" placeholder="请选择所在区县" v-decorator="[
-          'city', { rules: [{ required: true, message: '请填写所在区县' }] } ]" />
+      <!--<a-cascader :options="cityArr" placeholder="请选择所在区县" v-decorator="[
+          'city', { rules: [{ required: true, message: '请填写所在区县' }] } ]" />-->
+      <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
+      <a-input style="display: none;"
+               v-decorator="['levelCode',{rules: [{ required: true, message: '所属地区不能为空'}]}]"></a-input>
     </a-form-item>
     <a-form-item label="位置坐标" v-bind="formItemLayout">
       <div style="display: flex;align-items: center;white-space: nowrap;">
@@ -99,163 +100,184 @@
 </template>
 
 <script>
-  import mapCenterPoint from "@/components/mapCenterPoint/mapCenterPoint" // 选择中心点
-  function getBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = (e) => resolve(e.target.result)
-      reader.onerror = error => reject(error)
-    })
-  }
-  export default {
-    name: 'scene_add_edit',
-    components: {
-      mapCenterPoint
-    },
-    data() {
-      return {
-        cityArr: [{
-            value: 'zhejiang',
-            label: 'Zhejiang',
-            children: [{
-              value: 'hangzhou',
-              label: 'Hangzhou',
-              children: [{
-                value: 'xihu',
-                label: 'West Lake',
-              }, ],
-            }, ],
-          },
-          {
-            value: 'jiangsu',
-            label: 'Jiangsu',
-            children: [{
-              value: 'nanjing',
-              label: 'Nanjing',
-              children: [{
-                value: 'zhonghuamen',
-                label: 'Zhong Hua Men',
-              }, ],
-            }, ],
-          }
-        ], //省市区列表
-        formItemLayout: {
-          labelCol: {
-            span: 6
-          },
-          wrapperCol: {
-            span: 15
-          }
+import mapCenterPoint from '@/components/mapCenterPoint/mapCenterPoint' // 选择中心点
+import Cascader from '@/components/distselect/cascader.vue'
+function getBase64 (file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = (e) => resolve(e.target.result)
+    reader.onerror = error => reject(error)
+  })
+}
+export default {
+  name: 'scene_add_edit',
+  components: {
+    mapCenterPoint,
+    Cascader
+  },
+  data () {
+    return {
+      /* cityArr: [{
+        value: 'zhejiang',
+        label: 'Zhejiang',
+        children: [{
+          value: 'hangzhou',
+          label: 'Hangzhou',
+          children: [{
+            value: 'xihu',
+            label: 'West Lake'
+          } ]
+        } ]
+      },
+      {
+        value: 'jiangsu',
+        label: 'Jiangsu',
+        children: [{
+          value: 'nanjing',
+          label: 'Nanjing',
+          children: [{
+            value: 'zhonghuamen',
+            label: 'Zhong Hua Men'
+          } ]
+        } ]
+      }
+      ], */// 省市区列表
+      formItemLayout: {
+        labelCol: {
+          span: 6
         },
-        form: this.$form.createForm(this),
-        MapVisible: false, //地图选择中心点弹框
-        centerLongitude: '',
-        centerLatitude: '',
-        imgsList: [], //file-list 图片列表
-        previewImgs: '', //弹框显示的图片
-        previewImgsVisible: false, //显示弹框查看图片
-        customField: [], //自定义字段
-        customName: '', //自定义字段名称
-        isEditCustomName: '', //修改自定义字段名称
-        customFieldModal: false,
-        customErr: {
-          status: '',
-          help: ''
+        wrapperCol: {
+          span: 15
         }
-      };
-    },
-    methods: {
-      saveLngLat(lng, lat) {
-        this.form.setFieldsValue({
-          'projBasicLongitude': lng,
-          'projBasicLatitude': lat
-        })
-        this.projLongitude = lng
-        this.projLatitude = lat
       },
-      // 确认自定义字段 关闭弹框
-      customFieldOk() {
-        if (this.customName) {
-          this.customErr.status = ""
-          this.customErr.help = ''
-          if (this.isEditCustomName !== '') this.customField[this.isEditCustomName].name = this.customName
-          else {
-            this.customField.push({
-              name: this.customName,
-              value: ''
-            })
-          }
-        } else {
-          this.customErr.status = "error"
-          this.customErr.help = '请输入自定义名称'
-          return false
-        }
-        this.customFieldModal = false
-        this.customName = ''
-        this.isEditCustomName = ''
+      form: this.$form.createForm(this),
+      MapVisible: false, // 地图选择中心点弹框
+      centerLongitude: '',
+      centerLatitude: '',
+      imgsList: [], // file-list 图片列表
+      previewImgs: '', // 弹框显示的图片
+      previewImgsVisible: false, // 显示弹框查看图片
+      customField: [], // 自定义字段
+      customName: '', // 自定义字段名称
+      isEditCustomName: '', // 修改自定义字段名称
+      customFieldModal: false,
+      customErr: {
+        status: '',
+        help: ''
       },
-      editCustomName(v, i) {
-        this.customName = v.name
-        this.isEditCustomName = i
-        this.customFieldModal = true
-      },
-      // select 筛选过滤
-      filterOption(input, option) {
-        return (
-          option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        );
-      },
-      // 保存
-      handleSubmit(e) {
-        e.preventDefault();
-        this.form.validateFields((err, values) => {
-          console.log('Received values of form: ', values);
-          if (!err) {
-            console.log('Received values of form: ', values);
-          }
-        });
-      },
-      beforeUpload(file) {
-        this.imgsList = [...this.imgsList, file];
-        // console.log(this.imgsList)
-        // const reader = new FileReader();
-        // reader.readAsDataURL(file);
-        // reader.onload = (e) => {
-        //   // this.imgsList = [...this.imgsList, e.target.result];
-        // };
-        return false
-      },
-      handleImgsChange({
-        fileList
-      }) {
-        this.imgsList = fileList
-      },
-      async handleImgsPreview(file) {
-        if (!file.url && !file.preview) {
-          file.preview = await getBase64(file.originFileObj)
-        }
-        this.previewImgs = file.url || file.preview;
-        // console.log('展示图片', file)
-        this.previewImgsVisible = true
-      },
-      handleImgsRemove(file) {
-        // 删除实景图片
-        // const index = this.projIList.indexOf(file)
-        // const newFileList = this.projIList.slice()
-        // newFileList.splice(index, 1)
-        // this.projIList = newFileList
-      },
-    },
-    mounted() {
-      // form 赋值
-      // this.form.setFieldsValue({
-      //   latitude: 11,
-      //   longitude: 22,
-      //   username: '名称'
-      // })
+      sceneTypeList: [],
+      optionCityInfo: [],
+      distData: '', // 区县级联组件返回的数据
+      casdata: [] // 级联插件默认值
     }
+  },
+  methods: {
+    saveLngLat (lng, lat) {
+      this.form.setFieldsValue({
+        'projBasicLongitude': lng,
+        'projBasicLatitude': lat
+      })
+      this.projLongitude = lng
+      this.projLatitude = lat
+    },
+    // 确认自定义字段 关闭弹框
+    customFieldOk () {
+      if (this.customName) {
+        this.customErr.status = ''
+        this.customErr.help = ''
+        if (this.isEditCustomName !== '') this.customField[this.isEditCustomName].name = this.customName
+        else {
+          this.customField.push({
+            name: this.customName,
+            value: ''
+          })
+        }
+      } else {
+        this.customErr.status = 'error'
+        this.customErr.help = '请输入自定义名称'
+        return false
+      }
+      this.customFieldModal = false
+      this.customName = ''
+      this.isEditCustomName = ''
+    },
+    editCustomName (v, i) {
+      this.customName = v.name
+      this.isEditCustomName = i
+      this.customFieldModal = true
+    },
+    // select 筛选过滤
+    filterOption (input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
+    // 保存
+    handleSubmit (e) {
+      e.preventDefault()
+      this.form.validateFields((err, values) => {
+        console.log('Received values of form: ', values)
+        if (!err) {
+          console.log('Received values of form: ', values)
+        }
+      })
+    },
+    beforeUpload (file) {
+      this.imgsList = [...this.imgsList, file]
+      // console.log(this.imgsList)
+      // const reader = new FileReader();
+      // reader.readAsDataURL(file);
+      // reader.onload = (e) => {
+      //   // this.imgsList = [...this.imgsList, e.target.result];
+      // };
+      return false
+    },
+    handleImgsChange ({
+      fileList
+    }) {
+      this.imgsList = fileList
+    },
+    async handleImgsPreview (file) {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj)
+      }
+      this.previewImgs = file.url || file.preview
+      // console.log('展示图片', file)
+      this.previewImgsVisible = true
+    },
+    handleImgsRemove (file) {
+      // 删除实景图片
+      // const index = this.projIList.indexOf(file)
+      // const newFileList = this.projIList.slice()
+      // newFileList.splice(index, 1)
+      // this.projIList = newFileList
+    },
+    // 获取场景类型列表
+    getHiddenDangerTypeList () {
+      this.$get('web/hidden/getHiddenDangerTypeList').then((r) => {
+        this.sceneTypeList = r.data.data
+      })
+    },
+    // 获取子组件返回的cityCode和cityType
+    getDistData (distData) {
+      this.distData = distData
+      this.levelCode = this.distData.cityCode
+      this.form.setFieldsValue({
+        'levelCode': this.distData.cityCode
+      })
+    }
+  },
+  mounted () {
+    this.getHiddenDangerTypeList()
+    // form 赋值
+    // this.form.setFieldsValue({
+    //   latitude: 11,
+    //   longitude: 22,
+    //   username: '名称'
+    // })
   }
+}
 
 </script>
 <style scoped>

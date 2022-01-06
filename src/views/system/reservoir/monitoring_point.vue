@@ -430,6 +430,7 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
+      params.reservoirId = this.reservoirId
       this.$get('web/projPn/getProjPnDataList', {
         ...params
       }).then((r) => {
