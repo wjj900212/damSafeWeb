@@ -7,7 +7,7 @@ moment.locale('zh-cn')
 
 // 统一配置
 let MK_REQUEST = axios.create({
-  baseURL: 'http://192.168.120.126/',
+  baseURL: 'https://test.isafety.zgcsafety.com.cn/damsafe/',
   // baseURL: 'http://localhost/',
   responseType: 'json',
   validateStatus (status) {

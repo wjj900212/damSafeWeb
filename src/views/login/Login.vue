@@ -1,9 +1,6 @@
 <template>
   <div class="login">
     <a-form @submit.prevent="doLogin" :autoFormCreate="(form) => this.form = form">
-      <a-tabs size="large" :tabBarStyle="{textAlign: 'center'}" style="padding: 0 2px;" :activeKey="activeKey"
-              @change="handleTabsChange">
-        <a-tab-pane tab="账户密码登录" key="1">
           <a-alert type="error" :closable="true" v-show="error" :message="error" showIcon
                    style="margin-bottom: 24px;"></a-alert>
           <a-form-item
@@ -20,42 +17,32 @@
               <a-icon slot="prefix" type="lock"></a-icon>
             </a-input>
           </a-form-item>
-        </a-tab-pane>
-        <!--<a-tab-pane tab="手机号登录" key="2">
-          <a-form-item>
-            <a-input size="large">
-              <a-icon slot="prefix" type="mobile"></a-icon>
-            </a-input>
-          </a-form-item>
-          <a-form-item>
-            <a-row :gutter="8" style="margin: 0 -4px">
-              <a-col :span="16">
-                <a-input size="large">
-                  <a-icon slot="prefix" type="mail"></a-icon>
-                </a-input>
-              </a-col>
-              <a-col :span="8" style="padding-left: 4px">
-                <a-button style="width: 100%" class="captcha-button" size="large" @click="getCaptcha">获取验证码</a-button>
-              </a-col>
-            </a-row>
-          </a-form-item>
-        </a-tab-pane>-->
-      </a-tabs>
       <a-form-item>
+        <a-form-item>
+          <a-checkbox :checked="checked" @change="onRememberChange">记住密码</a-checkbox>
+          <a class="login-form-forgot" @click="forgetPassword">
+            忘记密码？
+          </a>
+        </a-form-item>
         <a-button :loading="loading" style="width: 100%; margin-top: 4px" size="large" htmlType="submit" type="primary">
           登录
         </a-button>
       </a-form-item>
-      <!--<div>
-        <a style="float: right" @click="regist">注册账户</a>
-      </div>-->
     </a-form>
+    <div>
+      <forget-password
+        ref="FP"
+        :visible="isShowForgetPassword"
+        @cancel="handleCancel"
+      ></forget-password>
+    </div>
   </div>
 </template>
 
 <script>
 import {mapMutations} from 'vuex'
 import moment from 'moment'
+import ForgetPassword from './ForgetPassword'
 // var LdapClient = require('node-ldap')
 export default {
   name: 'Login',
@@ -63,8 +50,13 @@ export default {
     return {
       loading: false,
       error: '',
-      activeKey: '1'
+      activeKey: '1',
+      isShowForgetPassword: false,
+      checked: false
     }
+  },
+  components: {
+    ForgetPassword
   },
   computed: {
     systemName () {
@@ -78,6 +70,9 @@ export default {
     this.$db.clear()
     this.$router.options.routes = []
   },
+  mounted () {
+    this.getCookie()
+  },
   methods: {
     moment,
     doLogin () {
@@ -86,77 +81,49 @@ export default {
         this.form.validateFields(['name', 'password'], (errors, values) => {
           if (!errors) {
             this.loading = true
-            // let name = this.form.getFieldValue('name')
-            // let password = this.form.getFieldValue('password')
-            const exipreTime = moment().add('hours', 9).format('YYYY-MM-DD HH:mm:ss')
-            this.saveLoginData({
-              token: '1.1640913844.1640917444.0734a1543e30c450e8164c903049fbd4',
-              config: {
-                color: 'rgb(24, 144, 255)',
-                fixHeader: '1',
-                fixSiderbar: '1',
-                layout: 'side',
-                multiPage: '0',
-                theme: 'dark',
-                userId: '1'
-              },
-              exipreTime: exipreTime,
-              roles: [],
-              permissions: [],
-              user: {
-                avatar: '5997fedcc7bd4cffbd350b40d1b5b987.jpg',
-                createTime: '2018-01-04 15:42:34',
-                createUserId: '1',
-                deptId: '2',
-                deptName: '开发一部',
-                description: '',
-                email: 'mk123@hotmail.com',
-                followPswd: '110',
-                lastLoginTime: '2021-12-29 13:56:16',
-                mobile: '13455533233',
-                password: 'its a secret',
-                realName: '管理员',
-                roleId: '1',
-                roleName: '平台管理员',
-                ssex: '0',
-                status: '1',
-                type: ' ',
-                userId: '1',
-                username: 'mk'
+            let name = this.form.getFieldValue('name')
+            let password = this.form.getFieldValue('password')
+            this.$post('web/login/login', {
+              username: name,
+              password: password
+            }).then((r) => {
+              console.log(r.data)
+              if (r.data.code === 1) {
+                let data = r.data.data
+                let config = {
+                  color: 'rgb(24, 144, 255)',
+                  fixHeader: '1',
+                  fixSiderbar: '1',
+                  layout: 'side',
+                  multiPage: '0',
+                  theme: 'dark'
+                }
+                data.config = config
+                this.saveLoginData(data)
+                setTimeout(() => {
+                  this.loading = false
+                  console.log('跳转页面')
+                  this.$router.push('/system/user/User')
+                }, 500)
+                // this.$router.push('/')
+                if (this.checked === true) {
+                  // 传入账号名，密码，和保存天数3个参数
+                  this.setCookie(this.form.getFieldValue('name'), this.form.getFieldValue('password'), 7)
+                } else {
+                  // console.log("清空Cookie");
+                  // 清空Cookie
+                  this.clearCookie()
+                }
+              } else {
+                this.$message.warning(r.data.msg)
+                this.$db.clear()
+                this.loading = false
               }
+            }).catch(() => {
+              setTimeout(() => {
+                this.loading = false
+              }, 500)
             })
-            setTimeout(() => {
-              this.loading = false
-              this.$router.push('/system/reservoir/reservoir')
-            }, 500)
-            // var client = new LdapClient({
-            //     ldapUrl: 'ldap://192.168.70.4:389',
-            //     userDn: 'CN=administrator,CN=Users,DC=peacemap,DC=com,DC=cn',
-            //     password: 'peacemap_admin'
-            // })
-            //
-            //
-            //  // 用户认证
-            // client.auth(name, password).then(function() {
-            //     console.log('success')
-            // }).catch(function(err) {
-            //     console.error(err)
-            // })
-            // this.$post('warnWeb/login/login', {
-            //   username: name,
-            //   password: password
-            // }).then((r) => {
-            //   let data = r.data.data
-            //   this.saveLoginData(data)
-            //   setTimeout(() => {
-            //     this.loading = false
-            //   }, 500)
-            //   this.$router.push('/')
-            // }).catch(() => {
-            //   setTimeout(() => {
-            //     this.loading = false
-            //   }, 500)
-            // })
           }
         })
       }
@@ -165,14 +132,52 @@ export default {
         this.$message.warning('暂未开发')
       }
     },
+    // 设置cookie
+    setCookie (cname, cpwd, exdays) {
+      var exdate = new Date() // 获取时间
+      exdate.setTime(exdate.getTime() + 24 * 60 * 60 * 1000 * exdays) // 保存的天数
+      // 字符串拼接cookie
+      window.document.cookie =
+        'userName' + '=' + cname + ';path=/;expires=' + exdate.toGMTString()
+      window.document.cookie =
+        'userPwd' + '=' + cpwd + ';path=/;expires=' + exdate.toGMTString()
+    },
+    getCookie: function () {
+      if (document.cookie.length > 0) {
+        this.checked = true
+        var arr = document.cookie.split('; ')
+        for (var i = 0; i < arr.length; i++) {
+          var arr2 = arr[i].split('=') // 再次切割
+          // 判断查找相对应的值
+          if (arr2[0] === 'userName') {
+            this.form.setFieldsValue({'name': arr2[1]})
+          } else if (arr2[0] === 'userPwd') {
+            this.form.setFieldsValue({'password': arr2[1]})
+          }
+        }
+      }
+    },
+    // 清除cookie
+    clearCookie: function () {
+      this.setCookie('', '', -1) // 修改2值都为空，天数为负1天就好了
+    },
     regist () {
       this.$emit('regist', 'Regist')
     },
-    getCaptcha () {
-      this.$message.warning('暂未开发')
+    forgetPassword () {
+      this.isShowForgetPassword = true
     },
-    handleTabsChange (val) {
-      this.activeKey = val
+    handleCancel (e) {
+      this.isShowForgetPassword = false
+      let form = this.$refs.FP.form
+      form.resetFields()
+    },
+    onRememberChange (e) {
+      this.checked = e.target.checked
+      if (this.checked === false) {
+        // 清空Cookie
+        this.clearCookie()
+      }
     },
     ...mapMutations({
       setToken: 'account/setToken',
@@ -218,5 +223,11 @@ export default {
         color: #1890ff;
       }
     }
+  }
+  .ant-checkbox-wrapper{
+    color:#c5f3ff !important;
+  }
+  .login-form-forgot{
+    float: right !important;
   }
 </style>

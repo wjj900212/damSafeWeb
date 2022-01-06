@@ -86,16 +86,15 @@ export default {
       }, 1500)
     },
     logout () {
-      this.$db.clear()
-      location.reload()
-      // this.$get(`admin/logout/${this.user.id}`).then(() => {
-      //   return new Promise((resolve, reject) => {
-      //     this.$db.clear()
-      //     location.reload()
-      //   })
-      // }).catch(() => {
-      //   this.$message.error('退出系统失败')
-      // })
+      console.log('user', this.user)
+      this.$get(`web/login/logout/${this.user.id}`).then(() => {
+        return new Promise((resolve, reject) => {
+          this.$db.clear()
+          location.reload()
+        })
+      }).catch(() => {
+        this.$message.error('退出系统失败')
+      })
     },
     ...mapMutations({setSettingBar: 'setting/setSettingBar'})
   }
