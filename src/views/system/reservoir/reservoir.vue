@@ -231,11 +231,10 @@
       getReservoirList() {
         this.queryParams.pageNum = this.pagination.current
         this.queryParams.pageSize = this.pagination.pageSize
-        console.log(this.queryParams)
-
+        // console.log(this.queryParams)
         this.$get("/web/reservoirAdmin/reservoirList", this.queryParams).then(res=>{
           let rr=res.data
-          console.log(rr.data)
+          // console.log(rr.data)
           let data=rr.data
           this.pagination.total=data.total
           this.dataSource=data.records
