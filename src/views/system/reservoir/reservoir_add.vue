@@ -1,5 +1,5 @@
 <template>
-  <!-- 添加 / 编辑 水库 -->
+  <!-- 添加 水库 -->
   <div class="reservoir_add">
       <reservoirAddEdit />
   </div>
