@@ -11,7 +11,7 @@
                 label="用户名"
                 :labelCol="{span: 4}"
                 :wrapperCol="{span: 18, offset: 2}">
-                <a-input v-model="queryParams.username" placeholder="请输入"/>
+                <a-input v-model="queryParams.userName" placeholder="请输入"/>
               </a-form-item>
             </a-col>
           <a-col :md="12" :sm="24" >
@@ -19,7 +19,7 @@
               label="水库"
               :labelCol="{span: 4}"
               :wrapperCol="{span: 18, offset: 2}">
-              <a-input v-model="queryParams.shuiku" placeholder="请输入"/>
+              <a-input v-model="queryParams.reservoirName" placeholder="请输入"/>
             </a-form-item>
           </a-col>
         </div>
@@ -64,6 +64,13 @@
       @success="handleUserEditSuccess"
       :userEditVisiable="userEdit.visiable">
     </user-edit>
+    <!--修改密码-->
+    <update-password
+      @success="handleUpdate"
+      @cancel="()=>{updatePasswordModelVisible=false}"
+      :user="userInfo.data"
+      :updatePasswordModelVisible="updatePasswordModelVisible">
+    </update-password>
   </a-card>
 </template>
 
@@ -73,10 +80,11 @@ import UserInfo from './UserInfo'
 import RangeDate from '@/components/datetime/RangeDate'
 import UserAdd from './UserAdd'
 import UserEdit from './UserEdit'
+import UpdatePassword from './UpdatePassword'
 
 export default {
   name: 'User',
-  components: {UserInfo, UserAdd, UserEdit, RangeDate},
+  components: {UserInfo, UserAdd, UserEdit, RangeDate, UpdatePassword},
   data () {
     return {
       advanced: false,
@@ -95,7 +103,6 @@ export default {
       sortedInfo: null,
       paginationInfo: null,
       dataSource: [],
-      selectedRowKeys: [],
       loading: false,
       pagination: {
         pageSizeOptions: ['10', '20', '30', '40', '100'],
@@ -104,7 +111,8 @@ export default {
         showQuickJumper: true,
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
-      }
+      },
+      updatePasswordModelVisible: false
     }
   },
   computed: {
@@ -119,61 +127,56 @@ export default {
         customRender: (text, record, index) => `${index + 1}`
       }, {
         title: '姓名',
-        dataIndex: 'username',
-        width: '10%'
+        dataIndex: 'userName'
       }, {
         title: '角色',
         dataIndex: 'roleId',
-        width: '10%',
         customRender: (text) => {
           switch (text) {
-            case '0':
-              return '主管部门'
-            case '1':
+            case '601':
+              return '水利主管部门'
+            case '602':
               return '水库管理员'
-            case '2':
-              return '运维人员'
+            case '603':
+              return '水库运维人员'
           }
         },
         filters: [
           {
-            text: '主管部门',
-            value: '0'
+            text: '水利主管部门',
+            value: '601'
           },
           {
             text: '水库管理员',
-            value: '1'
+            value: '602'
           },
           {
-            text: '运维人员',
-            value: '2'
+            text: '水库运维人员',
+            value: '603'
           }],
         filterMultiple: true,
         filteredValue: filteredInfo.roleId || null,
         onFilter: (value, record) => record.roleId.includes(value)
       }, {
-        title: '职位',
-        dataIndex: 'roleName',
-        width: '20%'
-      },
-      {
-        title: '水库权限',
-        dataIndex: 'userProjCount',
-        width: '10%'
+        title: '手机号',
+        dataIndex: 'mobile'
+      }, {
+          title: '水库权限',
+          dataIndex: 'reservoirName',
+          width:'20%'
       }, {
         title: '创建时间',
-        width: '10%',
-        dataIndex: 'userFollowCount'
+        dataIndex: 'createTime'
       },
       {
         title: '最近登录时间',
-        dataIndex: 'lastLoginTime',
-        width: '17%'
+        dataIndex: 'loginTime'
       }, {
         title: '操作',
         dataIndex: 'operation',
         customRender: (text, record) => (
           <div>
+            <a-icon type="paper-clip" class="icon-size" onClick={() => { this.updatePassword(record) }} title="修改密码" />
             <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" class="icon-size" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
             <a-icon type="delete" theme="twoTone" twoToneColor="#42b983" class="icon-size" onClick={() => { this.userDelete(record) }} title="删除"></a-icon>
           </div>
@@ -193,7 +196,7 @@ export default {
     },
     handleUserAddSuccess () {
       this.userAdd.visiable = false
-      this.$message.success('新增用户成功，初始密码为1234qwer')
+      this.$message.success('新增用户成功')
       this.search()
     },
     edit (record) {
@@ -211,6 +214,38 @@ export default {
     handleUserInfoClose () {
       this.userInfo.visiable = false
     },
+    // 修改密码
+    updatePassword(record){
+      this.userInfo.data = record
+      this.updatePasswordModelVisible = true
+    },
+    handleUpdate () {
+      this.updatePasswordModelVisible = false
+      this.$message.success('更新密码成功')
+    },
+    // 重置密码
+    resetPassword (record) {
+      let that = this
+      this.$confirm({
+        title: '确定重置用户密码?',
+        content: '当您点击确定按钮后，该用户的密码将会重置为手机号后6位',
+        centered: true,
+        onOk () {
+          that.$post('web/user/resetPwd', {
+            userId: record.userId
+          }).then((r) => {
+            if(r.data.code === 1){
+              that.$message.success('重置用户密码成功')
+            }else{
+              that.$message.error(r.data.msg)
+            }
+          })
+        },
+        onCancel () {
+
+        }
+      })
+    },
     userDelete (record) {
       let that = this
       this.$confirm({
@@ -218,19 +253,19 @@ export default {
         content: '当您点击确定按钮后，这个用户将会被彻底删除',
         centered: true,
         onOk () {
-          let userIds = []
-          userIds.push(record.userId)
-          that.$post('server/user.php', {
-            userIds: userIds.join(','),
-            action: 'deleteUsers'
-          }).then(() => {
-            that.$message.success('删除成功')
-            that.selectedRowKeys = []
-            that.search()
+          that.$post('web/user/deleteUser', {
+            userId: record.userId
+          }).then((r) => {
+            if(r.data.code === 1){
+              that.$message.success('删除成功')
+              that.search()
+            }else{
+              that.$message.error(r.data.msg)
+            }
           })
         },
         onCancel () {
-          that.selectedRowKeys = []
+
         }
       })
     },
@@ -277,18 +312,18 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
-      if (this.currentUser.type === '1') {
-        params.type = '1' // 项目管理员
-      }
-      this.$get('server/user.php', {
-        action: 'finduserpage',
+      this.$get('web/user/getUserList', {
         ...params
       }).then((r) => {
-        let data = r.data
-        const pagination = { ...this.pagination }
-        pagination.total = data.total
-        this.dataSource = data.records
-        this.pagination = pagination
+        if(r.data.code === 1){
+          let data = r.data.data
+          const pagination = { ...this.pagination }
+          pagination.total = data.total
+          this.dataSource = data.records
+          this.pagination = pagination
+        }else{
+          this.$message.error(r.data.msg)
+        }
         // 数据加载完毕，关闭loading
         this.loading = false
       })

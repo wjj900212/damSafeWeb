@@ -266,7 +266,7 @@ export default {
   },
   mounted () {
     this.welcomeMessage = this.welcome()
-    this.getHomeInfo()
+   // this.getHomeInfo()
     // setInterval(this.getHomeInfo, 600000)
   }
 }
