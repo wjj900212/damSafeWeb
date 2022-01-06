@@ -1,77 +1,65 @@
 <template>
   <a-card :bordered="false" class="card-area">
-    <div :class="advanced ? 'search' : null">
+    <div>
       <!-- 搜索区域 -->
       <a-form layout="horizontal">
-        <a-row >
-          <div :class="advanced ? null: 'fold'">
-            <a-col :md="12" :sm="24" >
-              <a-form-item
-                label="水库名称"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
-                <a-input v-model="queryParams.username" placeholder="请输入"/>
+        <a-row>
+          <div class="fold">
+            <a-col :md="12" :sm="24">
+              <a-form-item label="水库名称" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 2}">
+                <a-input v-model="queryParams.name" placeholder="请输入" />
               </a-form-item>
             </a-col>
-            <a-col :md="12" :sm="24" >
-              <a-form-item
-                label="所在地区"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
-                <a-input v-model="queryParams.shuiku" placeholder="请输入"/>
+            <a-col :md="12" :sm="24">
+              <a-form-item label="所在地区" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 2}">
+                <a-input v-model="queryParams.area" placeholder="请输入" />
               </a-form-item>
             </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
-            <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            <a-button type="primary">查询</a-button>
+            <a-button style="margin-left: 8px">重置</a-button>
           </span>
         </a-row>
       </a-form>
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" @click="add">添加</a-button>
+        <a-button type="primary" @click="goAdd">添加</a-button>
       </div>
       <!-- 表格区域 -->
-      <a-table ref="TableInfo"
-               :rowKey="(record,index)=>{return index}"
-               :columns="columns"
-               :dataSource="dataSource"
-               :pagination="pagination"
-               :loading="loading"
-               :scroll="{ x: 900 }"
-               @change="handleTableChange">
+      <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="dataSource"
+        :pagination="pagination" :loading="loading" :scroll="{ x: 900 }">
+        <template slot="operation" slot-scope="text, record">
+          <div class="icons-list">
+            <a-icon type="warning" theme="twoTone" twoToneColor="#4a9ff5" title="监测场景" @click="$router.push('/system/reservoir/reservoir/scene')"></a-icon>
+            <a-icon type="info-circle" theme="twoTone" twoToneColor="#4a9ff5" title="监测点" @click="goReservoirMonitoringPoint(record)"></a-icon>
+            <a-icon type="user" title="用户" @click="goReservoirUser"></a-icon>
+            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="编辑"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="userDelete(record)" title="删除">
+            </a-icon>
+          </div>
+        </template>
       </a-table>
     </div>
   </a-card>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+  mapState
+} from 'vuex'
 export default {
   name: 'reservoir',
   components: {},
   data () {
     return {
-      advanced: false,
-      userInfo: {
-        visiable: false,
-        data: {}
+      queryParams: {
+        name: '',
+        area: ''
       },
-      userAdd: {
-        visiable: false
-      },
-      userEdit: {
-        visiable: false
-      },
-      queryParams: {},
-      filteredInfo: null,
-      sortedInfo: null,
-      paginationInfo: null,
-      dataSource: [],
-      selectedRowKeys: [],
       loading: false,
+      dataSource: [{name: '121', roleId: 1}],
       pagination: {
         pageSizeOptions: ['10', '20', '30', '40', '100'],
         defaultCurrent: 1,
@@ -87,14 +75,16 @@ export default {
       currentUser: state => state.account.user
     }),
     columns () {
-      let { filteredInfo } = this
+      let {
+        filteredInfo
+      } = this
       filteredInfo = filteredInfo || {}
       return [{
         title: '序号',
         customRender: (text, record, index) => `${index + 1}`
       }, {
         title: '水库名称',
-        dataIndex: 'username'
+        dataIndex: 'name'
       }, {
         title: '地址',
         dataIndex: 'roleName3'
@@ -112,15 +102,15 @@ export default {
               return '有风险'
           }
         },
-        filters: [
-          {
-            text: '无风险',
-            value: '0'
-          },
-          {
-            text: '有风险',
-            value: '1'
-          }],
+        filters: [{
+          text: '无风险',
+          value: '0'
+        },
+        {
+          text: '有风险',
+          value: '1'
+        }
+        ],
         filterMultiple: true,
         filteredValue: filteredInfo.roleId || null,
         onFilter: (value, record) => record.roleId.includes(value)
@@ -145,12 +135,26 @@ export default {
               return '小(2)型'
           }
         },
-        filters: [
-          {text: '大(1)型', value: '0'},
-          {text: '大(2)型', value: '1'},
-          {text: '中型', value: '2'},
-          {text: '小(1)型', value: '3'},
-          {text: '小(2)型', value: '4'}
+        filters: [{
+          text: '大(1)型',
+          value: '0'
+        },
+        {
+          text: '大(2)型',
+          value: '1'
+        },
+        {
+          text: '中型',
+          value: '2'
+        },
+        {
+          text: '小(1)型',
+          value: '3'
+        },
+        {
+          text: '小(2)型',
+          value: '4'
+        }
         ],
         filterMultiple: true,
         filteredValue: filteredInfo.userProjCount || null,
@@ -165,47 +169,24 @@ export default {
       }, {
         title: '操作',
         dataIndex: 'operation',
-        customRender: (text, record) => (
-          <div class="icons-list">
-            <a-icon type="warning" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.edit(record) }} title="监测场景"></a-icon>
-            <a-icon type="info-circle" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.userDelete(record) }} title="监测点"></a-icon>
-            <a-icon type="user" onClick={() => { this.userDelete(record) }} title="用户"></a-icon>
-            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" onClick={() => { this.userDelete(record) }} title="删除"></a-icon>
-          </div>
-        )
-      }]
+        scopedSlots: {
+          customRender: 'operation'
+        }
+      }
+      ]
     }
   },
-  mounted () {
-    this.fetch()
-  },
+  mounted () {},
   methods: {
-    add () {
-      this.userAdd.visiable = true
+    // 添加水库
+    goAdd () {
+      this.$router.push('/system/reservoir/reservoir_add')
     },
-    handleUserAddClose () {
-      this.userAdd.visiable = false
+    goReservoirUser () {
+      this.$router.push('/system/reservoir/user')
     },
-    handleUserAddSuccess () {
-      this.userAdd.visiable = false
-      this.$message.success('新增用户成功，初始密码为1234qwer')
-      this.search()
-    },
-    edit (record) {
-      this.$refs.userEdit.setFormValues(record)
-      this.userEdit.visiable = true
-    },
-    handleUserEditClose () {
-      this.userEdit.visiable = false
-    },
-    handleUserEditSuccess () {
-      this.userEdit.visiable = false
-      this.$message.success('修改用户成功')
-      this.search()
-    },
-    handleUserInfoClose () {
-      this.userInfo.visiable = false
+    goReservoirMonitoringPoint (record) {
+      this.$router.push('/system/reservoir/monitoring_point?reservoirName=' + record.name)
     },
     userDelete (record) {
       let that = this
@@ -229,73 +210,17 @@ export default {
           that.selectedRowKeys = []
         }
       })
-    },
-    search () {
-      let {filteredInfo} = this
-      this.fetch({
-        ...this.queryParams,
-        ...filteredInfo
-      })
-    },
-    reset () {
-      // 重置分页
-      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
-      if (this.paginationInfo) {
-        this.paginationInfo.current = this.pagination.defaultCurrent
-        this.paginationInfo.pageSize = this.pagination.defaultPageSize
-      }
-      // 重置列过滤器规则
-      this.filteredInfo = null
-      // 重置查询参数
-      this.queryParams = {}
-      this.fetch()
-    },
-    handleTableChange (pagination, filters) {
-      // 将这三个参数赋值给Vue data，用于后续使用
-      this.paginationInfo = pagination
-      this.filteredInfo = filters
-      this.fetch({
-        ...this.queryParams,
-        ...filters
-      })
-    },
-    fetch (params = {}) {
-      // 显示loading
-      this.loading = true
-      if (this.paginationInfo) {
-        // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
-        this.$refs.TableInfo.pagination.current = this.paginationInfo.current
-        this.$refs.TableInfo.pagination.pageSize = this.paginationInfo.pageSize
-        params.pageSize = this.paginationInfo.pageSize
-        params.pageNum = this.paginationInfo.current
-      } else {
-        // 如果分页信息为空，则设置为默认值
-        params.pageSize = this.pagination.defaultPageSize
-        params.pageNum = this.pagination.defaultCurrent
-      }
-      if (this.currentUser.type === '1') {
-        params.type = '1' // 项目管理员
-      }
-      this.$get('server/user.php', {
-        action: 'finduserpage',
-        ...params
-      }).then((r) => {
-        let data = r.data
-        const pagination = { ...this.pagination }
-        pagination.total = data.total
-        this.dataSource = data.records
-        this.pagination = pagination
-        // 数据加载完毕，关闭loading
-        this.loading = false
-      })
     }
   }
 }
+
 </script>
 <style lang="less" scoped>
   @import "../../../../static/less/Common";
+
   .icons-list /deep/ .anticon {
-    margin-right: 10px;
-    font-size: 18px;
+    margin-right: 0.5rem;
+    font-size: 1.6rem;
   }
+
 </style>

@@ -27,6 +27,13 @@ export default {
 }
 </script>
 <style lang="less">
+  body,html{
+    font-family: "Microsoft YaHei UI";
+    font-size: 62.5%;
+  }
+  .icon-size{
+    font-size: 1.6rem;
+  }
   :global {
     .dragable-ghost {
       border: 1px dashed #aaaaaa;
