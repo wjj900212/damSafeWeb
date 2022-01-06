@@ -65,6 +65,7 @@ export default {
     width: 100%;
     margin: 10px;
     overflow: auto;
+    min-width: 1200px;
   }
 
   .card-area {
@@ -95,7 +96,7 @@ export default {
   }
 
   .ant-card-wider-padding .ant-card-body {
-    padding: 5px 10px !important;
+    padding: 5px 10px;
   }
 
   .ant-modal-mask {

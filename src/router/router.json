@@ -25,7 +25,7 @@
 		"isItem": "",
 		"meta": null,
 		"type": "",
-		"redirect": "/reservoir/reservoir/reservoir",
+		"redirect": "/reservoir/reservoir/generalview",
 		"children": [
 			{
 				"icon": "home",
@@ -58,6 +58,23 @@
 				"type": "0",
 				"redirect": "",
 				"children": [
+					{
+						"icon": "audit",
+						"path": "/reservoir/reservoir/generalview",
+						"component": "reservoir/reservoir/generalview",
+						"name": "水库概览",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					},
 					{
 						"icon": "audit",
 						"path": "/reservoir/reservoir/reservoir",
