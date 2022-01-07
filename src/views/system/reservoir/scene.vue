@@ -69,7 +69,7 @@
           </div>
         </template>
       </a-table>
-      <sceneVisual :visible="visualVisible" :id="hiddenId" :name="hiddenName" @close="()=>{ visualVisible=false }"/>
+      <sceneVisual :visible="visualVisible" :id="hiddenId" :name="hiddenName" :sceneType="sceneType" @close="()=>{ visualVisible=false }"/>
     </div>
   </a-card>
   <router-view v-else />
@@ -102,7 +102,8 @@ export default {
       hiddenName: '',
       reservoirList: [],
       reservoirName: '',
-      disabledFlag: false
+      disabledFlag: false,
+      sceneType: 1
     }
   },
   computed: {

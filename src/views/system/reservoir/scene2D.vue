@@ -7,8 +7,7 @@
           <a-input-search v-model="searchStr" placeholder="搜索监测点" @search="onSearch" />
         </div>
          <div v-if="pnTreeList.length > 0" class="pnTree" style="height: calc(100% - 70px);overflow-y: scroll;">
-          <a-tree v-model="checkedKeys" checkable :disabled="treeDisabled" :expanded-keys="expandedKeys"
-            :auto-expand-parent="autoExpandParent" :treeData="pnTreeList" @expand="onExpand" @check="onCheck">
+          <a-tree v-model="checkedKeys" checkable :disabled="treeDisabled" :expanded-keys="expandedKeys" :defaultExpandAll="autoExpandParent" :treeData="pnTreeList" @expand="onExpand" @check="onCheck">
             <template slot="title" slot-scope="record">
               <div style="display: inline-block;" v-html="record.title"></div>
             </template>
@@ -70,6 +69,10 @@ export default {
     name: {
       type: String,
       default: ''
+    },
+    sceneType: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -162,7 +165,8 @@ export default {
     // 初始化获取隐患点场景配置信息
     getHiddenSceneList (params = {}) {
       let _this = this
-      params.hiddenId = this.id
+      params.dataId = this.id
+      params.sceneType = this.sceneType
       this.$get('web/hiddenScene/getHiddenSceneList', {...params}).then((r) => {
         if (r.data.code === 1) {
           _this.panes = r.data.data
@@ -206,17 +210,28 @@ export default {
     },
     // 获取监测点列表
     getProjPnTreeList (params = {}) {
-      params.hiddenId = this.id
-      params.flag = 1
+      if (this.sceneType === 0) {
+        params.reservoirId = this.id
+      } else {
+        params.hiddenId = this.id
+      }
       this.$get('web/hiddenScene/getProjPnList', {...params}).then((r) => {
         let projPnData = r.data.data
-        let treePnData = [{title: this.name + '(' + projPnData.length + ')', key: 'all', children: []}]
+        let treePnData = []
         for (let i = 0; i < projPnData.length; i++) {
-          let treePn = {}
-          treePn.title = projPnData[i].pnName + '<br/>(' + projPnData[i].devBasicStrId + ')'
-          treePn.key = projPnData[i].pnId
-          treePn.children = []
-          treePnData[0].children.push(treePn)
+          let treeHidden = {}
+          treeHidden.title = projPnData[i].hiddenName
+          treeHidden.key = projPnData[i].hiddenId
+          treeHidden.children = []
+          treePnData.push(treeHidden)
+          console.log('二维可视化数列表', treePnData)
+          for (let j = 0; j < projPnData[i].list.length; j++) {
+            let treePn = {}
+            treePn.title = projPnData[i].list[j].pnName + '<br/>(' + projPnData[i].list[j].devCode + ')'
+            treePn.key = projPnData[i].list[j].pnId
+            treePn.children = []
+            treePnData[i].children.push(treePn)
+          }
         }
         this.pnTreeList = treePnData
         console.log('树值', this.pnTreeList)

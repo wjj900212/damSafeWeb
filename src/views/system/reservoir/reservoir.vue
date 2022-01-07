@@ -47,7 +47,7 @@
         </template>
       </a-table>
     </div>
-    <sceneVisual :visible="visualVisible" :id="reservoirId" :name="reservoirName" @close="()=>{ visualVisible=false }"/>
+    <sceneVisual :visible="visualVisible" :id="reservoirId" :name="reservoirName" :sceneType="sceneType" @close="()=>{ visualVisible=false }"/>
   </a-card>
   <router-view v-else />
 </template>
@@ -88,8 +88,9 @@ export default {
       },
       optionCityInfo: [],
       casdata: [],
-      reservoirId: '',
+      reservoirId: 0,
       reservoirName: '',
+      sceneType: 0, // 二维可视化类型 0 水库 1 监测场景
       visualVisible: false // 二维可视化弹框
     }
   },
@@ -102,99 +103,99 @@ export default {
         filteredInfo
       } = this
       filteredInfo = filteredInfo || {}
-      return [{
+      return [/* {
         title: '序号',
         customRender: (text, record, index) => `${index + 1}`
-      }, {
-        title: '水库名称',
-        dataIndex: 'reservoirName'
-      }, {
-        title: '地址',
-        dataIndex: 'cityName'
-      }, {
-        title: '管理单位',
-        dataIndex: 'managerUnit'
-      }, {
-        title: '安全状态',
-        dataIndex: 'reservoirStatus',
-        customRender: (text) => {
-          switch (text) {
-            case '0':
-              return '正常'
-            case '1':
-              return '异常'
-            case '2':
-              return '险情'
+      }, */{
+          title: '水库名称',
+          dataIndex: 'reservoirName'
+        }, {
+          title: '地址',
+          dataIndex: 'cityName'
+        }, {
+          title: '管理单位',
+          dataIndex: 'managerUnit'
+        }, {
+          title: '安全状态',
+          dataIndex: 'reservoirStatus',
+          customRender: (text) => {
+            switch (text) {
+              case '0':
+                return '正常'
+              case '1':
+                return '异常'
+              case '2':
+                return '险情'
+            }
+          },
+          filters: [{
+            text: '正常',
+            value: '0'
+          },
+          {
+            text: '异常',
+            value: '1'
+          },
+          {
+            text: '险情',
+            value: '2'
           }
-        },
-        filters: [{
-          text: '正常',
-          value: '0'
-        },
-        {
-          text: '异常',
-          value: '1'
+          ],
+          filterMultiple: false
+        }, {
+          title: '监测场景',
+          dataIndex: 'sceneCount'
         },
         {
-          text: '险情',
-          value: '2'
-        }
-        ],
-        filterMultiple: false
-      }, {
-        title: '监测场景',
-        dataIndex: 'sceneCount'
-      },
-      {
-        title: '水库规模',
-        dataIndex: 'scale',
-        customRender: (text) => {
-          switch (text) {
-            case '0':
-              return '大(1)型'
-            case '1':
-              return '大(2)型'
-            case '2':
-              return '中型'
-            case '3':
-              return '小(1)型'
-            case '4':
-              return '小(2)型'
+          title: '水库规模',
+          dataIndex: 'scale',
+          customRender: (text) => {
+            switch (text) {
+              case '0':
+                return '大(1)型'
+              case '1':
+                return '大(2)型'
+              case '2':
+                return '中型'
+              case '3':
+                return '小(1)型'
+              case '4':
+                return '小(2)型'
+            }
+          },
+          filters: [{
+            text: '大(1)型',
+            value: '0'
+          },
+          {
+            text: '大(2)型',
+            value: '1'
+          },
+          {
+            text: '中型',
+            value: '2'
+          },
+          {
+            text: '小(1)型',
+            value: '3'
+          },
+          {
+            text: '小(2)型',
+            value: '4'
           }
-        },
-        filters: [{
-          text: '大(1)型',
-          value: '0'
+          ],
+          filterMultiple: false
         },
         {
-          text: '大(2)型',
-          value: '1'
-        },
-        {
-          text: '中型',
-          value: '2'
-        },
-        {
-          text: '小(1)型',
-          value: '3'
-        },
-        {
-          text: '小(2)型',
-          value: '4'
+          title: '创建时间',
+          dataIndex: 'createTime'
+        }, {
+          title: '操作',
+          dataIndex: 'operation',
+          scopedSlots: {
+            customRender: 'operation'
+          }
         }
-        ],
-        filterMultiple: false
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'createTime'
-      }, {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: {
-          customRender: 'operation'
-        }
-      }
       ]
     }
   },
