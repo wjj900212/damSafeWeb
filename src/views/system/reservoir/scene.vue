@@ -48,22 +48,28 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" @click="$router.push('/system/reservoir/scene/scene_add')">添加</a-button>
+        <a-button type="primary" @click="$router.push('/system/reservoir/scene/scene_add?reservoirId=' + reservoirId)">添加</a-button>
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="dataSource"
         :pagination="pagination" :loading="loading" :scroll="{ x: 900 }">
+        <template slot="latitude" slot-scope="text, record">
+          <span>{{record.longitude}},{{record.latitude}}</span>
+        </template>
+        <template slot="image" slot-scope="text, record">
+          <img :src="text" style="width:3rem;height: 3rem;"/>
+        </template>
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
             <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="编辑"
               @click="$router.push('/system/reservoir/scene/scene_edit')"></a-icon>
-            <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" title="2D" @click="visualVisible=true"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="userDelete(record)" title="删除">
+            <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" title="2D" @click="visualConfig(record)"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="hiddenDelete(record)" title="删除">
             </a-icon>
           </div>
         </template>
       </a-table>
-      <sceneVisual :visible="visualVisible" @close="()=>{ visualVisible=false }"/>
+      <sceneVisual :visible="visualVisible" :hiddenPointSource="hiddenPointSource" @close="()=>{ visualVisible=false }"/>
     </div>
   </a-card>
   <router-view v-else />
@@ -77,10 +83,7 @@ export default {
   components: {sceneVisual},
   data () {
     return {
-      queryParams: {
-        name: '',
-        area: ''
-      },
+      queryParams: {},
       loading: false,
       dataSource: [{
         name: '121',
@@ -95,7 +98,7 @@ export default {
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
       visualVisible: false, // 二维可视化弹框
-      reservoirId: '',
+      hiddenPointSource: {},
       reservoirList: [],
       reservoirName: '',
       disabledFlag: false
@@ -115,48 +118,34 @@ export default {
         customRender: (text, record, index) => `${index + 1}`
       }, {
         title: '场景名称',
-        dataIndex: 'name'
+        dataIndex: 'hiddenName'
       }, {
         title: '类型',
-        dataIndex: 'roleId',
-        customRender: (text) => {
-          switch (text) {
-            case '0':
-              return '无风险'
-            case '1':
-              return '有风险'
-          }
-        },
-        filters: [{
-          text: '无风险',
-          value: '0'
-        },
-        {
-          text: '有风险',
-          value: '1'
-        }
-        ],
-        filterMultiple: true,
-        filteredValue: filteredInfo.roleId || null,
-        onFilter: (value, record) => record.roleId.includes(value)
+        dataIndex: 'hiddenTypeName'
       },
-        {
-          title: '测站编码',
-          dataIndex: 'name'
-        }, {
-          title: '所在地区',
-          dataIndex: 'name'
-        }, {
-          title: '经纬度',
-          dataIndex: 'name'
-        }, {
-          title: '实景图',
-          dataIndex: 'name'
-        },
-        {
-          title: '建设时间',
-          dataIndex: 'name'
-        },
+      {
+        title: '测站编码',
+        dataIndex: 'stationCode'
+      }, {
+        title: '所在地区',
+        dataIndex: 'cityName'
+      }, {
+        title: '经纬度',
+        dataIndex: 'latitude',
+        scopedSlots: {
+          customRender: 'latitude'
+        }
+      }, {
+        title: '实景图',
+        dataIndex: 'image',
+        scopedSlots: {
+          customRender: 'image'
+        }
+      },
+      {
+        title: '建设时间',
+        dataIndex: 'createTime'
+      },
       {
         title: '操作',
         dataIndex: 'operation',
@@ -195,6 +184,11 @@ export default {
         this.search()
       })
     },
+    visualConfig (record) {
+      // console.log('场景可视化列表信息', record)
+      this.hiddenPointSource = record
+      this.visualVisible = true
+    },
     filterOption (input, option) {
       return (
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -210,12 +204,6 @@ export default {
     },
     search () {
       let { filteredInfo } = this
-      if (this.queryParams.devBasicStrId === '') {
-        delete this.queryParams.devBasicStrId
-      }
-      if (this.queryParams.hiddenDangerAreaId !== undefined && this.queryParams.hiddenDangerAreaId === 'all') {
-        delete this.queryParams.hiddenDangerAreaId
-      }
       // 重置分页
       this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
       if (this.paginationInfo) {
@@ -275,26 +263,23 @@ export default {
         this.loading = false
       })
     },
-    userDelete (record) {
+    hiddenDelete (record) {
       let that = this
       this.$confirm({
-        title: '确定删除该用户?',
-        content: '当您点击确定按钮后，这个用户将会被彻底删除',
+        title: '确定删除该监测场景?',
+        content: '当您点击确定按钮后，这个监测场景将会被彻底删除',
         centered: true,
         onOk () {
-          let userIds = []
-          userIds.push(record.userId)
-          that.$post('server/user.php', {
-            userIds: userIds.join(','),
-            action: 'deleteUsers'
+          let hiddenIds = []
+          hiddenIds.push(record.hiddenId)
+          that.$post('web/hidden/deleteHiddenPoint', {
+            ids: hiddenIds.join(',')
           }).then(() => {
             that.$message.success('删除成功')
-            that.selectedRowKeys = []
             that.search()
           })
         },
         onCancel () {
-          that.selectedRowKeys = []
         }
       })
     }
