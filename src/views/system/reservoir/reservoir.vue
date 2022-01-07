@@ -12,13 +12,13 @@
             </a-col>
             <a-col :md="12" :sm="24">
               <a-form-item label="所在地区" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 2}">
-                <a-input v-model="queryParams.name" placeholder="请输入" />
+                <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
                 <!-- <a-cascader :options="areaList" v-model="queryParams.levelCode" placeholder="请选择" /> -->
               </a-form-item>
             </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="getReservoirList">查询</a-button>
+            <a-button type="primary" @click="searchTable">查询</a-button>
             <a-button style="margin-left: 8px">重置</a-button>
           </span>
         </a-row>
@@ -30,7 +30,7 @@
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="dataSource"
-        :pagination="pagination" :loading="loading" :scroll="{ x: 900 }">
+        :pagination="pagination" :loading="loading" :scroll="{ x: 900 }" @change="handleTableChange">
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
             <a-icon type="warning" theme="twoTone" twoToneColor="#4a9ff5" title="监测场景"
@@ -39,8 +39,8 @@
               @click="goReservoirMonitoringPoint(record)"></a-icon>
             <a-icon type="user" title="用户" @click="goReservoirUser"></a-icon>
             <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="编辑"
-              @click="$router.push('/system/reservoir/reservoir_edit')"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="userDelete(record)" title="删除">
+              @click="$router.push('/system/reservoir/reservoir_edit?reservoirId='+record.reservoirId)"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="reservoirDelete(record)" title="删除">
             </a-icon>
           </div>
         </template>
@@ -54,14 +54,19 @@
   import {
     mapState
   } from 'vuex'
+  import Cascader from '@/components/distselect/cascader.vue'
   export default {
     name: 'reservoir',
-    components: {},
+    components: {
+      Cascader
+    },
     data() {
       return {
         queryParams: {
           name: '',
-          levelCode: ''
+          levelCode: '',
+          reservoirStatus: '',
+          scale: ''
         },
         areaList: [], //城市列表
         loading: false,
@@ -74,9 +79,11 @@
           showSizeChanger: true,
           total: 0,
           showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`,
-          onChange: (cur, size) => this.pageChange(cur, size),
-          onShowSizeChange: (cur, size) => this.pageChange(cur, size),
-        }
+          // onChange: (cur, size) => this.pageChange(cur, size),
+          // onShowSizeChange: (cur, size) => this.pageChange(cur, size),
+        },
+        optionCityInfo: [],
+        casdata: []
       }
     },
     computed: {
@@ -126,9 +133,7 @@
                 value: '2'
               }
             ],
-            filterMultiple: true,
-            filteredValue: filteredInfo.roleId || null,
-            onFilter: (value, record) => record.roleId.includes(value)
+            filterMultiple: false,
           }, {
             title: '监测场景',
             dataIndex: 'sceneCount'
@@ -171,12 +176,7 @@
                 value: '4'
               }
             ],
-            filterMultiple: true,
-            filteredValue: filteredInfo.userProjCount || null,
-            onFilter: (value, record) => record.userProjCount.includes(value)
-          }, {
-            title: '水库类型',
-            dataIndex: 'capacity'
+            filterMultiple: false,
           },
           {
             title: '创建时间',
@@ -192,28 +192,29 @@
       }
     },
     methods: {
+      // 获取子组件返回的cityCode和cityType
+      getDistData(distData) {
+        this.queryParams.levelCode = distData.cityCode
+        // this.getReservoirList()
+      },
       goReservoirUser() {
         this.$router.push('/system/reservoir/user')
       },
       goReservoirMonitoringPoint(record) {
         this.$router.push('/system/reservoir/monitoring_point?reservoirName=' + record.name)
       },
-      userDelete(record) {
+      reservoirDelete(record) {
         let that = this
         this.$confirm({
-          title: '确定删除该用户?',
-          content: '当您点击确定按钮后，这个用户将会被彻底删除',
+          title: '确定删除该水库?',
+          content: '当您点击确定按钮后，这个水库将会被彻底删除',
           centered: true,
           onOk() {
-            let userIds = []
-            userIds.push(record.userId)
-            that.$post('server/user.php', {
-              userIds: userIds.join(','),
-              action: 'deleteUsers'
+            that.$post('/web/reservoirAdmin/deleteReservoir', {
+              reservoirId: record.reservoirId
             }).then(() => {
               that.$message.success('删除成功')
-              that.selectedRowKeys = []
-              that.search()
+              that.getReservoirList()
             })
           },
           onCancel() {
@@ -221,37 +222,42 @@
           }
         })
       },
-      // 表格页码及size
-      pageChange(cur,size){
-        this.pagination.current=cur
-        this.pagination.pageSize=size
-        this.getReservoirList()
-      },
-      // 获取水库列表
-      getReservoirList() {
-        this.queryParams.pageNum = this.pagination.current
-        this.queryParams.pageSize = this.pagination.pageSize
-        // console.log(this.queryParams)
-        this.$get("/web/reservoirAdmin/reservoirList", this.queryParams).then(res=>{
-          let rr=res.data
-          // console.log(rr.data)
-          let data=rr.data
-          this.pagination.total=data.total
-          this.dataSource=data.records
+      // 表格页码及size 表格筛选
+      handleTableChange(pagination, filter) {
+        // console.log(pagination,filter)
+        this.pagination.current = pagination.current
+        this.pagination.pageSize = pagination.pageSize
+        this.getReservoirList({
+          ...this.queryParams,
+          ...filter
         })
       },
-      // 获取地区列表
-      getAreaList() {
-        let param = {
-          cityCode: '000000',
-          type: 0
-        }
-        this.$get("/area/listCounty", param).then(res => {})
+      // 获取水库列表
+      getReservoirList(params = {}) {
+        if(!params.name)params.name=''
+        if(!params.levelCode)params.levelCode=''
+        // 如果分页信息为空，则设置为默认值
+        params.pageSize = this.pagination.pageSize
+        params.pageNum = this.pagination.current
+        if (params.reservoirStatus) params.reservoirStatus = params.reservoirStatus.join(',')
+        if (params.scale) params.scale = params.scale.join(',')
+        this.$get("/web/reservoirAdmin/reservoirList", params).then(res => {
+          let rr = res.data
+          let data = rr.data
+          this.pagination.total = data.total
+          this.dataSource = data.records
+        })
+      },
+      searchTable() {
+        this.getReservoirList({
+          ...this.queryParams
+        })
       }
     },
     mounted() {
-      // this.getAreaList()
-      this.getReservoirList()
+      this.getReservoirList({
+        ...this.queryParams
+      })
     }
   }
 
