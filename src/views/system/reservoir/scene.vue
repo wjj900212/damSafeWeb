@@ -6,17 +6,34 @@
       <a-form layout="horizontal">
         <a-row>
           <div class="fold">
-            <a-col :md="8" :sm="20">
+            <a-col :md="6" :sm="20">
+              <a-form-item label="水库" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 1}">
+                <a-select
+                  placeholder="选择水库"
+                  show-search
+                  allowClear
+                  :disabled="disabledFlag"
+                  v-model="reservoirName"
+                  :filterOption="filterOption"
+                  @change="setReservoir"
+                >
+                  <a-select-option v-for="(item,index) in reservoirList" :key="'reservoirId' + index" :value="item.reservoirId">
+                    {{ item.reservoirName }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="20">
               <a-form-item label="场景名称" :labelCol="{span: 5}" :wrapperCol="{span: 16, offset: 0}">
                 <a-input v-model="queryParams.name" placeholder="请输入" />
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="20">
+            <a-col :md="6" :sm="20">
               <a-form-item label="所在地区" :labelCol="{span: 5}" :wrapperCol="{span: 16, offset: 0}">
                 <a-input v-model="queryParams.area" placeholder="请输入" />
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="20">
+            <a-col :md="6" :sm="20">
               <a-form-item label="测站编码" :labelCol="{span: 5}" :wrapperCol="{span: 16}">
                 <a-input v-model="queryParams.area" placeholder="请输入" />
               </a-form-item>
@@ -31,148 +48,243 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" @click="$router.push('/system/reservoir/scene/scene_add')">添加</a-button>
+        <a-button type="primary" @click="$router.push('/system/reservoir/scene/scene_add?reservoirId=' + reservoirId)">添加</a-button>
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="dataSource"
         :pagination="pagination" :loading="loading" :scroll="{ x: 900 }">
+        <template slot="latitude" slot-scope="text, record">
+          <span>{{record.longitude}},{{record.latitude}}</span>
+        </template>
+        <template slot="image" slot-scope="text, record">
+          <img :src="text" style="width:3rem;height: 3rem;"/>
+        </template>
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
             <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="编辑"
               @click="$router.push('/system/reservoir/scene/scene_edit')"></a-icon>
-            <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" title="2D" @click="visualVisible=true"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="userDelete(record)" title="删除">
+            <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" title="2D" @click="visualConfig(record)"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="hiddenDelete(record)" title="删除">
             </a-icon>
           </div>
         </template>
       </a-table>
-      <sceneVisual :visible="visualVisible" @close="()=>{ visualVisible=false }"/>
+      <sceneVisual :visible="visualVisible" :hiddenPointSource="hiddenPointSource" @close="()=>{ visualVisible=false }"/>
     </div>
   </a-card>
   <router-view v-else />
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-  import sceneVisual from "./scene2D.vue"
-  export default {
-    name: 'reservoir',
-    components: {sceneVisual},
-    data() {
-      return {
-        queryParams: {
-          name: '',
-          area: ''
-        },
-        loading: false,
-        dataSource: [{
-          name: '121',
-          roleId: 1
-        }],
-        pagination: {
-          pageSizeOptions: ['10', '20', '30', '40', '100'],
-          defaultCurrent: 1,
-          defaultPageSize: 10,
-          showQuickJumper: true,
-          showSizeChanger: true,
-          showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
-        },
-        visualVisible:false,//二维可视化弹框
+import {mapState} from 'vuex'
+import sceneVisual from './scene2D.vue'
+export default {
+  name: 'reservoir',
+  components: {sceneVisual},
+  data () {
+    return {
+      queryParams: {},
+      loading: false,
+      dataSource: [{
+        name: '121',
+        roleId: 1
+      }],
+      pagination: {
+        pageSizeOptions: ['10', '20', '30', '40', '100'],
+        defaultCurrent: 1,
+        defaultPageSize: 10,
+        showQuickJumper: true,
+        showSizeChanger: true,
+        showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
+      },
+      visualVisible: false, // 二维可视化弹框
+      hiddenPointSource: {},
+      reservoirList: [],
+      reservoirName: '',
+      disabledFlag: false
+    }
+  },
+  computed: {
+    ...mapState({
+      currentUser: state => state.account.user
+    }),
+    columns () {
+      let {
+        filteredInfo
+      } = this
+      filteredInfo = filteredInfo || {}
+      return [{
+        title: '序号',
+        customRender: (text, record, index) => `${index + 1}`
+      }, {
+        title: '场景名称',
+        dataIndex: 'hiddenName'
+      }, {
+        title: '类型',
+        dataIndex: 'hiddenTypeName'
+      },
+      {
+        title: '测站编码',
+        dataIndex: 'stationCode'
+      }, {
+        title: '所在地区',
+        dataIndex: 'cityName'
+      }, {
+        title: '经纬度',
+        dataIndex: 'latitude',
+        scopedSlots: {
+          customRender: 'latitude'
+        }
+      }, {
+        title: '实景图',
+        dataIndex: 'image',
+        scopedSlots: {
+          customRender: 'image'
+        }
+      },
+      {
+        title: '建设时间',
+        dataIndex: 'createTime'
+      },
+      {
+        title: '操作',
+        dataIndex: 'operation',
+        scopedSlots: {
+          customRender: 'operation'
+        }
       }
-    },
-    computed: {
-      ...mapState({
-        currentUser: state => state.account.user
-      }),
-      columns() {
-        let {
-          filteredInfo
-        } = this
-        filteredInfo = filteredInfo || {}
-        return [{
-            title: '序号',
-            customRender: (text, record, index) => `${index + 1}`
-          }, {
-            title: '场景名称',
-            dataIndex: 'name'
-          }, {
-            title: '类型',
-            dataIndex: 'roleId',
-            customRender: (text) => {
-              switch (text) {
-                case '0':
-                  return '无风险'
-                case '1':
-                  return '有风险'
-              }
-            },
-            filters: [{
-                text: '无风险',
-                value: '0'
-              },
-              {
-                text: '有风险',
-                value: '1'
-              }
-            ],
-            filterMultiple: true,
-            filteredValue: filteredInfo.roleId || null,
-            onFilter: (value, record) => record.roleId.includes(value)
-          }, 
-          // {
-          //   title: '测站编码',
-          //   dataIndex: 'name'
-          // }, {
-          //   title: '所在地区',
-          //   dataIndex: 'name'
-          // }, {
-          //   title: '经纬度',
-          //   dataIndex: 'name'
-          // }, {
-          //   title: '实景图',
-          //   dataIndex: 'name'
-          // },
-          // {
-          //   title: '建设时间',
-          //   dataIndex: 'name'
-          // }, 
-          {
-            title: '操作',
-            dataIndex: 'operation',
-            scopedSlots: {
-              customRender: 'operation'
+      ]
+    }
+  },
+  mounted () {},
+  beforeRouteEnter (to, from, next) {
+    // 项目列表迁移时，设置默认值
+    next(vm => {
+      vm.init()
+    })
+  },
+  methods: {
+    init () {
+      this.reservoirId = this.$route.query.reservoirId
+      if (this.reservoirId) {
+        this.queryParams.reservoirId = this.reservoirId
+        this.disabledFlag = true
+      }
+      this.$get('web/hidden/getReservoirList').then((r) => {
+        this.reservoirList = r.data.data
+        if (this.reservoirList && this.reservoirId) {
+          for (let i = 0; i < this.reservoirList.length; i++) {
+            let currentProj = this.reservoirList[i]
+            if (currentProj.reservoirId.toString() === this.reservoirId) {
+              this.reservoirName = currentProj.reservoirName
+              break
             }
           }
-        ]
-      }
+        }
+        this.search()
+      })
     },
-    mounted() {},
-    methods: {
-      userDelete(record) {
-        let that = this
-        this.$confirm({
-          title: '确定删除该用户?',
-          content: '当您点击确定按钮后，这个用户将会被彻底删除',
-          centered: true,
-          onOk() {
-            let userIds = []
-            userIds.push(record.userId)
-            that.$post('server/user.php', {
-              userIds: userIds.join(','),
-              action: 'deleteUsers'
-            }).then(() => {
-              that.$message.success('删除成功')
-              that.selectedRowKeys = []
-              that.search()
-            })
-          },
-          onCancel() {
-            that.selectedRowKeys = []
-          }
-        })
-      },
+    visualConfig (record) {
+      // console.log('场景可视化列表信息', record)
+      this.hiddenPointSource = record
+      this.visualVisible = true
+    },
+    filterOption (input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
+    setReservoir (value) {
+      if (value) {
+        this.queryParams.reservoirId = value
+      } else {
+        delete this.queryParams.reservoirId
+      }
+      this.search()
+    },
+    search () {
+      let { filteredInfo } = this
+      // 重置分页
+      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
+      if (this.paginationInfo) {
+        this.paginationInfo.current = this.pagination.defaultCurrent
+        this.paginationInfo.pageSize = this.pagination.defaultPageSize
+      }
+      this.fetch({
+        ...this.queryParams,
+        ...filteredInfo
+      })
+    },
+    reset () {
+      // 重置分页
+      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
+      if (this.paginationInfo) {
+        this.paginationInfo.current = this.pagination.defaultCurrent
+        this.paginationInfo.pageSize = this.pagination.defaultPageSize
+      }
+      // 重置列过滤器规则
+      this.filteredInfo = null
+      // 重置查询参数
+      this.queryParams = {}
+    },
+    handleTableChange (pagination, filters) {
+      // 将这三个参数赋值给Vue data，用于后续使用
+      this.paginationInfo = pagination
+      this.filteredInfo = filters
+      this.fetch({
+        ...this.queryParams,
+        ...filters
+      })
+    },
+    fetch (params = {}) {
+      // 显示loading
+      this.loading = true
+      if (this.paginationInfo) {
+        // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
+        this.$refs.TableInfo.pagination.current = this.paginationInfo.current
+        this.$refs.TableInfo.pagination.pageSize = this.paginationInfo.pageSize
+        params.pageSize = this.paginationInfo.pageSize
+        params.pageNum = this.paginationInfo.current
+      } else {
+        // 如果分页信息为空，则设置为默认值
+        params.pageSize = this.pagination.defaultPageSize
+        params.pageNum = this.pagination.defaultCurrent
+      }
+      params.reservoirId = this.reservoirId
+      this.$get('web/hidden/getHiddenList', {
+        ...params
+      }).then((r) => {
+        let data = r.data.data
+        const pagination = { ...this.pagination }
+        pagination.total = data.total
+        this.dataSource = data.records
+        this.pagination = pagination
+        // 数据加载完毕，关闭loading
+        this.loading = false
+      })
+    },
+    hiddenDelete (record) {
+      let that = this
+      this.$confirm({
+        title: '确定删除该监测场景?',
+        content: '当您点击确定按钮后，这个监测场景将会被彻底删除',
+        centered: true,
+        onOk () {
+          let hiddenIds = []
+          hiddenIds.push(record.hiddenId)
+          that.$post('web/hidden/deleteHiddenPoint', {
+            ids: hiddenIds.join(',')
+          }).then(() => {
+            that.$message.success('删除成功')
+            that.search()
+          })
+        },
+        onCancel () {
+        }
+      })
     }
   }
+}
 
 </script>
 <style lang="less" scoped>

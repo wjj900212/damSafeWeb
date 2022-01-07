@@ -39,6 +39,7 @@ export default {
     })
   },
   mounted () {
+    console.log('1111')
     this.distType = '0'
     // let defaultValue = ['110000', '110100', '110108']
     this.init()
@@ -55,7 +56,7 @@ export default {
     },
     onChange (value, selectedOptions) {
       // this.casdata = []
-      // console.log('ssss:', this.casdata)
+      console.log('ssss:', this.casdata)
       for (let i = 0; i < value.length; i++) {
         if (value[i] === '000000') {
           this.distType = '0'
@@ -88,7 +89,7 @@ export default {
         type: that.distType
       }
       // this.getCityCodeList(params)
-      this.$get('/area/listCounty', {
+      this.$get('area/listCounty', {
         ...params
       }).then((r) => {
         if (r.data.code === 1) {
@@ -113,10 +114,10 @@ export default {
         targetOption.children = distDataList
         that.options = [...that.options]
       }, 1500)
-      // console.log(that.options)
+      console.log(that.options)
     },
     getCityCodeList (params = {}) {
-      this.$get('/area/listCounty', {
+      this.$get('area/listCounty', {
         ...params
       }).then((r) => {
         if (r.data.code === 1) {

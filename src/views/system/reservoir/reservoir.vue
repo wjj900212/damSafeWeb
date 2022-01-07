@@ -34,10 +34,10 @@
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
             <a-icon type="warning" theme="twoTone" twoToneColor="#4a9ff5" title="监测场景"
-              @click="$router.push('/system/reservoir/scene')"></a-icon>
+              @click="getScene(record)"></a-icon>
             <a-icon type="info-circle" theme="twoTone" twoToneColor="#4a9ff5" title="监测点"
               @click="goReservoirMonitoringPoint(record)"></a-icon>
-            <a-icon type="user" title="用户" @click="goReservoirUser"></a-icon>
+            <a-icon type="user" title="用户" @click="goReservoirUser(record)"></a-icon>
             <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="编辑"
               @click="$router.push('/system/reservoir/reservoir_edit?reservoirId='+record.reservoirId)"></a-icon>
             <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="reservoirDelete(record)" title="删除">
@@ -195,13 +195,16 @@
       // 获取子组件返回的cityCode和cityType
       getDistData(distData) {
         this.queryParams.levelCode = distData.cityCode
-        // this.getReservoirList()
       },
-      goReservoirUser() {
-        this.$router.push('/system/reservoir/user')
+      goReservoirUser(record) {
+        this.$router.push('/system/reservoir/user?reservoirId=' + record.reservoirId)
+      },
+      getScene(record){
+        this.$router.push('/system/reservoir/scene?reservoirId=' + record.reservoirId)
       },
       goReservoirMonitoringPoint(record) {
-        this.$router.push('/system/reservoir/monitoring_point?reservoirName=' + record.name)
+        // console.log('跳转监测点水库信息', record)
+        this.$router.push('/system/reservoir/monitoring_point?reservoirId=' + record.reservoirId)
       },
       reservoirDelete(record) {
         let that = this
