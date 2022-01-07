@@ -9,17 +9,17 @@
     title="用户信息">
     <a-layout class="user-info">
       <a-layout-sider class="user-info-side">
-        <a-avatar shape="square" :size="115" icon="user" :src="`static/avatar/${userInfoData.avatar}`"/>
+        <a-avatar shape="square" :size="115" icon="user" src="static/avatar/2dd7a2d09fa94bf8b5c52e5318868b4d9.jpg"/>
       </a-layout-sider>
       <a-layout-content class="user-content-one">
-        <p><a-icon type="user"/>权限组：水库管理员</p>
-        <p><a-icon type="skin"/>姓名：王伟</p>
-        <p><a-icon type="phone"/>手机号：18810342996</p>
+        <p><a-icon type="user"/>权限组：{{userInfoData.roleName}}</p>
+        <p><a-icon type="skin"/>姓名：{{userInfoData.userName}}</p>
+        <p><a-icon type="phone"/>手机号：{{userInfoData.mobile}}</p>
       </a-layout-content>
       <a-layout-content class="user-content-two">
-        <p><a-icon type="home"/>单位：密云水库管理局</p>
-        <p><a-icon type="user"/>水库权限：秘钥水库</p>
-        <p><a-icon type="clock-circle"/>创建时间：2021-02-24 18:24:21</p>
+        <p><a-icon type="home"/>单位：{{userInfoData.company}}</p>
+        <p><a-icon type="user"/>水库权限：{{userInfoData.ReservoirName}}</p>
+        <p><a-icon type="clock-circle"/>创建时间：{{userInfoData.creatTime}}</p>
       </a-layout-content>
     </a-layout>
   </a-modal>

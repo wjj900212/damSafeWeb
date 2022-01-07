@@ -96,75 +96,75 @@
 				"hasParent": false,
 				"hasChildren": false
 			},
-      {
-        "icon": "appstore-o",
-        "path": "/reservoir/warn",
-        "component": "LeftPageView",
-        "name": "预警管理",
-        "hidden": false,
-        "isItem": "0",
-        "meta": {
-          "closeable": true,
-          "isShow": true
-        },
-        "type": "0",
-        "redirect": "",
-        "children": [
-          {
-            "icon": "audit",
-            "path": "/reservoir/warn/message",
-            "component": "reservoir/warn/message/message",
-            "name": "预警消息",
-            "hidden": false,
-            "isItem": "0",
-            "meta": {
-              "closeable": true,
-              "isShow": true
-            },
-            "type": "0",
-            "redirect": "",
-            "children": [],
-            "hasParent": true,
-            "hasChildren": false
-          },
-          {
-            "icon": "audit",
-            "path": "/reservoir/warn/config",
-            "component": "reservoir/warn/config/config",
-            "name": "预警设置",
-            "hidden": false,
-            "isItem": "0",
-            "meta": {
-              "closeable": true,
-              "isShow": true
-            },
-            "type": "0",
-            "redirect": "",
-            "children": [],
-            "hasParent": true,
-            "hasChildren": false
-          },
-          {
-            "icon": "audit",
-            "path": "/reservoir/warn/safety",
-            "component": "reservoir/warn/safety/safety",
-            "name": "安全管理预案",
-            "hidden": false,
-            "isItem": "0",
-            "meta": {
-              "closeable": true,
-              "isShow": true
-            },
-            "type": "0",
-            "redirect": "",
-            "children": [],
-            "hasParent": true,
-            "hasChildren": false
-          }
-        ],
-        "hasParent": false,
-        "hasChildren": false
-      }
+			{
+				"icon": "appstore-o",
+				"path": "/reservoir/warn",
+				"component": "LeftPageView",
+				"name": "预警管理",
+				"hidden": false,
+				"isItem": "0",
+				"meta": {
+					"closeable": true,
+					"isShow": true
+				},
+				"type": "0",
+				"redirect": "",
+				"children": [
+					{
+						"icon": "audit",
+						"path": "/reservoir/warn/message",
+						"component": "reservoir/warn/message/message",
+						"name": "预警消息",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					},
+					{
+						"icon": "audit",
+						"path": "/reservoir/warn/config",
+						"component": "reservoir/warn/config/config",
+						"name": "预警设置",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					},
+					{
+						"icon": "audit",
+						"path": "/reservoir/warn/safety",
+						"component": "reservoir/warn/safety/safety",
+						"name": "安全管理预案",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					}
+				],
+				"hasParent": false,
+				"hasChildren": false
+			}
 		],
 		"hasParent": false,
 		"hasChildren": false
@@ -224,55 +224,111 @@
 						},
 						"type": "0",
 						"redirect": "",
-						"children": [],
+						"children": [
+							{
+								"children": [],
+								"component": "system/reservoir/reservoir_add",
+								"path": "/system/reservoir/reservoir_add",
+								"name": "添加水库",
+								"hasChildren": false,
+								"hasParent": true,
+								"hidden": true,
+								"meta": {
+									"closeable": true,
+									"isShow": true
+								},
+								"isItem": "0",
+								"type": "1"
+							},
+							{
+								"children": [],
+								"component": "system/reservoir/reservoir_edit",
+								"path": "/system/reservoir/reservoir_edit",
+								"name": "编辑水库",
+								"hasChildren": false,
+								"hasParent": true,
+								"hidden": true,
+								"meta": {
+									"closeable": true,
+									"isShow": true
+								},
+								"isItem": "0",
+								"type": "1"
+							},
+							{
+								"children": [
+									{
+										"component": "system/reservoir/scene_add",
+										"path": "/system/reservoir/scene/scene_add",
+										"name": "添加场景",
+										"hasChildren": false,
+										"hasParent": true,
+										"hidden": true,
+										"meta": {
+											"closeable": true,
+											"isShow": true
+										}
+									},
+									{
+										"component": "system/reservoir/scene_edit",
+										"path": "/system/reservoir/scene/scene_edit",
+										"name": "编辑场景",
+										"hasChildren": false,
+										"hasParent": true,
+										"hidden": true,
+										"meta": {
+											"closeable": true,
+											"isShow": true
+										}
+									}
+								],
+								"component": "system/reservoir/scene",
+								"path": "/system/reservoir/scene",
+								"name": "监测场景",
+								"hasChildren": false,
+								"hasParent": true,
+								"hidden": true,
+								"meta": {
+									"closeable": true,
+									"isShow": true
+								},
+								"isItem": "0",
+								"type": "1"
+							},
+							{
+								"children": [],
+								"path": "/system/reservoir/user",
+								"component": "system/reservoir/user",
+								"name": "用户",
+								"hasChildren": false,
+								"hasParent": true,
+								"hidden": true,
+								"meta": {
+									"closeable": true,
+									"isShow": false
+								},
+								"isItem": "0",
+								"type": "1"
+							},
+							{
+								"children": [],
+								"path": "/system/reservoir/monitoring_point",
+								"component": "system/reservoir/monitoring_point",
+								"name": "监测点",
+								"hasChildren": false,
+								"hasParent": true,
+								"hidden": true,
+								"meta": {
+									"closeable": true,
+									"isShow": false
+								},
+								"isItem": "0",
+								"type": "1"
+							}
+						],
 						"hasParent": true,
 						"hasChildren": false
-					},
-					{
-						"children": [],
-						"component": "system/reservoir/reservoir_add",
-						"path": "/system/reservoir/reservoir_add",
-						"name": "添加水库",
-						"hasChildren": false,
-						"hasParent": true,
-						"hidden": true,
-						"meta": {
-							"closeable": true,
-							"isShow": true
-						},
-						"isItem": "0",
-						"type": "1"
-					},
-          {
-            "children": [],
-            "path": "/system/reservoir/user",
-            "component": "system/reservoir/user",
-            "name": "用户",
-            "hasChildren": false,
-            "hasParent": true,
-            "hidden": true,
-            "meta": {
-              "closeable": true,
-              "isShow": false
-            },
-            "isItem": "0",
-            "type": "1"
-          },
-          {
-            "children": [],
-            "path": "/system/reservoir/monitoring_point",
-            "component": "system/reservoir/monitoring_point",
-            "name": "监测点",
-            "hasChildren": false,
-            "hasParent": true,
-            "hidden": true,
-            "meta": {
-              "closeable": true,
-              "isShow": false
-            },
-            "isItem": "0",
-            "type": "1"
-          }
+					}
 				],
 				"hasParent": false,
 				"hasChildren": false

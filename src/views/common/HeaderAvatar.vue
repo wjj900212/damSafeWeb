@@ -35,7 +35,7 @@
     </update-password>-->
     <user-info
       :userInfoVisiable="userInfoVisiable"
-      :userInfoData="user"
+      :userInfoData="userInfo"
       @onClose="()=>{userInfoVisiable=false}"
     ></user-info>
   </div>
@@ -52,7 +52,8 @@ export default {
   data () {
     return {
       updatePasswordModelVisible: false,
-      userInfoVisiable: false
+      userInfoVisiable: false,
+      userInfo: {}
     }
   },
   computed: {
@@ -69,8 +70,14 @@ export default {
       this.setSettingBar(!this.settingBar)
     },
     openProfile () {
+      this.getPersonalInfo()
       this.userInfoVisiable = true
       // this.$router.push('/profile')
+    },
+    getPersonalInfo () {
+      this.$get('web/user/getPersonalInfo').then((r) => {
+        this.userInfo = r.data.data
+      })
     },
     updatePassword () {
       this.updatePasswordModelVisible = true
@@ -86,8 +93,7 @@ export default {
       }, 1500)
     },
     logout () {
-      console.log('user', this.user)
-      this.$get(`web/login/logout/${this.user.id}`).then(() => {
+      this.$postDate(`web/login/logout/${this.user.id}`).then(() => {
         return new Promise((resolve, reject) => {
           this.$db.clear()
           location.reload()

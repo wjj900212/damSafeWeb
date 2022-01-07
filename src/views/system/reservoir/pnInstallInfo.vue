@@ -12,7 +12,7 @@
           安装位置
       </a-col>
       <a-col :span="8" :order="2" class="info-value">
-          <a v-if="installInfo.longitude!==0 && installInfo.latitude !== 0" @click="showMapModal">
+          <a v-if="installInfo.longitude!==0 && installInfo.latitude !== 0">
             {{installInfo.longitude}},{{installInfo.latitude}}
             <a-icon type="environment" />
           </a>
@@ -21,7 +21,7 @@
           设计位置
       </a-col>
       <a-col :span="8" :order="4" class="info-value">
-          <a @click="showMapModal">
+          <a>
             {{installInfo.lon}},{{installInfo.lat}}
             <a-icon type="environment" />
           </a>
@@ -136,9 +136,6 @@ export default {
       this.fileName = ''
       this.fileUrl = ''
       this.$emit('cancel')
-    },
-    showMapModal () {
-      this.$emit('showMapModal')
     },
     downLoadFile () {
       window.open(this.fileUrl)

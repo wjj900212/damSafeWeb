@@ -10,17 +10,16 @@
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
       <a-form-item label='姓名' v-bind="formItemLayout">
-        <a-input readOnly v-decorator="['username']"/>
+        <a-input v-decorator="['userName',{rules: [{ required: true, message: '用户名不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label="手机" v-bind="formItemLayout">
         <a-input
           v-decorator="['mobile', {rules: [
-            { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
+            {required: true, pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
           ]}]"/>
       </a-form-item>
       <a-form-item label='角色' v-bind="formItemLayout">
         <a-select
-          mode="multiple"
           :allowClear="true"
           style="width: 100%"
           v-decorator="[
@@ -30,22 +29,13 @@
           <a-select-option v-for="r in roleData" :key="r.roleId.toString()">{{r.roleName}}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label='职位' v-bind="formItemLayout">
-        <a-tree-select
-          :allowClear="true"
-          :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
-          :treeData="deptTreeData"
-          @change="onDeptChange"
-          v-model="userDept">
-        </a-tree-select>
-      </a-form-item>
       <a-form-item label='水库权限' v-bind="formItemLayout">
         <a-select
           mode="multiple"
           :allowClear="true"
           style="width: 100%"
-          v-decorator="['proj']">
-          <a-select-option v-for="r in projData" :key="r.key">{{r.value}}</a-select-option>
+          v-decorator="['reservoirIds']">
+          <a-select-option v-for="r in reservoirData" :key="r.reservoirId.toString()">{{r.reservoirName}}</a-select-option>
         </a-select>
       </a-form-item>
     </a-form>
@@ -73,13 +63,11 @@ export default {
     return {
       formItemLayout,
       form: this.$form.createForm(this),
-      deptTreeData: [],
-      roleData: [],
-      userDept: '',
-      projData: [],
       userId: '',
       loading: false,
-      validateStatus: ''
+      validateStatus: '',
+      roleData: [],
+      reservoirData: []
     }
   },
   computed: {
@@ -98,7 +86,7 @@ export default {
     },
     setFormValues ({...user}) {
       this.userId = user.userId
-      let fields = ['username', 'email', 'status', 'ssex', 'mobile', 'realName', 'followPswd', 'description']
+      let fields = ['userName', 'mobile', 'roleId', 'reservoirIds']
       Object.keys(user).forEach((key) => {
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)
@@ -107,22 +95,23 @@ export default {
           this.form.setFieldsValue(obj)
         }
       })
-      if (user.roleId) {
-        this.form.getFieldDecorator('roleId')
-        let roleArr = user.roleId.split(',')
-        this.form.setFieldsValue({'roleId': roleArr})
+      if (user.reservoirId) {
+        this.form.getFieldDecorator('reservoirIds')
+        let reservoirIdArr = user.reservoirId.split(',')
+        this.form.setFieldsValue({'reservoirIds': reservoirIdArr})
       }
-      if (user.deptId) {
-        this.userDept = user.deptId
-      }
-      // if (user.followProjId) {
-      //   this.form.getFieldDecorator('projBasicId')
-      //   let followProjIdArr = user.followProjId.split(',')
-      //   this.form.setFieldsValue({'projBasicId': followProjIdArr})
-      // }
     },
-    onDeptChange (value) {
-      this.userDept = value
+    // 角色列表
+    getRoleList () {
+      this.$get('web/user/getRoleList').then((r) => {
+        this.roleData = r.data.data
+      })
+    },
+    // 水库列表
+    getReservoirList () {
+      this.$get('web/hidden/getReservoirList').then((r) => {
+        this.reservoirData = r.data.data
+      })
     },
     handleSubmit () {
       this.form.validateFields((err, values) => {
@@ -130,25 +119,18 @@ export default {
         if (!err) {
           this.loading = true
           let user = this.form.getFieldsValue()
-          user.roleId = user.roleId.join(',')
           user.userId = this.userId
-          user.deptId = this.userDept
-          user.createUserId = this.currentUser.userId
-          if (user.projBasicId && user.projBasicId !== null && user.projBasicId !== '') {
-            user.followProjId = user.projBasicId.join(',')
-          }
-          this.$post('server/user.php', {
-            ...user,
-            action: 'updateUser'
+          user.reservoirIds = user.reservoirIds.join(',')
+          this.$post('web/user/editUser', {
+            ...user
           }).then((r) => {
-            this.loading = false
-            this.$emit('success')
-            // 如果修改用户就是当前登录用户的话，更新其state
-            if (user.username === this.currentUser.username) {
-              this.$get(`server/user.php?action=userDetail&username=${user.username}`).then((r) => {
-                this.setUser(r.data)
-              })
+            if (r.data.code === 1) {
+              this.onClose()
+              this.$emit('success')
+            } else {
+              this.$message.error(r.data.msg)
             }
+            this.loading = false
           }).catch(() => {
             this.loading = false
           })
@@ -157,21 +139,10 @@ export default {
     }
   },
   watch: {
-    userEditVisiable () {
-      if (this.userEditVisiable) {
-        this.$get('server/role.php?action=list').then((r) => {
-          this.roleData = r.data
-        })
-        this.$get('server/dept.php?action=depttree').then((r) => {
-          this.deptTreeData = r.data.rows.children
-        })
-        // let projBasic = {}
-        // projBasic.projBasicCreateUser = this.currentUser.userId
-        // this.$get('admin/proj/list', {
-        //   ...projBasic
-        // }).then((r) => {
-        //   this.projData = r.data
-        // })
+    userEditVisiable (newVal) {
+      if (newVal) {
+        this.getRoleList()
+        this.getReservoirList()
       }
     }
   }
