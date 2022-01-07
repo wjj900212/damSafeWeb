@@ -69,7 +69,7 @@
           </div>
         </template>
       </a-table>
-      <sceneVisual :visible="visualVisible" :hiddenPointSource="hiddenPointSource" @close="()=>{ visualVisible=false }"/>
+      <sceneVisual :visible="visualVisible" :id="hiddenId" :name="hiddenName" @close="()=>{ visualVisible=false }"/>
     </div>
   </a-card>
   <router-view v-else />
@@ -98,7 +98,8 @@ export default {
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
       visualVisible: false, // 二维可视化弹框
-      hiddenPointSource: {},
+      hiddenId: '',
+      hiddenName: '',
       reservoirList: [],
       reservoirName: '',
       disabledFlag: false
@@ -186,7 +187,8 @@ export default {
     },
     visualConfig (record) {
       // console.log('场景可视化列表信息', record)
-      this.hiddenPointSource = record
+      this.hiddenId = record.hiddenId
+      this.hiddenName = record.hiddenName
       this.visualVisible = true
     },
     filterOption (input, option) {

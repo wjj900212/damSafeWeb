@@ -47,7 +47,7 @@
         </template>
       </a-table>
     </div>
-    <sceneVisual :visible="visualVisible" :hiddenPointSource="hiddenPointSource" @close="()=>{ visualVisible=false }"/>
+    <sceneVisual :visible="visualVisible" :id="reservoirId" :name="reservoirName" @close="()=>{ visualVisible=false }"/>
   </a-card>
   <router-view v-else />
 </template>
@@ -88,7 +88,8 @@ export default {
       },
       optionCityInfo: [],
       casdata: [],
-      hiddenPointSource: {},
+      reservoirId: '',
+      reservoirName: '',
       visualVisible: false // 二维可视化弹框
     }
   },
@@ -264,7 +265,8 @@ export default {
     },
     visualConfig (record) {
       // console.log('场景可视化列表信息', record)
-      this.hiddenPointSource = record
+      this.reservoirId = record.reservoirId
+      this.reservoirName = record.reservoirName
       this.visualVisible = true
     }
   },

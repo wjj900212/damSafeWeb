@@ -46,7 +46,7 @@
     <template slot="footer">
       <a-button type="primary">确定</a-button>
     </template>
-    <visualAdd :visible="isShowAddScene" :hiddenId="hiddenPointSource.hiddenId" @getScenePicPath="getScenePicPath" @onClose="()=>{isShowAddScene=false}" />
+    <visualAdd :visible="isShowAddScene" :hiddenId="id" @getScenePicPath="getScenePicPath" @onClose="()=>{isShowAddScene=false}" />
   </a-modal>
 </template>
 
@@ -63,9 +63,13 @@ export default {
       type: Boolean,
       default: false
     },
-    hiddenPointSource: {
-      type: Object,
-      default: () => {}
+    id: {
+      type: Number,
+      default: 0
+    },
+    name: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -158,7 +162,7 @@ export default {
     // 初始化获取隐患点场景配置信息
     getHiddenSceneList (params = {}) {
       let _this = this
-      params.hiddenId = this.hiddenPointSource.hiddenId
+      params.hiddenId = this.id
       this.$get('web/hiddenScene/getHiddenSceneList', {...params}).then((r) => {
         if (r.data.code === 1) {
           _this.panes = r.data.data
@@ -202,11 +206,11 @@ export default {
     },
     // 获取监测点列表
     getProjPnTreeList (params = {}) {
-      params.hiddenId = this.hiddenPointSource.hiddenId
+      params.hiddenId = this.id
       params.flag = 1
       this.$get('web/hiddenScene/getProjPnList', {...params}).then((r) => {
         let projPnData = r.data.data
-        let treePnData = [{title: this.hiddenPointSource.hiddenName + '(' + projPnData.length + ')', key: 'all', children: []}]
+        let treePnData = [{title: this.name + '(' + projPnData.length + ')', key: 'all', children: []}]
         for (let i = 0; i < projPnData.length; i++) {
           let treePn = {}
           treePn.title = projPnData[i].pnName + '<br/>(' + projPnData[i].devBasicStrId + ')'
