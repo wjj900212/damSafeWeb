@@ -13,13 +13,12 @@
             <a-col :md="12" :sm="24">
               <a-form-item label="所在地区" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 2}">
                 <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
-                <!-- <a-cascader :options="areaList" v-model="queryParams.levelCode" placeholder="请选择" /> -->
               </a-form-item>
             </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="searchTable">查询</a-button>
-            <a-button style="margin-left: 8px">重置</a-button>
+            <a-button style="margin-left: 8px" @click="resetFilter">重置</a-button>
           </span>
         </a-row>
       </a-form>

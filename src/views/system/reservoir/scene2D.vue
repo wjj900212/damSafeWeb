@@ -78,6 +78,7 @@ export default {
   data () {
     return {
       searchStr: '',
+      treeDisabled:false,
       panes: [], // 场景列表
       pnTreeList: [],
       expandedKeys: ['all'],

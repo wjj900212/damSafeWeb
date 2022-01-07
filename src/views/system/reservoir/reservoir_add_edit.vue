@@ -47,8 +47,8 @@
       </div>
     </a-form-item>
     <a-form-item label="建设时间" v-bind="formItemLayout">
-      <a-date-picker :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }" format="YYYY-MM-DD HH:mm:ss"
-        valueFormat="YYYY-MM-DD HH:mm:ss" placeholder="请选择" v-decorator="['createTime']" />
+      <!-- :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }" -->
+      <a-date-picker format="YYYY-MM-DD" valueFormat="YYYY-MM-DD" placeholder="请选择" v-decorator="['createTime']" />
     </a-form-item>
     <a-form-item label="实景图" v-bind="formItemLayout">
       <a-upload list-type="picture-card" :file-list="sjImgsList" :multiple="true" :remove="handleImgsRemove"
@@ -66,7 +66,8 @@
       <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['notes']" />
     </a-form-item>
     <a-form-item label="详细介绍" v-bind="formItemLayout">
-      <editorCom ref="editorBox" putUrl="/web/reservoirAdmin/uploadDetailsImage" delUrl="/web/reservoirAdmin/deleteDetailsImage"></editorCom>
+      <editorCom ref="editorBox" putUrl="/web/reservoirAdmin/uploadDetailsImage"
+        delUrl="/web/reservoirAdmin/deleteDetailsImage"></editorCom>
     </a-form-item>
     <div class="title"><span class="line"></span>自定义信息</div>
     <a-row>
@@ -262,7 +263,7 @@
           // form 赋值
           this.form.setFieldsValue(obj)
           this.form.setFieldsValue({
-            'createTime': !data.createTime ? null : moment(data.createTime, 'YYYY-MM-DD HH:mm:ss'),
+            'createTime': !data.createTime ? null : moment(data.createTime, 'YYYY-MM-DD'),
           })
           this.$refs.editorBox.content = data.introduct
           if (data.customParam) this.customField = JSON.parse(data.customParam)
@@ -277,7 +278,9 @@
               })
             })
           }
-          this.setData({...data})
+          this.setData({
+            ...data
+          })
         })
       },
 
@@ -290,7 +293,7 @@
             let formData = new FormData()
             Object.keys(values).forEach(k => {
               if (k == 'createTime') formData.append(k, values[k] === null || values[k] === undefined ? '' :
-                moment(values[k]).format('YYYY-MM-DD HH:mm:ss'))
+                moment(values[k]).format('YYYY-MM-DD'))
               else formData.append(k, values[k] === undefined || values[k] === null ? '' : values[k])
             })
             formData.append('introduct', this.$refs.editorBox.content)
