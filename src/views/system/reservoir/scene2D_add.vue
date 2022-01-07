@@ -25,8 +25,8 @@ export default {
       default: false
     },
     hiddenId: {
-      type: String,
-      default: ''
+      type: Number,
+      default: 0
     }
   },
   data () {

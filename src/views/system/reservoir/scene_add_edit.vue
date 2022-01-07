@@ -19,6 +19,9 @@
       <a-input style="display: none;"
                v-decorator="['levelCode',{rules: [{ required: true, message: '所属地区不能为空'}]}]"></a-input>
     </a-form-item>
+    <a-form-item label="所在乡镇" v-bind="formItemLayout">
+      <a-input v-decorator="['township']"></a-input>
+    </a-form-item>
     <a-form-item label="位置坐标" v-bind="formItemLayout">
       <div style="display: flex;align-items: center;white-space: nowrap;">
         <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]" placeholder="请填写经度" />

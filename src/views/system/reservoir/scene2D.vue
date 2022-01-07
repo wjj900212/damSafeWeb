@@ -28,8 +28,8 @@
             </template>
             <div class="tempCon" ref="tempBox">
               <img :src="pane.sceneImage" class="upImged" />
-              <VueDragResize v-for="(v,i) in pane.itemList" :key="i" :isActive="v.isActive" :w="v.width" :h="v.height"
-                v-on:clicked="dragClick(i)" v-on:dragging="dragging" :isResizable="false" :parentLimitation="true"
+              <VueDragResize v-for="(v,i) in pane.itemList" :key="i" :isActive="v.isActive" :w="v.width-28" :h="v.height-28"
+                v-on:clicked="dragClick(i)" v-on:dragging="resize" :isResizable="false" :parentLimitation="true"
                 :parentW="765" :parentH="398" :x="v.xaxis" :y="v.yaxis">
                 <div
                   style="background: url('static/img/圆角矩形2640.png');width: 128px;height: 48px;position: absolute;top:-48px;">
@@ -150,9 +150,10 @@ export default {
   },
   methods: {
     // 搜索监测点
-    onSearch () {},
-    callback () {
-      console.log(this.activetabInd)
+    onSearch (value) {
+      this.getProjPnTreeList({
+        projPnName: value
+      })
     },
     // 初始化获取隐患点场景配置信息
     getHiddenSceneList (params = {}) {
@@ -229,16 +230,118 @@ export default {
       let itemList = this.panes.find(item => item.sceneId === this.activeKey)
       itemList.itemList = []
     },
-    // 点击选中 需要拖拽的下标
+    // 根据设备条码找到设备对应的图标
+    getIconUrl (params = {}) {
+      let _this = this
+      console.log('场景上的监测点列表', _this.panes.find(item => item.sceneId === _this.activeKey).itemList.length)
+      // if (_this.panes.find(item => item.sceneId === _this.activeKey).itemList.length === 0) {
+      this.$post('web/hiddenScene/findIcon', {...params}).then((r) => {
+        if (r.data.code === 1) {
+          let iconInfo = r.data.data
+          iconInfo.projPnId = params.pnId
+          iconInfo.sceneId = _this.activeKey
+          iconInfo.xaxis = 0
+          iconInfo.yaxis = 0
+          let itemList = _this.panes.find(item => item.sceneId === _this.activeKey).itemList
+          itemList.push(iconInfo)
+          // 新建一个空对象将对象复制进空对象再赋值给监听的值，这种方法可以监听到对象属性的新增和修改
+          _this.panes = Object.assign([], _this.panes)
+          // console.log('监测设备icon信息', itemList)
+          // console.log('场景上的监测点', itemList.itemList)
+        }
+      })
+      // }
+    },
+    onExpand (expandedKeys) {
+      console.log('onExpand', expandedKeys)
+      this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
+    },
+    onCheck (checkedKeys) {
+      console.log('checkedKeys-----', checkedKeys)
+      let allEmle = checkedKeys.findIndex(item => item === 'all')
+      console.log('选择多选框', allEmle)
+      if (allEmle >= 0) {
+        // checkedKeys.pop()
+        checkedKeys.splice(allEmle, 1)
+      }
+      this.checkedKeys = checkedKeys
+    },
+    resize (newRect) {
+      let itemList = this.panes.find(item => item.sceneId === this.activeKey).itemList
+      itemList[this.actItemI].yaxis = newRect.top
+      itemList[this.actItemI].xaxis = newRect.left
+      // console.log('this.itemList', this.itemList)
+    },
     dragClick (i) {
-      this.itemList.forEach((v) => {
+      let itemList = this.panes.find(item => item.sceneId === this.activeKey).itemList
+      itemList.forEach((v) => {
         v.isActive = false
       })
-      this.itemList[i].isActive = true
-      this.dragActI = i
+      itemList[i].isActive = true
+      this.actItemI = i
+      console.log('this.itemList=====dragClick', itemList)
     },
-    dragging (newRect) {
-      console.log(newRect)
+    callback () {
+      let itemList = this.panes.find(item => item.sceneId === this.activeKey)
+      if (itemList.itemList === undefined) {
+        itemList.itemList = []
+      }
+      if (itemList.itemList.length === 0) {
+        this.checkedKeys = []
+        this.getHiddenConfig(this.activeKey)
+      } else {
+        let checkkey = []
+        for (let i = 0; i < itemList.itemList.length; i++) {
+          checkkey.push(itemList.itemList[i].projPnId)
+        }
+        this.checkedKeys = checkkey
+      }
+      console.log('callback---newVal', this.checkedKeys)
+    },
+    diffent (fArr, cArr) {
+      let diffRes = []
+      let fDatas = []
+      let cDatas = []
+      for (let i in fArr) {
+        let flg = false
+        for (let j in cArr) {
+          if (cArr[j] === fArr[i]) {
+            flg = true
+            break
+          }
+        }
+        if (!flg) {
+          fDatas.push(fArr[i])
+        }
+      }
+      for (let i in cArr) {
+        let flg = false
+        for (let j in fArr) {
+          if (fArr[j] === cArr[i]) {
+            flg = true
+            break
+          }
+        }
+        if (!flg) {
+          cDatas.push(cArr[i])
+        }
+      }
+      diffRes.push(...cDatas.concat(fDatas))
+      console.log('两个数组不同值', diffRes)
+      return diffRes
+    }
+  },
+  filters: {
+    // 名称过长时用...代替
+    ellipsis (value, num) {
+      if (!value) {
+        return ''
+      }
+      if (value.length > num) {
+        return value.slice(0, num) + '...'
+      }
+      return value
     }
   }
 }

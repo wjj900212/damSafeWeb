@@ -336,7 +336,7 @@ export default {
     getInstallInfo (record) {
       this.projPnId = record.projPnId
       let params = {}
-      params.id = record.projPnId
+      params.projPnId = record.projPnId
       this.$get('web/projPn/getInstallData', {...params}).then((r) => {
         if (r.data.code === 1) {
           if (r.data.data === null) {
