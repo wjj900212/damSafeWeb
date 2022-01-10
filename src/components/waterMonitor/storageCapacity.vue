@@ -1,22 +1,8 @@
 <template>
-  <!-- 库水位趋势统计 -->
-  <div class="trendStatistic">
+  <!-- 水位库容曲线 -->
+  <div class="storageCapacity">
     <div class="tit">
-      <span>库水位趋势统计</span>
-      <div>
-        <a-select v-model="current">
-          <a-select-option value="jack">监测点_001</a-select-option>
-          <a-select-option value="lucy">监测点_002</a-select-option>
-          <a-select-option value="lucy">监测点_003</a-select-option>
-        </a-select>
-        <a-range-picker @change="onChange" style="width:250px;" />
-        <a-select v-model="current">
-          <a-select-option value="jack">日数据</a-select-option>
-          <a-select-option value="lucy">月数据</a-select-option>
-          <a-select-option value="lili">年数据</a-select-option>
-        </a-select>
-        <a-button type="primary">数据导出</a-button>
-      </div>
+      <span>水位库容曲线</span>
     </div>
     <div class="trendCon">
       <div>
@@ -25,20 +11,11 @@
           <span class="cricle"></span>
           <span>202101100040</span>
         </div>
-        <a-col>
-          <a-button>水位一级警戒</a-button>
-        </a-col>
-        <a-col style="margin:1rem 0;">
-          <a-button>水位二级警戒</a-button>
-        </a-col>
-        <a-col>
-          <a-button style="width:100%">保证水位</a-button>
-        </a-col>
       </div>
       <div class="echartTU">
         <!-- <chartTU /> -->
       </div>
-      <div style="width:40%">
+      <div style="width:30%">
         <a-table :columns="columns" :data-source="data">
         </a-table>
       </div>
@@ -50,47 +27,31 @@
   // import chartTU from "../echarts/EchartsArrLine.vue"
   import moment from 'moment';
   const columns = [{
-      title: '库水位',
+      title: '库水位(m)',
       dataIndex: 'val',
       key: 'val1'
     },
     {
-      title: '一级警戒值',
+      title: '库容(百万m³)',
       dataIndex: 'age',
       key: 'age',
     },
-    {
-      title: '保证水位值',
-      dataIndex: 'val',
-      key: 'val',
-    },
-    {
-      title: '时间',
-      dataIndex: 'time',
-      key: 'time'
-    }
   ];
 
   const data = [{
       key: '1',
-      name: 'John Brown',
       age: 32,
       val: 60,
-      time: '2022-05-30 12:15:15'
     },
     {
       key: '2',
-      name: 'Jim Green',
       age: 42,
       val: 60,
-      time: '2022-05-30 12:15:15'
     },
     {
       key: '3',
-      name: 'Joe Black',
       age: 32,
-      val: 60,
-      time: '2022-05-30 12:15:15'
+      val: 60
     },
   ];
 
@@ -101,7 +62,6 @@
     },
     data() {
       return {
-        current: 'jack',
         data,
         columns,
       };
@@ -124,7 +84,6 @@
 
 </script>
 <style scoped>
-  /* .trendStatistic{} */
   .tit {
     display: flex;
     align-items: center;
@@ -145,7 +104,7 @@
   }
 
   .echartTU {
-    width: 50%;
+    width: 60%;
     margin: 0 1rem;
   }
 

@@ -8,18 +8,24 @@
         <a-select-option value="lucy">Lucy (101)</a-select-option>
       </a-select>
     </div>
-          <a-card-grid style="width: 100%; text-align: center">
-            <img width="100%" src="static/img/u483.png" alt="" />
-          </a-card-grid>
+
+    <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+      <design :data="designData"></design>
+    </a-card-grid>
   </div>
 </template>
 
 <script>
+  import design from "../design/design.vue"
   export default {
     props: ["pointId"],
+    components: {
+      design
+    },
     data() {
       return {
-        current: 'jack'
+        current: 'jack',
+        designData: [],
       };
     },
     watch: {
@@ -42,8 +48,10 @@
     justify-content: space-between;
     border-bottom: 1px solid #f2f2f2;
     padding-bottom: 1rem;
+    margin-bottom: 1rem;
   }
-  .tit>span{
+
+  .tit>span {
     font-size: 1.6rem;
   }
 
