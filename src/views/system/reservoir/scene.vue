@@ -65,7 +65,8 @@
           </div>
         </template>
       </a-table>
-      <sceneVisual :visible="visualVisible" :id="hiddenId" :name="hiddenName" :sceneType="sceneType" @close="()=>{ visualVisible=false }"/>
+      <sceneVisual :visible="visualVisible" :hiddenPointSource="hiddenPointSource"
+        @close="()=>{ visualVisible=false }" />
     </div>
   </a-card>
   <router-view v-else />
@@ -101,12 +102,9 @@
         },
         visualVisible: false, // 二维可视化弹框
         hiddenPointSource: {},
-        sceneType:0,
-        hiddenId:0,
-        hiddenName:'',
         reservoirList: [],
         reservoirName: '',
-        disabledFlag: false,
+        disabledFlag: false
       }
     },
     computed: {
@@ -196,8 +194,6 @@
       visualConfig(record) {
         // console.log('场景可视化列表信息', record)
         this.hiddenPointSource = record
-        this.hiddenId=record.hiddenId
-        this.hiddenName=record.hiddenName
         this.visualVisible = true
       },
       filterOption(input, option) {
