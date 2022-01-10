@@ -1,4 +1,5 @@
 <template>
+  <!--场景可视化-->
   <div>
     <div class="design_content" @click="onClick">
       <!-- <div class="tabs-list">
@@ -71,7 +72,6 @@ export default {
     }
   },
   watch: {
-    
   },
   data () {
     return {
