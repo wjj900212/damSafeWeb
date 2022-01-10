@@ -293,7 +293,7 @@
             console.log('Received values of form: ', values)
             if (hiddenId) {
               // 修改
-              values.hiddenId = hiddenId
+              values.id = hiddenId
               _this.$post('web/hidden/updateHiddenPoint', values).then((r) => {
                 if (r.data.code === 1) {
                   _this.putimgsave(hiddenId)
@@ -384,13 +384,14 @@
             longitude: data.longitude,
             latitude: data.latitude,
             stationCode: data.stationCode,
-            remarks: data.remarks
+            remarks: data.remarks,
+            township:data.township
           }
           this.form.setFieldsValue(obj) //表单赋值
           this.setData({
             ...data
           }) //省市区回显
-          if (data.customParam) this.customField = JSON.parse(data.customParam) //自定义字段
+          if (data.customParam) this.customParam = JSON.parse(data.customParam) //自定义字段
           // 实景图
           if (data.image) {
             let imgArr = data.image.split('||')

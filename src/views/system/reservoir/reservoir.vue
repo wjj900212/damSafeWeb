@@ -140,7 +140,8 @@ export default {
             value: '2'
           }
           ],
-          filterMultiple: false
+          filterMultiple: false,
+          filteredValue:filteredInfo.reservoirStatus||null
         }, {
           title: '监测场景',
           dataIndex: 'sceneCount'
@@ -183,7 +184,8 @@ export default {
             value: '4'
           }
           ],
-          filterMultiple: false
+          filterMultiple: false,
+          filteredValue:filteredInfo.scale||null
         },
         {
           title: '创建时间',
@@ -230,6 +232,15 @@ export default {
         onCancel () {
           that.selectedRowKeys = []
         }
+      })
+    },
+    // 重置
+    resetFilter(){
+      this.queryParams={}
+      this.pagination.current=1
+      this.pagination.pageSize=10
+      this.getReservoirList({
+        ...this.queryParams
       })
     },
     // 表格页码及size 表格筛选

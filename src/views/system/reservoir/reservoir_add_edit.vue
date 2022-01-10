@@ -48,7 +48,7 @@
     </a-form-item>
     <a-form-item label="建设时间" v-bind="formItemLayout">
       <!-- :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }" -->
-      <a-date-picker format="YYYY-MM-DD" valueFormat="YYYY-MM-DD" placeholder="请选择" v-decorator="['createTime']" />
+      <a-date-picker format="YYYY-MM-DD HH:mm:ss" valueFormat="YYYY-MM-DD HH:mm:ss" placeholder="请选择" v-decorator="['buildTime']" />
     </a-form-item>
     <a-form-item label="实景图" v-bind="formItemLayout">
       <a-upload list-type="picture-card" :file-list="sjImgsList" :multiple="true" :remove="handleImgsRemove"
@@ -254,6 +254,7 @@
             images,
             sceneCount,
             createTime,
+            buildTime,
             customParam,
             reservoirStatus,
             cityInfo,
@@ -263,7 +264,7 @@
           // form 赋值
           this.form.setFieldsValue(obj)
           this.form.setFieldsValue({
-            'createTime': !data.createTime ? null : moment(data.createTime, 'YYYY-MM-DD'),
+            'buildTime': !data.buildTime ? null : moment(data.buildTime, 'YYYY-MM-DD HH:mm:ss'),
           })
           this.$refs.editorBox.content = data.introduct
           if (data.customParam) this.customField = JSON.parse(data.customParam)
@@ -292,9 +293,9 @@
             console.log('Received values of form: ', values);
             let formData = new FormData()
             Object.keys(values).forEach(k => {
-              if (k == 'createTime') formData.append(k, values[k] === null || values[k] === undefined ? '' :
-                moment(values[k]).format('YYYY-MM-DD'))
-              else formData.append(k, values[k] === undefined || values[k] === null ? '' : values[k])
+              if (k == 'buildTime') {
+                if (values[k]) formData.append(k, moment(values[k]).format('YYYY-MM-DD HH:mm:ss'))
+              } else formData.append(k, values[k] === undefined || values[k] === null ? '' : values[k])
             })
             formData.append('introduct', this.$refs.editorBox.content)
             if (this.customField.length > 0) formData.append('customParam', JSON.stringify(this.customField))
