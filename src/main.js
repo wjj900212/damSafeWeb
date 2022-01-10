@@ -7,6 +7,7 @@ import request from 'utils/request'
 import db from 'utils/localstorage'
 import VueApexCharts from 'vue-apexcharts'
 import 'ant-design-vue/dist/antd.css'
+import * as echarts from 'echarts'
 
 import 'utils/install'
 
@@ -23,6 +24,7 @@ Vue.use({
   }
 })
 
+Vue.prototype.$echarts = echarts
 Vue.prototype.$post = request.post
 Vue.prototype.$postDate = request.postDate
 Vue.prototype.$get = request.get

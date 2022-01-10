@@ -16,6 +16,7 @@
     "axios": "^0.18.0",
     "date-fns": "^1.29.0",
     "dhtmlx-gantt": "^6.2.3",
+    "echarts": "^5.1.2",
     "enquire.js": "^2.1.6",
     "file-saver": "^2.0.2",
     "jquery": "^3.4.1",
