@@ -47,7 +47,15 @@
           <a-card-grid style="width: 100%; text-align: center">
             <a-row>
               <a-col :span="12">
-                <img src="static/img/u289.png" alt="" />
+                <!-- <img src="static/img/u289.png" alt="" /> -->
+                <div style="width: 100%;height: 220px;">
+                  <component
+                    :is="'EchartsRadar'"
+                    refid="radar"
+                    :data="radarData"
+                    class="main-content"
+                  ></component>
+                </div>
               </a-col>
               <a-col :span="12" :style="{ marginTop: '25px' }">
                 <a-row>
@@ -96,8 +104,8 @@
               {{ item.name }}
             </a-select-option>
           </a-select>
-          <a-card-grid style="width: 100%; text-align: center">
-            <img width="100%" src="static/img/u483.png" alt="" />
+          <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+            <design :data="designData"></design>
           </a-card-grid>
         </a-card>
       </a-col>
@@ -156,10 +164,29 @@
       <a-col :span="24">
         <a-card title="综合趋势统计">
           <div slot="extra">
+            <a-select
+              style="width: 100px"
+              v-model="dateModel"
+              option-filter-prop="children"
+              @change="handleDateModelChange"
+            >
+              <a-select-option
+                v-for="item in dateModelData"
+                :value="item.value"
+                :key="item.value"
+              >
+                {{ item.name }}
+              </a-select-option>
+            </a-select>
+            <a-range-picker
+              v-model="dateTimeValue"
+              style="width: 240px"
+              @change="onDateChange"
+            />
             <a-button type="primary"> 查询 </a-button>
             <a-button type="primary"> 导出 </a-button>
           </div>
-          <a-card-grid style="width: 100%;">
+          <a-card-grid style="width: 100%">
             <a-row>
               <a-col :span="6">
                 <div>
@@ -190,7 +217,14 @@
                   </a-tree>
                 </div>
               </a-col>
-              <a-col :span="18"></a-col>
+              <a-col :span="18">
+                <component
+                  :is="'EchartsRelationship'"
+                  refid="Relationship"
+                  :data="relationshipData"
+                  class="main-content"
+                ></component>
+              </a-col>
             </a-row>
           </a-card-grid>
         </a-card>
@@ -206,40 +240,26 @@
           <a-card-grid style="width: 100%; text-align: left">
             <a-row>
               <a-col :span="2">
-                <img width="36" height="34" src="static/img/u295.png" alt="">
+                <img width="36" height="34" src="static/img/u295.png" alt="" />
               </a-col>
               <a-col :span="22">
                 <a-row>
                   <a-col>
-                    <h4 style="float:left;">雨情</h4>
+                    <h4 style="float: left">雨情</h4>
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="3">
-                    安全状态
-                  </a-col>
-                  <a-col :span="3">
-                    正常
-                  </a-col>
-                  <a-col :span="3">
-                    当前降水量
-                  </a-col>
-                  <a-col :span="3">
-                    29.2mm
-                  </a-col>
-                  <a-col :span="3">
-                    日降水量
-                  </a-col>
-                  <a-col :span="3">
-                    52.2mm
-                  </a-col>
+                  <a-col :span="3"> 安全状态 </a-col>
+                  <a-col :span="3"> 正常 </a-col>
+                  <a-col :span="3"> 当前降水量 </a-col>
+                  <a-col :span="3"> 29.2mm </a-col>
+                  <a-col :span="3"> 日降水量 </a-col>
+                  <a-col :span="3"> 52.2mm </a-col>
                 </a-row>
               </a-col>
             </a-row>
           </a-card-grid>
-          <a-card-grid style="width: 100%; text-align: center">
-            
-          </a-card-grid>
+          <a-card-grid style="width: 100%; text-align: center"> </a-card-grid>
         </a-card>
       </a-col>
       <a-col :span="12">
@@ -248,33 +268,21 @@
           <a-card-grid style="width: 100%; text-align: left">
             <a-row>
               <a-col :span="2">
-                <img width="36" height="34" src="static/img/u319.png" alt="">
+                <img width="36" height="34" src="static/img/u319.png" alt="" />
               </a-col>
               <a-col :span="22">
                 <a-row>
                   <a-col>
-                    <h4 style="float:left;">水情</h4>
+                    <h4 style="float: left">水情</h4>
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="3">
-                    安全状态
-                  </a-col>
-                  <a-col :span="3">
-                    正常
-                  </a-col>
-                  <a-col :span="3">
-                    当前水位
-                  </a-col>
-                  <a-col :span="3">
-                    29.2mm
-                  </a-col>
-                  <a-col :span="3">
-                    历史最大水位
-                  </a-col>
-                  <a-col :span="3">
-                    39.2mm
-                  </a-col>
+                  <a-col :span="3"> 安全状态 </a-col>
+                  <a-col :span="3"> 正常 </a-col>
+                  <a-col :span="3"> 当前水位 </a-col>
+                  <a-col :span="3"> 29.2mm </a-col>
+                  <a-col :span="3"> 历史最大水位 </a-col>
+                  <a-col :span="3"> 39.2mm </a-col>
                 </a-row>
               </a-col>
             </a-row>
@@ -307,37 +315,25 @@
           <a-card-grid style="width: 100%; text-align: left">
             <a-row>
               <a-col :span="3">
-                <img width="36" height="34" src="static/img/u309.png" alt="">
+                <img width="36" height="34" src="static/img/u309.png" alt="" />
               </a-col>
               <a-col :span="15">
                 <a-row>
                   <a-col>
-                    <h4 style="float:left;">渗流</h4>
+                    <h4 style="float: left">渗流</h4>
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="8">
-                    安全状态
-                  </a-col>
-                  <a-col :span="16">
-                    正常
-                  </a-col>
+                  <a-col :span="8"> 安全状态 </a-col>
+                  <a-col :span="16"> 正常 </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="8">
-                    当前降水量
-                  </a-col>
-                  <a-col :span="16">
-                    29.2mm
-                  </a-col>
+                  <a-col :span="8"> 当前降水量 </a-col>
+                  <a-col :span="16"> 29.2mm </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="8">
-                    日降水量
-                  </a-col>
-                  <a-col :span="16">
-                    52.2mm
-                  </a-col>
+                  <a-col :span="8"> 日降水量 </a-col>
+                  <a-col :span="16"> 52.2mm </a-col>
                 </a-row>
               </a-col>
               <a-col :span="6">
@@ -367,26 +363,20 @@
           <a-card-grid style="width: 100%; text-align: left">
             <a-row>
               <a-col :span="3">
-                <img width="36" height="34" src="static/img/u550.png" alt="">
+                <img width="36" height="34" src="static/img/u550.png" alt="" />
               </a-col>
               <a-col :span="15">
                 <a-row>
                   <a-col>
-                    <h4 style="float:left;">240断面渗压</h4>
+                    <h4 style="float: left">240断面渗压</h4>
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="8">
-                    安全状态
-                  </a-col>
-                  <a-col :span="16">
-                    正常
-                  </a-col>
+                  <a-col :span="8"> 安全状态 </a-col>
+                  <a-col :span="16"> 正常 </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="8">
-                    水位高程
-                  </a-col>
+                  <a-col :span="8"> 水位高程 </a-col>
                   <a-col :span="16">
                     <a-row>
                       <a-col :span="8">45m(坝顶) </a-col>
@@ -396,13 +386,11 @@
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="8">
-                    水头
-                  </a-col>
+                  <a-col :span="8"> 水头 </a-col>
                   <a-col :span="16">
                     <a-row>
                       <a-col :span="8">5m(坝顶) </a-col>
-                      <a-col :span="8">4m(坝中)  </a-col>
+                      <a-col :span="8">4m(坝中) </a-col>
                       <a-col :span="8">3m(坝底)</a-col>
                     </a-row>
                   </a-col>
@@ -435,26 +423,20 @@
           <a-card-grid style="width: 100%; text-align: left">
             <a-row>
               <a-col :span="3">
-                <img width="36" height="34" src="static/img/u209.png" alt="">
+                <img width="36" height="34" src="static/img/u209.png" alt="" />
               </a-col>
               <a-col :span="15">
                 <a-row>
                   <a-col>
-                    <h4 style="float:left;">变形监测-01</h4>
+                    <h4 style="float: left">变形监测-01</h4>
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="8">
-                    安全状态
-                  </a-col>
-                  <a-col :span="16">
-                    正常
-                  </a-col>
+                  <a-col :span="8"> 安全状态 </a-col>
+                  <a-col :span="16"> 正常 </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="8">
-                    最大位移值
-                  </a-col>
+                  <a-col :span="8"> 最大位移值 </a-col>
                   <a-col :span="16">
                     <a-row>
                       <a-col :span="24">位移X （东）+0.2mm </a-col>
@@ -496,10 +478,15 @@
     >
       <a-col :span="12">
         <a-card>
-          <div slot="title"><span>预警消息</span><span style="font-size: 10px;margin-left: 10px;color: darkgray;">今日 246条消息</span></div>
+          <div slot="title">
+            <span>预警消息</span
+            ><span style="font-size: 10px; margin-left: 10px; color: darkgray"
+              >今日 246条消息</span
+            >
+          </div>
           <a slot="extra" href="#">更多消息</a>
-          <a-card-grid style="width: 100%; text-align: center;padding: 0px;">
-            <a-list bordered :data-source="data">
+          <a-card-grid style="width: 100%; text-align: center; padding: 0px">
+            <a-list bordered :dataSource="warnData">
               <a-list-item slot="renderItem" slot-scope="item">
                 {{ item }}
               </a-list-item>
@@ -517,15 +504,39 @@
   </div>
 </template>
 <script>
+import design from "@/components/design/design.vue";
+import EchartsRadar from "@/components/echarts/EchartsRadar.vue";
+import EchartsRelationship from "@/components/echarts/EchartsRelationship.vue";
+import moment from "moment";
+
 export default {
   name: "generalview",
-  components: {},
+  components: {
+    design,
+    EchartsRadar,
+    EchartsRelationship
+  },
   data() {
     return {
+      radarData: ['a'],
+      relationshipData: ['1'],
+      dateTimeValue: [
+        moment(new Date(), "YYYY-MM-DD"),
+        moment(new Date(), "YYYY-MM-DD"),
+      ],
+      dateModel: "now",
+      dateModelData: [
+        { name: "今日", value: "now" },
+        { name: "近三天", value: "day" },
+        { name: "近一周", value: "week" },
+        { name: "近一月", value: "month" },
+      ],
+      designData: [],
+      warnData: [],
       monitor: 1,
       monitorData: [],
       dataSource: [],
-      expandedKeys: ['0-0-0'],
+      expandedKeys: ["0-0-0"],
       replaceFields: { title: "name" },
       searchValue: "",
       searchStr: "",
@@ -533,22 +544,22 @@ export default {
         {
           name: "雨情监测站01",
           key: "0-0",
-          scopedSlots:{
-            title:'title'
+          scopedSlots: {
+            title: "title",
           },
           children: [
             {
               name: "监测点1(202100100044)",
               key: "0-0-0",
-              scopedSlots:{
-                title:'title'
-              }
+              scopedSlots: {
+                title: "title",
+              },
             },
             {
               name: "监测点2(202100100044)",
               key: "0-0-1",
-              scopedSlots:{
-                title:'title'
+              scopedSlots: {
+                title: "title",
               },
             },
           ],
@@ -630,7 +641,45 @@ export default {
   mounted() {},
   updated() {},
   methods: {
-    handleMonitorChange () {},
+    moment,
+    handleDateModelChange(value) {
+      let dateValue;
+      switch (value) {
+        case "now":
+          dateValue = [
+            moment(new Date(), "YYYY-MM-DD"),
+            moment(new Date(), "YYYY-MM-DD"),
+          ];
+          break;
+        case "day":
+          dateValue = [
+            moment().subtract(3, "days"),
+            moment(new Date(), "YYYY-MM-DD"),
+          ];
+          break;
+        case "week":
+          dateValue = [
+            moment().subtract(1, "weeks"),
+            moment(new Date(), "YYYY-MM-DD"),
+          ];
+          break;
+        case "month":
+          dateValue = [
+            moment().subtract(1, "months"),
+            moment(new Date(), "YYYY-MM-DD"),
+          ];
+          break;
+      }
+      this.dateTimeValue = dateValue;
+    },
+    onDateChange(dates, dateStrings) {
+      console.log(this.dateTimeValue);
+      const start = moment(this.dateTimeValue[0]).format("YYYY-MM-DD");
+      const end = moment(this.dateTimeValue[1]).format("YYYY-MM-DD");
+      console.log(start, end);
+      this.dateModel = undefined;
+    },
+    handleMonitorChange() {},
     handleSceneChange() {},
     handlePlanChange() {},
     onExpand(expandedKeys) {
