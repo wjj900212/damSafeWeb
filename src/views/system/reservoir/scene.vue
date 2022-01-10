@@ -8,16 +8,10 @@
           <div class="fold">
             <a-col :md="6" :sm="20">
               <a-form-item label="水库" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 1}">
-                <a-select
-                  placeholder="选择水库"
-                  show-search
-                  allowClear
-                  :disabled="disabledFlag"
-                  v-model="reservoirName"
-                  :filterOption="filterOption"
-                  @change="setReservoir"
-                >
-                  <a-select-option v-for="(item,index) in reservoirList" :key="'reservoirId' + index" :value="item.reservoirId">
+                <a-select placeholder="选择水库" show-search allowClear :disabled="disabledFlag" v-model="reservoirName"
+                  :filterOption="filterOption" @change="setReservoir">
+                  <a-select-option v-for="(item,index) in reservoirList" :key="'reservoirId' + index"
+                    :value="item.reservoirId">
                     {{ item.reservoirName }}
                   </a-select-option>
                 </a-select>
@@ -25,74 +19,83 @@
             </a-col>
             <a-col :md="6" :sm="20">
               <a-form-item label="场景名称" :labelCol="{span: 5}" :wrapperCol="{span: 16, offset: 0}">
-                <a-input v-model="queryParams.name" placeholder="请输入" />
+                <a-input v-model="queryParams.key" placeholder="请输入" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="20">
               <a-form-item label="所在地区" :labelCol="{span: 5}" :wrapperCol="{span: 16, offset: 0}">
-                <a-input v-model="queryParams.area" placeholder="请输入" />
+                <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="20">
               <a-form-item label="测站编码" :labelCol="{span: 5}" :wrapperCol="{span: 16}">
-                <a-input v-model="queryParams.area" placeholder="请输入" />
+                <a-input v-model="queryParams.stationCode" placeholder="请输入" />
               </a-form-item>
             </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary">查询</a-button>
-            <a-button style="margin-left: 8px">重置</a-button>
+            <a-button type="primary" @click="search">查询</a-button>
+            <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
         </a-row>
       </a-form>
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" @click="$router.push('/system/reservoir/scene/scene_add?reservoirId=' + reservoirId)">添加</a-button>
+        <a-button type="primary" @click="$router.push('/system/reservoir/scene/scene_add?reservoirId=' + reservoirId)">
+          添加</a-button>
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="dataSource"
-        :pagination="pagination" :loading="loading" :scroll="{ x: 900 }">
+        :pagination="pagination" :loading="loading" :scroll="{ x: 900 }" @change="handleTableChange">
         <template slot="latitude" slot-scope="text, record">
           <span>{{record.longitude}},{{record.latitude}}</span>
         </template>
-        <template slot="image" slot-scope="text, record">
-          <img :src="text" style="width:3rem;height: 3rem;"/>
+        <template slot="image" slot-scope="text">
+          <img :src="text" style="width:3rem;height: 3rem;" />
         </template>
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
             <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="编辑"
-              @click="$router.push('/system/reservoir/scene/scene_edit')"></a-icon>
+              @click="$router.push('/system/reservoir/scene/scene_edit?reservoirId=' + reservoirId+'&hiddenId='+record.hiddenId)">
+            </a-icon>
             <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" title="2D" @click="visualConfig(record)"></a-icon>
             <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="hiddenDelete(record)" title="删除">
             </a-icon>
           </div>
         </template>
       </a-table>
-      <sceneVisual :visible="visualVisible" :hiddenPointSource="hiddenPointSource" @close="()=>{ visualVisible=false }"/>
+      <sceneVisual :visible="visualVisible" :id="hiddenId" :name="hiddenName" :hiddenType="hiddenType" :sceneType="sceneType"
+        @close="()=>{ visualVisible=false }" />
     </div>
   </a-card>
   <router-view v-else />
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {
+  mapState
+} from 'vuex'
 import sceneVisual from './scene2D.vue'
+import Cascader from '@/components/distselect/cascader.vue'
 export default {
   name: 'reservoir',
-  components: {sceneVisual},
+  components: {
+    sceneVisual,
+    Cascader
+  },
   data () {
     return {
+      reservoirId: '',
       queryParams: {},
+      optionCityInfo: [], // 省市区筛选所传的值
+      casdata: [],
       loading: false,
-      dataSource: [{
-        name: '121',
-        roleId: 1
-      }],
+      dataSource: [],
       pagination: {
         pageSizeOptions: ['10', '20', '30', '40', '100'],
-        defaultCurrent: 1,
-        defaultPageSize: 10,
+        current: 1,
+        pageSize: 10,
         showQuickJumper: true,
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
@@ -101,7 +104,11 @@ export default {
       hiddenPointSource: {},
       reservoirList: [],
       reservoirName: '',
-      disabledFlag: false
+      disabledFlag: false,
+      hiddenId: 0,
+      hiddenName: '',
+      hiddenType: '',
+      sceneType: 1
     }
   },
   computed: {
@@ -164,6 +171,10 @@ export default {
     })
   },
   methods: {
+    // 获取子组件返回的cityCode和cityType
+    getDistData (distData) {
+      this.queryParams.cityCode = distData.cityCode
+    },
     init () {
       this.reservoirId = this.$route.query.reservoirId
       if (this.reservoirId) {
@@ -186,7 +197,10 @@ export default {
     },
     visualConfig (record) {
       // console.log('场景可视化列表信息', record)
-      this.hiddenPointSource = record
+      // this.hiddenPointSource = record
+      this.hiddenId = record.hiddenId
+      this.hiddenName = record.hiddenName
+      this.hiddenType = record.hiddenType
       this.visualVisible = true
     },
     filterOption (input, option) {
@@ -197,39 +211,33 @@ export default {
     setReservoir (value) {
       if (value) {
         this.queryParams.reservoirId = value
+        this.reservoirId = value
       } else {
         delete this.queryParams.reservoirId
       }
       this.search()
     },
+    // 点击查询
     search () {
-      let { filteredInfo } = this
-      // 重置分页
-      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
-      if (this.paginationInfo) {
-        this.paginationInfo.current = this.pagination.defaultCurrent
-        this.paginationInfo.pageSize = this.pagination.defaultPageSize
-      }
       this.fetch({
-        ...this.queryParams,
-        ...filteredInfo
+        ...this.queryParams
       })
     },
+    // 查询重置
     reset () {
-      // 重置分页
-      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
-      if (this.paginationInfo) {
-        this.paginationInfo.current = this.pagination.defaultCurrent
-        this.paginationInfo.pageSize = this.pagination.defaultPageSize
-      }
-      // 重置列过滤器规则
-      this.filteredInfo = null
+      this.pagination.current = 1
+      this.pagination.pageSize = 10
       // 重置查询参数
       this.queryParams = {}
+      this.fetch({
+        ...this.queryParams
+      })
     },
     handleTableChange (pagination, filters) {
       // 将这三个参数赋值给Vue data，用于后续使用
-      this.paginationInfo = pagination
+      // this.paginationInfo = pagination
+      this.pagination.current = pagination.current
+      this.pagination.pageSize = pagination.pageSize
       this.filteredInfo = filters
       this.fetch({
         ...this.queryParams,
@@ -239,23 +247,18 @@ export default {
     fetch (params = {}) {
       // 显示loading
       this.loading = true
-      if (this.paginationInfo) {
-        // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
-        this.$refs.TableInfo.pagination.current = this.paginationInfo.current
-        this.$refs.TableInfo.pagination.pageSize = this.paginationInfo.pageSize
-        params.pageSize = this.paginationInfo.pageSize
-        params.pageNum = this.paginationInfo.current
-      } else {
-        // 如果分页信息为空，则设置为默认值
-        params.pageSize = this.pagination.defaultPageSize
-        params.pageNum = this.pagination.defaultCurrent
-      }
+      params.pageSize = this.pagination.pageSize
+      params.pageNum = this.pagination.current
       params.reservoirId = this.reservoirId
+      console.log(params)
+      // return
       this.$get('web/hidden/getHiddenList', {
         ...params
       }).then((r) => {
         let data = r.data.data
-        const pagination = { ...this.pagination }
+        const pagination = {
+          ...this.pagination
+        }
         pagination.total = data.total
         this.dataSource = data.records
         this.pagination = pagination
@@ -279,8 +282,7 @@ export default {
             that.search()
           })
         },
-        onCancel () {
-        }
+        onCancel () {}
       })
     }
   }

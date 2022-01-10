@@ -12,14 +12,13 @@
             </a-col>
             <a-col :md="12" :sm="24">
               <a-form-item label="所在地区" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 2}">
-                <a-input v-model="queryParams.name" placeholder="请输入" />
-                <!-- <a-cascader :options="areaList" v-model="queryParams.levelCode" placeholder="请选择" /> -->
+                <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
               </a-form-item>
             </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="getReservoirList">查询</a-button>
-            <a-button style="margin-left: 8px">重置</a-button>
+            <a-button type="primary" @click="searchTable">查询</a-button>
+            <a-button style="margin-left: 8px" @click="resetFilter">重置</a-button>
           </span>
         </a-row>
       </a-form>
@@ -30,234 +29,265 @@
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="dataSource"
-        :pagination="pagination" :loading="loading" :scroll="{ x: 900 }">
+        :pagination="pagination" :loading="loading" :scroll="{ x: 900 }" @change="handleTableChange">
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
+            <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" title="2D" @click="visualConfig(record)"></a-icon>
             <a-icon type="warning" theme="twoTone" twoToneColor="#4a9ff5" title="监测场景"
               @click="getScene(record)"></a-icon>
             <a-icon type="info-circle" theme="twoTone" twoToneColor="#4a9ff5" title="监测点"
               @click="goReservoirMonitoringPoint(record)"></a-icon>
             <a-icon type="user" title="用户" @click="goReservoirUser(record)"></a-icon>
             <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="编辑"
-              @click="$router.push('/system/reservoir/reservoir_edit')"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="userDelete(record)" title="删除">
+              @click="$router.push('/system/reservoir/reservoir_edit?reservoirId='+record.reservoirId)"></a-icon>
+            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="reservoirDelete(record)" title="删除">
             </a-icon>
           </div>
         </template>
       </a-table>
+      <sceneVisual :visible="visualVisible" :id="reservoirId" :name="reservoirName" :hiddenType="hiddenType" :sceneType="sceneType" @close="()=>{ visualVisible=false }"/>
     </div>
   </a-card>
   <router-view v-else />
 </template>
 
 <script>
-  import {
-    mapState
-  } from 'vuex'
-  export default {
-    name: 'reservoir',
-    components: {},
-    data() {
-      return {
-        queryParams: {
-          name: '',
-          levelCode: ''
-        },
-        areaList: [], //城市列表
-        loading: false,
-        dataSource: [],
-        pagination: {
-          pageSizeOptions: ['10', '20', '30', '40', '100'],
-          pageSize: 10,
-          current: 1,
-          showQuickJumper: true,
-          showSizeChanger: true,
-          total: 0,
-          showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`,
-          onChange: (cur, size) => this.pageChange(cur, size),
-          onShowSizeChange: (cur, size) => this.pageChange(cur, size),
-        }
-      }
-    },
-    computed: {
-      ...mapState({
-        currentUser: state => state.account.user
-      }),
-      columns() {
-        let {
-          filteredInfo
-        } = this
-        filteredInfo = filteredInfo || {}
-        return [{
-            title: '序号',
-            customRender: (text, record, index) => `${index + 1}`
-          }, {
-            title: '水库名称',
-            dataIndex: 'reservoirName'
-          }, {
-            title: '地址',
-            dataIndex: 'cityName'
-          }, {
-            title: '管理单位',
-            dataIndex: 'managerUnit'
-          }, {
-            title: '安全状态',
-            dataIndex: 'reservoirStatus',
-            customRender: (text) => {
-              switch (text) {
-                case '0':
-                  return '正常'
-                case '1':
-                  return '异常'
-                case '2':
-                  return '险情'
-              }
-            },
-            filters: [{
-                text: '正常',
-                value: '0'
-              },
-              {
-                text: '异常',
-                value: '1'
-              },
-              {
-                text: '险情',
-                value: '2'
-              }
-            ],
-            filterMultiple: true,
-            filteredValue: filteredInfo.roleId || null,
-            onFilter: (value, record) => record.roleId.includes(value)
-          }, {
-            title: '监测场景',
-            dataIndex: 'sceneCount'
-          },
-          {
-            title: '水库规模',
-            dataIndex: 'scale',
-            customRender: (text) => {
-              switch (text) {
-                case '0':
-                  return '大(1)型'
-                case '1':
-                  return '大(2)型'
-                case '2':
-                  return '中型'
-                case '3':
-                  return '小(1)型'
-                case '4':
-                  return '小(2)型'
-              }
-            },
-            filters: [{
-                text: '大(1)型',
-                value: '0'
-              },
-              {
-                text: '大(2)型',
-                value: '1'
-              },
-              {
-                text: '中型',
-                value: '2'
-              },
-              {
-                text: '小(1)型',
-                value: '3'
-              },
-              {
-                text: '小(2)型',
-                value: '4'
-              }
-            ],
-            filterMultiple: true,
-            filteredValue: filteredInfo.userProjCount || null,
-            onFilter: (value, record) => record.userProjCount.includes(value)
-          }, {
-            title: '水库类型',
-            dataIndex: 'capacity'
-          },
-          {
-            title: '创建时间',
-            dataIndex: 'createTime'
-          }, {
-            title: '操作',
-            dataIndex: 'operation',
-            scopedSlots: {
-              customRender: 'operation'
-            }
-          }
-        ]
-      }
-    },
-    methods: {
-      goReservoirUser(record) {
-        this.$router.push('/system/reservoir/user?reservoirId=' + record.reservoirId)
+import {
+  mapState
+} from 'vuex'
+import Cascader from '@/components/distselect/cascader.vue'
+import sceneVisual from './scene2D.vue'
+export default {
+  name: 'reservoir',
+  components: {
+    Cascader,
+    sceneVisual
+  },
+  data () {
+    return {
+      queryParams: {
+        name: '',
+        levelCode: '',
+        reservoirStatus: '',
+        scale: ''
       },
-      getScene(record){
-        this.$router.push('/system/reservoir/scene?reservoirId=' + record.reservoirId)
+      areaList: [], // 城市列表
+      loading: false,
+      dataSource: [],
+      pagination: {
+        pageSizeOptions: ['10', '20', '30', '40', '100'],
+        pageSize: 10,
+        current: 1,
+        showQuickJumper: true,
+        showSizeChanger: true,
+        total: 0,
+        showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
+        // onChange: (cur, size) => this.pageChange(cur, size),
+        // onShowSizeChange: (cur, size) => this.pageChange(cur, size),
       },
-      goReservoirMonitoringPoint(record) {
-        // console.log('跳转监测点水库信息', record)
-        this.$router.push('/system/reservoir/monitoring_point?reservoirId=' + record.reservoirId)
-      },
-      userDelete(record) {
-        let that = this
-        this.$confirm({
-          title: '确定删除该用户?',
-          content: '当您点击确定按钮后，这个用户将会被彻底删除',
-          centered: true,
-          onOk() {
-            let userIds = []
-            userIds.push(record.userId)
-            that.$post('server/user.php', {
-              userIds: userIds.join(','),
-              action: 'deleteUsers'
-            }).then(() => {
-              that.$message.success('删除成功')
-              that.selectedRowKeys = []
-              that.search()
-            })
-          },
-          onCancel() {
-            that.selectedRowKeys = []
-          }
-        })
-      },
-      // 表格页码及size
-      pageChange(cur,size){
-        this.pagination.current=cur
-        this.pagination.pageSize=size
-        this.getReservoirList()
-      },
-      // 获取水库列表
-      getReservoirList() {
-        this.queryParams.pageNum = this.pagination.current
-        this.queryParams.pageSize = this.pagination.pageSize
-        // console.log(this.queryParams)
-        this.$get("/web/reservoirAdmin/reservoirList", this.queryParams).then(res=>{
-          let rr=res.data
-          // console.log(rr.data)
-          let data=rr.data
-          this.pagination.total=data.total
-          this.dataSource=data.records
-        })
-      },
-      // 获取地区列表
-      getAreaList() {
-        let param = {
-          cityCode: '000000',
-          type: 0
-        }
-        this.$get("/area/listCounty", param).then(res => {})
-      }
-    },
-    mounted() {
-      // this.getAreaList()
-      this.getReservoirList()
+      optionCityInfo: [],
+      casdata: [],
+      reservoirId: 0,
+      reservoirName: '',
+      sceneType: 0, // 二维可视化类型 0 水库 1 监测场景
+      hiddenType: '',
+      visualVisible: false // 二维可视化弹框
     }
+  },
+  computed: {
+    ...mapState({
+      currentUser: state => state.account.user
+    }),
+    columns () {
+      let {
+        filteredInfo
+      } = this
+      filteredInfo = filteredInfo || {}
+      return [/* {
+        title: '序号',
+        customRender: (text, record, index) => `${index + 1}`
+      }, */{
+          title: '水库名称',
+          dataIndex: 'reservoirName'
+        }, {
+          title: '地址',
+          dataIndex: 'cityName'
+        }, {
+          title: '管理单位',
+          dataIndex: 'managerUnit'
+        }, {
+          title: '安全状态',
+          dataIndex: 'reservoirStatus',
+          customRender: (text) => {
+            switch (text) {
+              case '0':
+                return '正常'
+              case '1':
+                return '异常'
+              case '2':
+                return '险情'
+            }
+          },
+          filters: [{
+            text: '正常',
+            value: '0'
+          },
+          {
+            text: '异常',
+            value: '1'
+          },
+          {
+            text: '险情',
+            value: '2'
+          }
+          ],
+          filterMultiple: false,
+          filteredValue:filteredInfo.reservoirStatus||null
+        }, {
+          title: '监测场景',
+          dataIndex: 'sceneCount'
+        },
+        {
+          title: '水库规模',
+          dataIndex: 'scale',
+          customRender: (text) => {
+            switch (text) {
+              case '0':
+                return '大(1)型'
+              case '1':
+                return '大(2)型'
+              case '2':
+                return '中型'
+              case '3':
+                return '小(1)型'
+              case '4':
+                return '小(2)型'
+            }
+          },
+          filters: [{
+            text: '大(1)型',
+            value: '0'
+          },
+          {
+            text: '大(2)型',
+            value: '1'
+          },
+          {
+            text: '中型',
+            value: '2'
+          },
+          {
+            text: '小(1)型',
+            value: '3'
+          },
+          {
+            text: '小(2)型',
+            value: '4'
+          }
+          ],
+          filterMultiple: false,
+          filteredValue:filteredInfo.scale||null
+        },
+        {
+          title: '创建时间',
+          dataIndex: 'createTime'
+        }, {
+          title: '操作',
+          dataIndex: 'operation',
+          scopedSlots: {
+            customRender: 'operation'
+          }
+        }
+      ]
+    }
+  },
+  methods: {
+    // 获取子组件返回的cityCode和cityType
+    getDistData (distData) {
+      this.queryParams.levelCode = distData.cityCode
+    },
+    goReservoirUser (record) {
+      this.$router.push('/system/reservoir/user?reservoirId=' + record.reservoirId)
+    },
+    getScene (record) {
+      this.$router.push('/system/reservoir/scene?reservoirId=' + record.reservoirId)
+    },
+    goReservoirMonitoringPoint (record) {
+      // console.log('跳转监测点水库信息', record)
+      this.$router.push('/system/reservoir/monitoring_point?reservoirId=' + record.reservoirId)
+    },
+    reservoirDelete (record) {
+      let that = this
+      this.$confirm({
+        title: '确定删除该水库?',
+        content: '当您点击确定按钮后，这个水库将会被彻底删除',
+        centered: true,
+        onOk () {
+          that.$post('/web/reservoirAdmin/deleteReservoir', {
+            reservoirId: record.reservoirId
+          }).then(() => {
+            that.$message.success('删除成功')
+            that.getReservoirList()
+          })
+        },
+        onCancel () {
+          that.selectedRowKeys = []
+        }
+      })
+    },
+    // 重置
+    resetFilter(){
+      this.queryParams={}
+      this.pagination.current=1
+      this.pagination.pageSize=10
+      this.getReservoirList({
+        ...this.queryParams
+      })
+    },
+    // 表格页码及size 表格筛选
+    handleTableChange (pagination, filter) {
+      // console.log(pagination,filter)
+      this.pagination.current = pagination.current
+      this.pagination.pageSize = pagination.pageSize
+      this.getReservoirList({
+        ...this.queryParams,
+        ...filter
+      })
+    },
+    // 获取水库列表
+    getReservoirList (params = {}) {
+      if (!params.name)params.name = ''
+      if (!params.levelCode)params.levelCode = ''
+      // 如果分页信息为空，则设置为默认值
+      params.pageSize = this.pagination.pageSize
+      params.pageNum = this.pagination.current
+      if (params.reservoirStatus) params.reservoirStatus = params.reservoirStatus.join(',')
+      if (params.scale) params.scale = params.scale.join(',')
+      this.$get('/web/reservoirAdmin/reservoirList', params).then(res => {
+        let rr = res.data
+        let data = rr.data
+        this.pagination.total = data.total
+        this.dataSource = data.records
+      })
+    },
+    searchTable () {
+      this.getReservoirList({
+        ...this.queryParams
+      })
+    },
+    visualConfig (record) {
+      // console.log('场景可视化列表信息', record)
+      this.reservoirId = record.reservoirId
+      this.reservoirName = record.reservoirName
+      this.visualVisible = true
+    }
+  },
+  mounted () {
+    this.getReservoirList({
+      ...this.queryParams
+    })
   }
+}
 
 </script>
 <style lang="less" scoped>

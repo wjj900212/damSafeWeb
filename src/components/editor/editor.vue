@@ -69,6 +69,12 @@
           return {}
         }
       },
+      delParams: {
+        type: Object,
+        default: function () {
+          return {}
+        }
+      },
       putUrl: {
         type: String,
         default: ''
@@ -192,12 +198,12 @@
       delPic() {
         // console.log(this.delImg)
         let obj = {}
-        if (JSON.stringify(this.putParams) != "{}") {
-          Object.keys(this.putParams).forEach(k => {
-            obj[k] = this.putParams[k]
+        if (JSON.stringify(this.delParams) != "{}") {
+          Object.keys(this.delParams).forEach(k => {
+            obj[k] = this.delParams[k]
           })
         }
-        obj.list = this.delImg
+        obj.arr = this.delImg.join(',')
         // console.log(obj)
         this.$postDate(this.delUrl, obj).then(res => {
           this.delImg = []
@@ -220,3 +226,5 @@
   }
 
 </script>
+<style scoped>
+</style>

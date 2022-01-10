@@ -16,8 +16,11 @@
       <!--<a-cascader :options="cityArr" placeholder="请选择所在区县" v-decorator="[
           'city', { rules: [{ required: true, message: '请填写所在区县' }] } ]" />-->
       <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
-      <a-input style="display: none;"
-               v-decorator="['levelCode',{rules: [{ required: true, message: '所属地区不能为空'}]}]"></a-input>
+      <a-input style="display: none;" v-decorator="['levelCode',{rules: [{ required: true, message: '所属地区不能为空'}]}]">
+      </a-input>
+    </a-form-item>
+    <a-form-item label="所在乡镇" v-bind="formItemLayout">
+      <a-input v-decorator="['township']"></a-input>
     </a-form-item>
     <a-form-item label="位置坐标" v-bind="formItemLayout">
       <div style="display: flex;align-items: center;white-space: nowrap;">
@@ -37,9 +40,7 @@
         :before-upload="beforeRealSceneUpload" @change="handleRealSceneUploadChange" @preview="handleRealScenePreview">
         <div>
           <a-icon type="plus" />
-          <div class="ant-upload-text">
-            上传
-          </div>
+          <div class="ant-upload-text">上传</div>
         </div>
       </a-upload>
       <a-modal :visible="previewRealSceneVisible" :footer="null" @cancel="previewRealSceneVisible=false">
@@ -51,9 +52,7 @@
         :before-upload="beforeUpload" @change="handleUploadChange" @preview="handlePreview">
         <div>
           <a-icon type="plus" />
-          <div class="ant-upload-text">
-            上传
-          </div>
+          <div class="ant-upload-text">上传</div>
         </div>
       </a-upload>
       <a-modal :visible="previewVisible" :footer="null" @cancel="previewVisible=false">
@@ -97,217 +96,349 @@
 </template>
 
 <script>
-import mapCenterPoint from '@/components/mapCenterPoint/mapCenterPoint' // 选择中心点
-import Cascader from '@/components/distselect/cascader.vue'
-function getBase64 (file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = (e) => resolve(e.target.result)
-    reader.onerror = error => reject(error)
-  })
-}
-export default {
-  name: 'scene_add_edit',
-  components: {
-    mapCenterPoint,
-    Cascader
-  },
-  props: {
-    reservoirId: {
-      type: String,
-      default: ''
-    }
-  },
-  data () {
-    return {
-      formItemLayout: {
-        labelCol: {
-          span: 6
-        },
-        wrapperCol: {
-          span: 15
-        }
-      },
-      form: this.$form.createForm(this),
-      MapVisible: false, // 地图选择中心点弹框
-      centerLongitude: '',
-      centerLatitude: '',
-      previewVisible: false,
-      previewImage: '',
-      previewRealSceneVisible: false,
-      previewRealSceneImage: '',
-      fList: [],
-      fileList: [],
-      RealSceneFList: [],
-      RealSceneFileList: [],
-      customParam: [], // 自定义字段
-      customName: '', // 自定义字段名称
-      isEditCustomName: '', // 修改自定义字段名称
-      customFieldModal: false,
-      customErr: {
-        status: '',
-        help: ''
-      },
-      sceneTypeList: [],
-      optionCityInfo: [],
-      distData: '', // 区县级联组件返回的数据
-      casdata: [] // 级联插件默认值
-    }
-  },
-  methods: {
-    saveLngLat (lng, lat) {
-      this.form.setFieldsValue({
-        'longitude': lng,
-        'latitude': lat
-      })
-      this.centerLongitude = lng
-      this.centerLatitude = lat
+  import mapCenterPoint from '@/components/mapCenterPoint/mapCenterPoint' // 选择中心点
+  import Cascader from '@/components/distselect/cascader.vue'
+
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (e) => resolve(e.target.result)
+      reader.onerror = error => reject(error)
+    })
+  }
+  var hiddenId //hiddenId 存在即为修改监测场景
+  export default {
+    name: 'scene_add_edit',
+    components: {
+      mapCenterPoint,
+      Cascader
     },
-    // 确认自定义字段 关闭弹框
-    customFieldOk () {
-      if (this.customName) {
-        this.customErr.status = ''
-        this.customErr.help = ''
-        if (this.isEditCustomName !== '') this.customParam[this.isEditCustomName].key = this.customName
-        else {
-          this.customParam.push({
-            key: this.customName,
-            value: ''
+    props: {
+      reservoirId: {
+        type: String,
+        default: ''
+      }
+    },
+    data() {
+      return {
+        formItemLayout: {
+          labelCol: {
+            span: 6
+          },
+          wrapperCol: {
+            span: 15
+          }
+        },
+        form: this.$form.createForm(this),
+        MapVisible: false, // 地图选择中心点弹框
+        centerLongitude: '',
+        centerLatitude: '',
+        previewVisible: false,
+        previewImage: '',
+        previewRealSceneVisible: false,
+        previewRealSceneImage: '',
+        fileList: [],
+        RealSceneFileList: [],
+        customParam: [], // 自定义字段
+        customName: '', // 自定义字段名称
+        isEditCustomName: '', // 修改自定义字段名称
+        customFieldModal: false,
+        customErr: {
+          status: '',
+          help: ''
+        },
+        sceneTypeList: [],
+        optionCityInfo: [],
+        distData: '', // 区县级联组件返回的数据
+        casdata: [] // 级联插件默认值
+      }
+    },
+    methods: {
+      saveLngLat(lng, lat) {
+        this.form.setFieldsValue({
+          'longitude': lng,
+          'latitude': lat
+        })
+        this.centerLongitude = lng
+        this.centerLatitude = lat
+      },
+      // 确认自定义字段 关闭弹框
+      customFieldOk() {
+        if (this.customName) {
+          this.customErr.status = ''
+          this.customErr.help = ''
+          if (this.isEditCustomName !== '') this.customParam[this.isEditCustomName].key = this.customName
+          else {
+            this.customParam.push({
+              key: this.customName,
+              value: ''
+            })
+          }
+        } else {
+          this.customErr.status = 'error'
+          this.customErr.help = '请输入自定义名称'
+          return false
+        }
+        this.customFieldModal = false
+        this.customName = ''
+        this.isEditCustomName = ''
+      },
+      editCustomName(v, i) {
+        this.customName = v.key
+        this.isEditCustomName = i
+        this.customFieldModal = true
+      },
+      // select 筛选过滤
+      filterOption(input, option) {
+        return (
+          option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        )
+      },
+      async handlePreview(file) {
+        if (!file.url && !file.preview) {
+          file.preview = await getBase64(file.originFileObj)
+        }
+        this.previewImage = file.url || file.preview
+        this.previewVisible = true
+      },
+      async handleRealScenePreview(file) {
+        if (!file.url && !file.preview) {
+          file.preview = await getBase64(file.originFileObj)
+        }
+        this.previewRealSceneImage = file.url || file.preview
+        console.log('展示图片', file)
+        this.previewRealSceneVisible = true
+      },
+      beforeUpload(file) {
+        this.fileList = [...this.fileList, file]
+        return false
+      },
+      beforeRealSceneUpload(file) {
+        this.RealSceneFileList = [...this.RealSceneFileList, file]
+        return false
+      },
+      // 布设图
+      handleRemove(file) {
+        const index = this.fileList.indexOf(file)
+        const newFileList = this.fileList.slice()
+        newFileList.splice(index, 1)
+        this.fileList = newFileList
+      },
+      // 实景图
+      handleRealSceneRemove(file) {
+        const index = this.RealSceneFileList.indexOf(file)
+        const newFileList = this.RealSceneFileList.slice()
+        newFileList.splice(index, 1)
+        this.RealSceneFileList = newFileList
+      },
+      handleUploadChange({
+        fileList
+      }) {
+        this.fileList = fileList
+      },
+      handleRealSceneUploadChange({
+        fileList
+      }) {
+        this.RealSceneFileList = fileList
+      },
+      // 区县回显 赋值
+      setData(val = {}) {
+        let that = this
+        that.optionCityInfo = []
+        that.casdata = []
+        if (val.cityInfo.length === 3) {
+          that.optionCityInfo.push({
+            label: val.cityInfo[0].cityName,
+            value: val.cityInfo[0].cityCode,
+            children: [{
+              label: val.cityInfo[1].cityName,
+              value: val.cityInfo[1].cityCode,
+              children: [{
+                label: val.cityInfo[2].cityName,
+                value: val.cityInfo[2].cityCode
+              }]
+            }]
+          })
+        } else if (val.cityInfo.length === 2) {
+          that.optionCityInfo.push({
+            label: val.cityInfo[0].cityName,
+            value: val.cityInfo[0].cityCode,
+            children: [{
+              label: val.cityInfo[1].cityName,
+              value: val.cityInfo[1].cityCode
+            }]
+          })
+        } else {
+          that.optionCityInfo.push({
+            label: val.cityInfo[0].cityName,
+            value: val.cityInfo[0].cityCode
           })
         }
-      } else {
-        this.customErr.status = 'error'
-        this.customErr.help = '请输入自定义名称'
-        return false
-      }
-      this.customFieldModal = false
-      this.customName = ''
-      this.isEditCustomName = ''
-    },
-    editCustomName (v, i) {
-      this.customName = v.key
-      this.isEditCustomName = i
-      this.customFieldModal = true
-    },
-    // select 筛选过滤
-    filterOption (input, option) {
-      return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      )
-    },
-    async handlePreview (file) {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj)
-      }
-      this.previewImage = file.url || file.preview
-      this.previewVisible = true
-    },
-    async handleRealScenePreview (file) {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj)
-      }
-      this.previewRealSceneImage = file.url || file.preview
-      console.log('展示图片', file)
-      this.previewRealSceneVisible = true
-    },
-    beforeUpload (file) {
-      this.fileList = [...this.fileList, file]
-      this.fList = [...this.fList, file]
-      return false
-    },
-    beforeRealSceneUpload (file) {
-      this.RealSceneFileList = [...this.RealSceneFileList, file]
-      this.RealSceneFList = [...this.RealSceneFList, file]
-      return false
-    },
-    handleRemove (file) {
-      const index = this.fList.indexOf(file)
-      const newFileList = this.fList.slice()
-      newFileList.splice(index, 1)
-      this.fList = newFileList
-    },
-    handleRealSceneRemove (file) {
-      const index = this.RealSceneFList.indexOf(file)
-      const newFileList = this.RealSceneFList.slice()
-      newFileList.splice(index, 1)
-      this.RealSceneFList = newFileList
-    },
-    handleUploadChange ({ fileList }) {
-      this.fileList = fileList
-    },
-    handleRealSceneUploadChange ({ fileList }) {
-      this.RealSceneFileList = fileList
-    },
-    // 保存
-    handleSubmit (e) {
-      e.preventDefault()
-      let _this = this
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          if (_this.customParam) {
-            values.customParam = _this.customParam
-          }
-          values.reservoirId = this.reservoirId
-          console.log('Received values of form: ', values)
-          _this.$post('web/hidden/addHiddenPoint', values).then((r) => {
-            if (r.data.code === 1) {
-              let dataId = r.data.data
-              const { fList, RealSceneFList } = _this
-              const formData = new FormData()
-              fList.forEach(file => {
-                formData.append('layout', file)
-              })
-              RealSceneFList.forEach(file => {
-                formData.append('image', file)
-              })
-              formData.append('dataId', dataId)
-              formData.append('imageList', '')
-              formData.append('layoutList', '')
-              _this.$upload('file/uploadSceneImage', formData).then((r) => {
+        for (let i = 0; i < val.cityInfo.length; i++) {
+          that.casdata.push(val.cityInfo[i].cityCode)
+        }
+      },
+      // 保存
+      handleSubmit(e) {
+        e.preventDefault()
+        let _this = this
+        // return
+        this.form.validateFields((err, values) => {
+          if (!err) {
+            if (_this.customParam) {
+              values.customParam = JSON.stringify(_this.customParam)
+            }
+            values.reservoirId = this.reservoirId
+            console.log('Received values of form: ', values)
+            if (hiddenId) {
+              // 修改
+              values.id = hiddenId
+              _this.$post('web/hidden/updateHiddenPoint', values).then((r) => {
                 if (r.data.code === 1) {
-                  _this.$message.success('上传成功')
-                  _this.fList = []
-                  _this.fileList = []
-                  _this.RealSceneFList = []
-                  _this.RealSceneFileList = []
-                  _this.form.resetFields()
+                  _this.putimgsave(hiddenId)
                 } else {
                   _this.$message.warning(r.data.msg)
                 }
               })
             } else {
-              _this.$message.warning(r.data.msg)
+              // 添加
+              _this.$post('web/hidden/addHiddenPoint', values).then((r) => {
+                if (r.data.code === 1) {
+                  let dataId = r.data.data
+                  _this.putimgsave(dataId)
+                } else {
+                  _this.$message.warning(r.data.msg)
+                }
+              })
             }
-          })
+          }
+        })
+      },
+      // 保存实景图与布设图
+      putimgsave(dataId) {
+        let _this = this
+        const {
+          fileList,
+          RealSceneFileList
+        } = _this
+        const formData = new FormData()
+        // console.log(fileList)
+        let layoutList = []
+        fileList.forEach(file => {
+          if (file.originFileObj) formData.append('layout', file.originFileObj)
+          else layoutList.push(file.url)
+        })
+        let imageList = []
+        RealSceneFileList.forEach(file => {
+          if (file.originFileObj) formData.append('image', file.originFileObj)
+          else imageList.push(file.url)
+        })
+        formData.append('dataId', dataId)
+        if (imageList.length > 0) {
+          formData.append('imageList', imageList.join('||')) //旧的实景图路径
         }
-      })
+        if (layoutList.length > 0) {
+          formData.append('layoutList', layoutList.join("||")) //	旧的布设图路径
+        }
+        _this.$upload('file/uploadSceneImage', formData).then((r) => {
+          if (r.data.code === 1) {
+            _this.$message.success('上传成功')
+            _this.fileList = []
+            _this.RealSceneFileList = []
+            _this.form.resetFields()
+          } else {
+            _this.$message.warning(r.data.msg)
+          }
+        })
+      },
+      // 获取场景类型列表
+      getHiddenDangerTypeList() {
+        this.$get('web/hidden/getHiddenDangerTypeList').then((r) => {
+          this.sceneTypeList = r.data.data
+        })
+      },
+      // 获取子组件返回的cityCode和cityType
+      getDistData(distData) {
+        this.distData = distData
+        this.levelCode = this.distData.cityCode
+        this.form.setFieldsValue({
+          'levelCode': this.distData.cityCode
+        })
+      },
+      // 修改场景内容查询
+      getHiddenMsg() {
+        this.$post('/web/hidden/getHiddenPointDetail', {
+          hiddenId
+        }).then(res => {
+          let rr = res.data
+          if (rr.code != 1) {
+            this.$message.error(rr.msg)
+            return false
+          }
+          let data = rr.data
+          let obj = {
+            name: data.hiddenName,
+            type: Number(data.hiddenType),
+            levelCode: data.cityCode,
+            longitude: data.longitude,
+            latitude: data.latitude,
+            stationCode: data.stationCode,
+            remarks: data.remarks,
+            township:data.township
+          }
+          this.form.setFieldsValue(obj) //表单赋值
+          this.setData({
+            ...data
+          }) //省市区回显
+          if (data.customParam) this.customParam = JSON.parse(data.customParam) //自定义字段
+          // 实景图
+          if (data.image) {
+            let imgArr = data.image.split('||')
+            imgArr.forEach((v, i) => {
+              this.RealSceneFileList.push({
+                uid: -(i + 1),
+                name: getUrlParam(v, 'filename'),
+                status: 'done',
+                url: v
+              })
+            })
+          }
+          // 布设图
+          if (data.layout) {
+            let imgArr = data.layout.split('||')
+            imgArr.forEach((v, i) => {
+              this.fileList.push({
+                uid: -(i + 1),
+                name: getUrlParam(v, 'filename'),
+                status: 'done',
+                url: v
+              })
+            })
+          }
+        })
+      }
     },
-    // 获取场景类型列表
-    getHiddenDangerTypeList () {
-      this.$get('web/hidden/getHiddenDangerTypeList').then((r) => {
-        this.sceneTypeList = r.data.data
-      })
-    },
-    // 获取子组件返回的cityCode和cityType
-    getDistData (distData) {
-      this.distData = distData
-      this.levelCode = this.distData.cityCode
-      this.form.setFieldsValue({
-        'levelCode': this.distData.cityCode
-      })
+    mounted() {
+      this.getHiddenDangerTypeList()
+      //hiddenId 存在即为修改监测场景
+      hiddenId = this.$route.query.hiddenId
+      if (hiddenId) this.getHiddenMsg()
     }
-  },
-  mounted () {
-    this.getHiddenDangerTypeList()
-    // form 赋值
-    // this.form.setFieldsValue({
-    //   latitude: 11,
-    //   longitude: 22,
-    //   username: '名称'
-    // })
   }
-}
+  //获取url中的参数
+  function getUrlParam(url, name) {
+    try {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      var r = url.split('?')[1].match(reg);
+      if (r != null) {
+        return r[2];
+      }
+      return ""; //如果此处只写return;则返回的是undefined
+    } catch (e) {
+      return ""; //如果此处只写return;则返回的是undefined
+    }
+  }
 
 </script>
 <style scoped>
