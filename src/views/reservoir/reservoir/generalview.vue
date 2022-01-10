@@ -48,7 +48,7 @@
             <a-row>
               <a-col :span="12">
                 <!-- <img src="static/img/u289.png" alt="" /> -->
-                <div style="width: 100%;height: 220px;">
+                <div :style="{ width: '100%', height: '220px' }">
                   <component
                     :is="'EchartsRadar'"
                     refid="radar"
@@ -218,12 +218,14 @@
                 </div>
               </a-col>
               <a-col :span="18">
-                <component
-                  :is="'EchartsRelationship'"
-                  refid="Relationship"
-                  :data="relationshipData"
-                  class="main-content"
-                ></component>
+                <div :style="{width: '100%', height: '300px'}">
+                  <component
+                    :is="'EchartsRelationship'"
+                    refid="Relationship"
+                    :data="relationshipData"
+                    class="main-content"
+                  ></component>
+                </div>
               </a-col>
             </a-row>
           </a-card-grid>
@@ -259,7 +261,16 @@
               </a-col>
             </a-row>
           </a-card-grid>
-          <a-card-grid style="width: 100%; text-align: center"> </a-card-grid>
+          <a-card-grid style="width: 100%; text-align: center">
+            <div :style="{ width: '100%', height: '320px' }">
+              <component
+                :is="'EchartsBarLine'"
+                refid="BarLine"
+                :data="radarData"
+                class="main-content"
+              ></component>
+            </div>
+          </a-card-grid>
         </a-card>
       </a-col>
       <a-col :span="12">
@@ -301,7 +312,9 @@
             <a-button type="primary"> 查询 </a-button>
             <a-button type="primary"> 导出 </a-button>
           </div>
-          <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
+          <a-card-grid style="width: 100%; text-align: center">
+            
+          </a-card-grid>
         </a-card>
       </a-col>
     </a-row>
@@ -507,6 +520,7 @@
 import design from "@/components/design/design.vue";
 import EchartsRadar from "@/components/echarts/EchartsRadar.vue";
 import EchartsRelationship from "@/components/echarts/EchartsRelationship.vue";
+import EchartsBarLine from "@/components/echarts/EchartsBarLine.vue";
 import moment from "moment";
 
 export default {
@@ -514,7 +528,8 @@ export default {
   components: {
     design,
     EchartsRadar,
-    EchartsRelationship
+    EchartsRelationship,
+    EchartsBarLine
   },
   data() {
     return {

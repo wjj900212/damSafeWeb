@@ -23,6 +23,7 @@ export default {
   methods: {
     drawLine () {
       let myChart = this.$echarts.init(document.getElementById(this.refid))
+      window.addEventListener('resize',() => { myChart.resize(); });
       let data = this.data
       let name = this.name
       console.log('EchartsThinbar',data)
@@ -101,6 +102,9 @@ export default {
         }]
       }
       myChart.setOption(option, true)
+      setTimeout(() => {
+        myChart.resize()
+      },500)
     }
   },
   mounted () {

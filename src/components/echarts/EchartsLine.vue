@@ -43,6 +43,7 @@ export default {
     drawLine () {
       console.log(this.refid)
       let myChart = this.$echarts.init(document.getElementById(this.refid))
+      window.addEventListener('resize',() => { myChart.resize(); });
       // this.$get('https://echarts.cdn.apache.org/examples/data/asset/data/aqi-beijing.json').then((r) => {
       let data = this.data
       let boundary = this.boundary
@@ -171,6 +172,9 @@ export default {
         }
       }, true)
       // myChart.refresh()
+      setTimeout(() => {
+        myChart.resize()
+      },500)
     }
   },
   mounted () {

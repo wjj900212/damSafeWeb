@@ -27,6 +27,7 @@ export default {
     drawLine () {
       console.log(this.data)
       let myChart = this.$echarts.init(document.getElementById(this.refid))
+      window.addEventListener('resize',() => { myChart.resize(); });
       // this.$get('https://echarts.cdn.apache.org/examples/data/asset/data/aqi-beijing.json').then((r) => {
       let data = this.data
       let name = this.name
@@ -76,6 +77,9 @@ export default {
         }
       }, true)
       // myChart.refresh()
+      setTimeout(() => {
+        myChart.resize()
+      },500)
     }
   },
   mounted () {
