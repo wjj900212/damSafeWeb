@@ -45,8 +45,8 @@
           </div>
         </template>
       </a-table>
+      <sceneVisual :visible="visualVisible" :id="reservoirId" :name="reservoirName" :hiddenType="hiddenType" :sceneType="sceneType" @close="()=>{ visualVisible=false }"/>
     </div>
-    <sceneVisual :visible="visualVisible" :id="reservoirId" :name="reservoirName" :sceneType="sceneType" @close="()=>{ visualVisible=false }"/>
   </a-card>
   <router-view v-else />
 </template>
@@ -90,6 +90,7 @@ export default {
       reservoirId: 0,
       reservoirName: '',
       sceneType: 0, // 二维可视化类型 0 水库 1 监测场景
+      hiddenType: '',
       visualVisible: false // 二维可视化弹框
     }
   },

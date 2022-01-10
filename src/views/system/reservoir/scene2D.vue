@@ -1,8 +1,8 @@
 <template>
   <!-- 监测场景可视化 scene2D -->
-  <a-modal :visible="visible" title="二维可视化配置" width="1000px" @cancel="$emit('close')">
+  <a-modal :visible="visible" title="二维可视化配置" width="1100px" @cancel="handleCancel">
     <div style="display: flex;height: auto;min-height: 450px;">
-      <div style="flex: 0.25;border-right:1px solid #e9e9e9;">
+      <div style="width:300px;border-right:1px solid #e9e9e9;">
         <div style="margin:5px;">
           <a-input-search v-model="searchStr" placeholder="搜索监测点" @search="onSearch" />
         </div>
@@ -14,7 +14,7 @@
           </a-tree>
         </div>
       </div>
-      <div style="flex: 0.75;position: relative;padding:5px;">
+      <div style="width:100%;position: relative;padding:5px;">
         <!-- :disabled="panes.length > 4" @click="add" -->
         <div style="position: absolute;top:0px;right: 0px;z-index: 2;">
           <a-button type="primary" icon="plus" @click="isShowAddScene=true">添加</a-button>
@@ -30,12 +30,10 @@
               <VueDragResize v-for="(v,i) in pane.itemList" :key="i" :isActive="v.isActive" :w="v.width-28" :h="v.height-28"
                 v-on:clicked="dragClick(i)" v-on:dragging="resize" :isResizable="false" :parentLimitation="true"
                 :parentW="765" :parentH="398" :x="v.xaxis" :y="v.yaxis">
-                <div
-                  style="background: url('static/img/圆角矩形2640.png');width: 128px;height: 48px;position: absolute;top:-48px;">
-                  <span style="color:#ffffff;display:flex;justify-content: center;line-height: 40px;"
-                    :title="v.pnName">{{v.pnName | ellipsis(9)}}</span>
+                <div style="background: url('static/img/圆角矩形2640.png');width: 98px;height: 36px;background-size:100% 100%;position: absolute;top:-39px;left:-5px;">
+                  <span style="color:#ffffff;display:flex;justify-content: center;line-height: 25px;" :title="v.pnName">{{v.pnName | ellipsis(6)}}</span>
                 </div>
-                <img :src="v.path" alt="" style="width:100%;height: 100%;">
+                <img :src="v.path" alt="" :style="{width:(v.width - 22) + 'px',height: (v.height - 22) + 'px'}">
               </VueDragResize>
             </div>
           </a-tab-pane>
@@ -43,9 +41,9 @@
       </div>
     </div>
     <template slot="footer">
-      <a-button type="primary">确定</a-button>
+      <a-button type="primary" @click="handleSave">确定</a-button>
     </template>
-    <visualAdd :visible="isShowAddScene" :hiddenId="id" @getScenePicPath="getScenePicPath" @onClose="()=>{isShowAddScene=false}" />
+    <visualAdd :sceneType="sceneType" :hiddenType="hiddenType" :visible="isShowAddScene" :hiddenId="id" @getScenePicPath="getScenePicPath" @onClose="()=>{isShowAddScene=false}" />
   </a-modal>
 </template>
 
@@ -73,12 +71,16 @@ export default {
     sceneType: {
       type: Number,
       default: 0
+    },
+    hiddenType: {
+      type: String,
+      default: ''
     }
   },
   data () {
     return {
       searchStr: '',
-      treeDisabled:false,
+      treeDisabled: false,
       panes: [], // 场景列表
       pnTreeList: [],
       expandedKeys: ['all'],
@@ -117,16 +119,20 @@ export default {
       let pnId = []
       if (newVal.length === 0) {
         oldVal = newVal
-        console.log('newVal.length', this.panes.find(item => item.sceneId === this.activeKey))
-        this.panes.find(item => item.sceneId === this.activeKey).itemList = []
-        this.panes = Object.assign([], this.panes)
+        console.log(this.panes)
+        if (this.panes.find(item => item.sceneId === this.activeKey) !== undefined) {
+          console.log('newVal.length', this.panes.find(item => item.sceneId === this.activeKey))
+          this.panes.find(item => item.sceneId === this.activeKey).itemList = []
+          this.panes = Object.assign([], this.panes)
+        }
       }
       if (oldVal.length !== 0 || newVal.length === 1 || newVal.length === this.checkedKeys.length) {
         pnId = this.diffent(newVal, oldVal)
       }
       if (pnId.length !== 0) {
         let isExite = newVal.findIndex(item => item === pnId[0])
-        console.log('isExite', isExite)
+        /* console.log('isExite', isExite)
+        console.log('pnId', pnId) */
         if (isExite === 0) {
           if (this.panes.find(item => item.sceneId === this.activeKey).itemList.length === 0) {
             for (let i = 0; i < pnId.length; i++) {
@@ -222,7 +228,7 @@ export default {
         for (let i = 0; i < projPnData.length; i++) {
           let treeHidden = {}
           treeHidden.title = projPnData[i].hiddenName
-          treeHidden.key = projPnData[i].hiddenId
+          treeHidden.key = projPnData[i].hiddenId + 'all'
           treeHidden.children = []
           treePnData.push(treeHidden)
           console.log('二维可视化数列表', treePnData)
@@ -279,7 +285,7 @@ export default {
     },
     onCheck (checkedKeys) {
       console.log('checkedKeys-----', checkedKeys)
-      let allEmle = checkedKeys.findIndex(item => item === 'all')
+      let allEmle = checkedKeys.findIndex(item => typeof item === 'string')
       console.log('选择多选框', allEmle)
       if (allEmle >= 0) {
         // checkedKeys.pop()
@@ -318,6 +324,31 @@ export default {
         this.checkedKeys = checkkey
       }
       console.log('callback---newVal', this.checkedKeys)
+    },
+    handleCancel () {
+      this.checkedKeys = []
+      this.$emit('close')
+    },
+    handleSave () {
+      let iconData = []
+      for (let i = 0; i < this.panes.length; i++) {
+        for (let j = 0; j < this.panes[i].itemList.length; j++) {
+          let icon = {}
+          icon.projPnId = this.panes[i].itemList[j].projPnId
+          icon.sceneId = this.panes[i].itemList[j].sceneId
+          icon.xaxis = this.panes[i].itemList[j].xaxis
+          icon.yaxis = this.panes[i].itemList[j].yaxis
+          iconData.push(icon)
+        }
+      }
+      this.$postDate('web/hiddenScene/addOrUpdateConfig?dataId=' + this.id + '&sceneType=' + this.sceneType, iconData).then((r) => {
+        if (r.data.code === 1) {
+          this.handleCancel()
+          this.$message.success('可视化配置成功')
+        }
+      }).catch((e) => {
+        console.log(e)
+      })
     },
     diffent (fArr, cArr) {
       let diffRes = []
