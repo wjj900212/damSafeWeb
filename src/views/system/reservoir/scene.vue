@@ -277,9 +277,13 @@ export default {
           hiddenIds.push(record.hiddenId)
           that.$post('web/hidden/deleteHiddenPoint', {
             ids: hiddenIds.join(',')
-          }).then(() => {
-            that.$message.success('删除成功')
-            that.search()
+          }).then((r) => {
+            if (r.data.code === 1) {
+              that.$message.success('删除成功')
+              that.search()
+            } else {
+              that.$message.error(r.data.msg)
+            }
           })
         },
         onCancel () {}

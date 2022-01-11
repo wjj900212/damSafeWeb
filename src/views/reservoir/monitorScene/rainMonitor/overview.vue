@@ -3,81 +3,129 @@
   <div class="overview">
     <a-card title="雨情概况" style="width: 100%">
       <a slot="extra" href="#">安全管理预案</a>
-      <div class="basicMsg">
-        <div class="basicTxt">
-          <a-icon type="area-chart" style="fontSize:3rem;color:#1397db" />
-          <div class="basic">
-            <div class="subtit">雨情监测</div>
-            <div class="subTxt"><span>测站编码</span> test_001</div>
-            <div class="subTxt"><span>建设时间</span> 2022-01-01</div>
-            <div class="subTxt"><span>联系人</span> 张三</div>
-          </div>
-        </div>
-        <img src="static/img/u268.svg" alt="" />
-      </div>
-      <div class="stateMsg">
-        <div class="s_left">
-          <div>
-            <div>降水状态</div>
-            <div style="font-size:1.8rem;color:#1a94ff;">小雨</div>
-          </div>
-        </div>
-        <div class="s_right">
-          <div>安全状态</div>
-          <div style="font-size:1.8rem;color:#24C174;">正常</div>
-        </div>
-      </div>
-      <div class="dataBox">
-        <div class="data_tit">
-          <div>
-            <span>当前</span>
-            <a-select v-model="current">
-              <a-select-option value="jack">Jack (100)</a-select-option>
-              <a-select-option value="lucy">Lucy (101)</a-select-option>
-            </a-select>
-          </div>
-          <div>
-            <a-button type="primary" size="small">召测</a-button>
-            <a-button type="primary" size="small">加密采集</a-button>
-          </div>
-        </div>
-        <div class="dataVBox">
-          <div class="dataV" v-for="i in 4" :key="i">
-            <div>
-              <span>当前库水位(m)</span>
-              <span class="cricle"></span>
-            </div>
-            <div>
-              <span style="color:#1a94ff;">5.0</span>
-              <span>07-20 23:12</span>
+      <a-card-grid style="width: 100%; padding: 5px">
+        <div class="basicMsg">
+          <div class="basicTxt">
+            <a-icon type="area-chart" style="fontSize:3rem;color:#1397db" />
+            <div class="basic">
+              <div class="subtit">{{overViewData.hiddenName}}</div>
+              <div class="subTxt"><span>测站编码</span> {{overViewData.stationCode}}</div>
+              <div class="subTxt"><span>建设时间</span> {{overViewData.createTime}}</div>
+              <div class="subTxt"><span>联系人</span> {{overViewData.hiddenCharge || '无'}}</div>
             </div>
           </div>
-          <div style="width:22.5%;"></div>
-          <div style="width:22.5%;"></div>
+          <img src="static/img/u268.svg" alt="" />
         </div>
-      </div>
+      </a-card-grid>
+      <a-card-grid style="width: 100%; padding: 5px">
+        <div class="stateMsg">
+          <div class="s_left">
+            <div>
+              <div>降水状态</div>
+              <div style="font-size:1.8rem;color:#1a94ff;">{{overViewData.waterState || '无'}}</div>
+            </div>
+          </div>
+          <div class="s_right">
+            <div>安全状态</div>
+            <div style="font-size:1.8rem;color:#24C174;">{{overViewData.reservoirStatus || '无'}}</div>
+          </div>
+        </div>
+      </a-card-grid>
+      <a-card-grid style="width: 100%; padding: 5px">
+        <div class="dataBox">
+          <div class="data_tit">
+            <div>
+              <span>当前</span>
+              <a-select v-model="current" :style="{width:'20rem'}">
+                <a-select-option v-for="pn in overViewData.pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
+              </a-select>
+            </div>
+            <div>
+              <a-button type="primary" size="small">召测</a-button>
+              <a-button type="primary" size="small">加密采集</a-button>
+            </div>
+          </div>
+          <div class="dataVBox">
+            <div v-if="pnRainData.length === 0">
+              无数据
+            </div>
+            <div class="dataV" v-else v-for="(pnRain,index) in pnRainData" :key="index">
+              <div>
+                <span>当前库水位(m)</span>
+                <span class="cricle"></span>
+              </div>
+              <div>
+                <span style="color:#1a94ff;">5.0</span>
+                <span>07-20 23:12</span>
+              </div>
+            </div>
+            <div style="width:22.5%;"></div>
+            <div style="width:22.5%;"></div>
+          </div>
+        </div>
+      </a-card-grid>
     </a-card>
   </div>
 </template>
 
 <script>
-  export default {
-    props: ["pointId"],
-    data() {
-      return {
-        current: 'jack'
-      };
+export default {
+  props: {
+    pointId: {
+      type: Number,
+      default: -1
+    }
+  },
+  data () {
+    return {
+      current: '',
+      overViewData: {},
+      pnRainData: []
+    }
+  },
+  watch: {
+    pointId: {
+      handler: function (n, o) {
+        console.log(n)
+      },
+      immediate: true
+    }
+  },
+  mounted () {
+    this.getMonitorConditionRain()
+  },
+  methods: {
+    getMonitorConditionRain () {
+      let _this = this
+      this.$get('web/monitorScene/monitorConditionRain', {
+        hiddenId: _this.pointId
+      }).then((res) => {
+        if (res.data.code === 1) {
+          if (res.data.data.pnList.length !== 0) {
+            _this.current = res.data.data.pnList[0].pnName
+            _this.monitorPnDataRain(res.data.data.pnList[0].pnId)
+          }
+          _this.overViewData = res.data.data
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
     },
-    watch: {
-      pointId: {
-        handler: function (n, o) {
-          console.log(n)
-        },
-        immediate: true
-      }
-    },
-    methods: {},
+    // 获取当前监测点列表信息
+    monitorPnDataRain (pnId) {
+      let _this = this
+      this.$get('web/monitorScene/monitorPnDataRain', {
+        pnId: pnId
+      }).then((res) => {
+        if (res.data.code === 1) {
+          _this.pnRainData = res.data.data
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
+    }
   }
+}
 
 </script>
 <style lang="less" scoped>
@@ -86,12 +134,10 @@
     position: relative;
   }
 
-
   .basicMsg {
     display: flex;
     /* align-items: center; */
     justify-content: space-between;
-    border-bottom: 1px solid #f2f2f2;
     padding: 1rem 0;
   }
 

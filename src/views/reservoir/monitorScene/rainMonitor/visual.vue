@@ -25,23 +25,32 @@
 </template>
 
 <script>
-  export default {
-    props: ["pointId"],
-    data() {
-      return {
-        current: 'jack'
-      };
-    },
-    watch: {
-      pointId: {
-        handler: function (n, o) {
-          console.log(n)
-        },
-        immediate: true
-      }
-    },
-    methods: {},
+import Design from '@/components/design/design.vue'
+export default {
+  components: {Design},
+  props: ['pointId'],
+  data () {
+    return {
+      current: 'jack',
+      scene: '',
+      sceneData: [],
+      designData: {}
+    }
+  },
+  watch: {
+    pointId: {
+      handler: function (n, o) {
+        console.log(n)
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    handleSceneChange () {
+
+    }
   }
+}
 
 </script>
 <style scoped>

@@ -20,7 +20,7 @@
       </a-input>
     </a-form-item>
     <a-form-item label="所在乡镇" v-bind="formItemLayout">
-      <a-input v-decorator="['township']"></a-input>
+      <a-input v-decorator="['township']" placeholder="请输入"></a-input>
     </a-form-item>
     <a-form-item label="位置坐标" v-bind="formItemLayout">
       <div style="display: flex;align-items: center;white-space: nowrap;">
@@ -31,9 +31,11 @@
         <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" />
       </div>
     </a-form-item>
+    <a-form-item label="联系人" v-bind="formItemLayout">
+      <a-input v-decorator="['hiddenCharge']" placeholder="请输入"></a-input>
+    </a-form-item>
     <a-form-item label="测站编码" v-bind="formItemLayout">
-      <a-input v-decorator="[
-          'stationCode',{ rules: [{ required: true, message: '请输入测站编码' }] }]" placeholder="请输入" />
+      <a-input v-decorator="['stationCode']" placeholder="请输入" />
     </a-form-item>
     <a-form-item label="实景图" v-bind="formItemLayout">
       <a-upload list-type="picture-card" :file-list="RealSceneFileList" :multiple="true" :remove="handleRealSceneRemove"
