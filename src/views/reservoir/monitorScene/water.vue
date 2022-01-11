@@ -13,6 +13,9 @@
       <overview :pointId="pointId" style="width:48%" />
       <visual :pointId="pointId" style="width:48%"/>
       <trend-statistic :pointId="pointId" style="width:100%"/>
+      <storageCapacity :pointId="pointId" style="width:100%;"/>
+      <warnMsg :pointId="pointId" style="width:48%"/>
+      <record :pointId="pointId" style="width:48%"/>
     </div>
   </div>
 </template>
@@ -21,9 +24,12 @@
   import overview from "@/components/waterMonitor/overview.vue"
   import visual from "@/components/waterMonitor/visual.vue"
   import trendStatistic from "@/components/waterMonitor/trendStatistic.vue"
+  import storageCapacity from "@/components/waterMonitor/storageCapacity.vue"
+  import warnMsg from "@/components/warnMsg/warnMsg.vue"
+  import record from "@/components/devopsRecord/record.vue"
   export default {
     components: {
-      overview,visual,trendStatistic
+      overview,visual,trendStatistic,storageCapacity,warnMsg,record
     },
     data() {
       return {
