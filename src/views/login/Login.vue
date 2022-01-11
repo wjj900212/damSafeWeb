@@ -190,7 +190,9 @@ export default {
       setMultipage: 'setting/setMultipage',
       fixSiderbar: 'setting/fixSiderbar',
       fixHeader: 'setting/fixHeader',
-      setColor: 'setting/setColor'
+      setColor: 'setting/setColor',
+      setReservoirList: 'account/setReservoirList',
+      setReservoirId: 'account/setReservoirId',
     }),
     saveLoginData (data) {
       this.setToken(data.token)
@@ -204,6 +206,8 @@ export default {
       this.fixSiderbar(data.config.fixSiderbar === '1')
       this.fixHeader(data.config.fixHeader === '1')
       this.setColor(data.config.color)
+      this.setReservoirList(data.reservoirList)
+      this.setReservoirId(data.reservoirList[0].reservoirId)
     }
   }
 }

@@ -46,9 +46,6 @@ export default {
           },
           toolbox: {
             feature: {
-              dataZoom: {
-                yAxisIndex: "none",
-              },
               restore: {},
               saveAsImage: {},
             },

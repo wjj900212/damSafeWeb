@@ -313,7 +313,7 @@
             <a-button type="primary"> 导出 </a-button>
           </div>
           <a-card-grid style="width: 100%; text-align: center">
-            
+
           </a-card-grid>
         </a-card>
       </a-col>
@@ -521,6 +521,7 @@ import design from "@/components/design/design.vue";
 import EchartsRadar from "@/components/echarts/EchartsRadar.vue";
 import EchartsRelationship from "@/components/echarts/EchartsRelationship.vue";
 import EchartsBarLine from "@/components/echarts/EchartsBarLine.vue";
+import { mapState } from 'vuex'
 import moment from "moment";
 
 export default {
@@ -533,6 +534,7 @@ export default {
   },
   data() {
     return {
+      reservoirInfo: {},
       radarData: ['a'],
       relationshipData: ['1'],
       dateTimeValue: [
@@ -602,6 +604,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      reservoirId: state => state.account.reservoirId
+    }),
     aqglyacolumns() {
       return [
         {
@@ -653,10 +658,26 @@ export default {
       ];
     },
   },
-  mounted() {},
+  mounted() {
+    this.getReservoirInfo()
+  },
   updated() {},
   methods: {
     moment,
+    getReservoirInfo () {
+      const { reservoirId } = this
+      const params = {
+        reservoirId: reservoirId
+      }
+      this.$get('web/reservoirOverview/safetyOverview', {
+        ...params,
+      }).then((r) => {
+        if (JSON.stringify(r.data.data) !== "{}") {
+          let data = r.data.data
+          this.reservoirInfo = data
+        }
+      })
+    },
     handleDateModelChange(value) {
       let dateValue;
       switch (value) {

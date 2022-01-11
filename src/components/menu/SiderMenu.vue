@@ -6,22 +6,37 @@
     v-model="collapsed"
     :trigger="null">
     <div :class="['logo', theme]">
-      <router-link to="/">
-        <img src="static/img/logo.png" alt="">
-        <h1 class="animated fadeIn">{{systemName}}</h1>
-      </router-link>
+      <!-- <router-link to="/">
+        
+      </router-link> -->
+      <img src="static/img/logo.png" alt="">
+      <span class="menutitle" v-if="mainMenu === 'reservoir'">{{ reservoirList.find(item => item.reservoirId === reservoirId ).reservoirName }}</span>
+      <a-dropdown v-if="mainMenu === 'reservoir'" :trigger="['click']">
+        <a-icon type="unordered-list" :style="{ fontSize: '20px', float: 'right', marginTop: '20px', color: 'white', cursor: 'pointer', marginRight: '10px' }" />
+        <a-menu slot="overlay">
+          <a-menu-item @click="changeReservoir(item.reservoirId)" v-for="item in reservoirList" :key="item.reservoirId">
+            {{ item.reservoirName }}
+          </a-menu-item>
+        </a-menu>
+      </a-dropdown>
+      
     </div>
     <i-menu :theme="theme" :collapsed="collapsed" :menuData="menuData" @select="onSelect"/>
+    
   </a-layout-sider>
 </template>
 
 <script>
 import IMenu from './menu'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'SiderMenu',
   components: {IMenu},
+  data () {
+    return {
+    }
+  },
   props: {
     collapsible: {
       type: Boolean,
@@ -37,6 +52,11 @@ export default {
       type: Array,
       required: true
     },
+    mainMenu: {
+      type: String,
+      required: false,
+      default: ''
+    },
     theme: {
       type: String,
       required: false,
@@ -46,11 +66,23 @@ export default {
   computed: {
     ...mapState({
       isMobile: state => state.setting.isMobile,
-      systemName: state => state.setting.systemName,
-      fixSiderbar: state => state.setting.fixSiderbar
+      fixSiderbar: state => state.setting.fixSiderbar,
+      reservoirList: state => state.account.reservoirList,
+      reservoirId: state => state.account.reservoirId
     })
   },
+  mounted() {
+  },
+  watch: {
+
+  },
   methods: {
+    ...mapMutations({
+      setReservoirId: 'account/setReservoirId'
+    }),
+    changeReservoir (value) {
+      this.setReservoirId(value)
+    },
     onSelect (obj) {
       this.$emit('menuSelect', obj)
     }
@@ -59,6 +91,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .menutitle {
+    color: white;
+    font-size: 15px;
+    margin-left: 10px;
+    width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    white-space: nowrap;
+    display: inline-block;
+  }
   .shadow {
     box-shadow: 1px 0 6px rgba(0, 21, 41, .35);
   }
@@ -109,7 +152,8 @@ export default {
       img {
         width: 32px;
         display: inline-block;
-        vertical-align: middle;
+        vertical-align: initial;
+        margin-bottom: 22px;
       }
     }
   }

@@ -7,9 +7,20 @@ export default {
     expireTime: db.get('EXPIRE_TIME'),
     user: db.get('USER'),
     permissions: db.get('PERMISSIONS'),
-    roles: db.get('ROLES')
+    roles: db.get('ROLES'),
+    reservoirList: db.get('RESERVOIRLIST'),
+    reservoirId: db.get('RESERVOIRID')
   },
   mutations: {
+    setReservoirId (state, val) {
+      db.save('RESERVOIRID', val)
+      state.reservoirId = val
+    },
+    setReservoirList (state, val) {
+      console.log(val)
+      db.save('RESERVOIRLIST', val)
+      state.reservoirList = val
+    },
     setToken (state, val) {
       db.save('USER_TOKEN', val)
       state.token = val

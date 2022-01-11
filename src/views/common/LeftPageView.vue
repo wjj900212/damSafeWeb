@@ -3,7 +3,7 @@
     <div id="app" style="height: 100%;">
       <a-layout class="ant-col-24" style="height:100%">
         <a-layout-sider style="flex:0 0 0 30%;max-width: 256px; min-width: 256px; width: 256px;">
-          <sider-menu :theme="theme" :menuData="subTitles" :collapsed="collapsed" :collapsible="true" />
+          <sider-menu :theme="theme" :mainMenu="mainMenu" :menuData="subTitles" :collapsed="collapsed" :collapsible="true" />
           <!-- <side-menu :subTitles="subTitles">
           </side-menu> -->
         </a-layout-sider>
@@ -32,6 +32,7 @@ export default {
     return {
       locale: zhCN,
       title: '',
+      mainMenu: '',
       subTitles: [],
       collapsed: false
     }
@@ -100,6 +101,7 @@ export default {
       let pathname = this.getFirstValue(arr)
       console.log(routers)
       console.log(pathname)
+      this.mainMenu = pathname
       // let trees = routers.find((item) => item.path === '/').children
       this.subTitles = []
       this.subTitles = this.getChildren(routers, '/' + pathname)

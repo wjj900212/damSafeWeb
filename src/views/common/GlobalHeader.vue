@@ -11,7 +11,7 @@
         <i-menu style="height: 64px; line-height: 64px;" class="system-top-menu" :theme="theme" mode="horizontal" :menuData="menuData" @select="onSelect"/>
       </div>
       <div :class="['global-header-right', theme]">
-          <div @click="() => { isShowList = !isShowList }" style="float: left;margin-right: 10px;cursor: pointer;"><a-icon type="bars" /></div>
+          <div @click="() => { isShowList = !isShowList }" style="float: left;margin-right: 10px;cursor: pointer;"><a-icon type="bars" :style="{ fontSize: '20px', marginTop: '22px' }" /></div>
           <header-avatar class="header-item"/>
       </div>
       <div v-show="isShowList" class="buttonlist">
