@@ -11,9 +11,6 @@ export default {
     data: {
       require: true
     },
-    name: {
-      type: String
-    },
     refid: {
       require: true
     }
@@ -30,7 +27,6 @@ export default {
       window.addEventListener('resize',() => { myChart.resize(); });
       // this.$get('https://echarts.cdn.apache.org/examples/data/asset/data/aqi-beijing.json').then((r) => {
       let data = this.data
-      let name = this.name
       if (this.data.length === 0) {
         myChart.setOption({}, true)
         return

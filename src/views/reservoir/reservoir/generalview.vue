@@ -9,18 +9,18 @@
           <a-card-grid style="width: 100%; text-align: left">
             <a-row>
               <a-col :span="16">
-                <h2>密云水库</h2>
+                <h2>{{ reservoirInfo.reservoirName }}</h2>
                 <a-row>
                   <a-col :span="4">所在地址</a-col>
-                  <a-col :span="20">北京市密云区恒河西山</a-col>
+                  <a-col :span="20">{{ reservoirInfo.cityName }}</a-col>
                 </a-row>
                 <a-row>
                   <a-col :span="4">管理单位</a-col>
-                  <a-col :span="20">密云水库管理所</a-col>
+                  <a-col :span="20">{{ reservoirInfo.managerUnit }}</a-col>
                 </a-row>
               </a-col>
               <a-col :span="8">
-                <img src="static/img/u268.svg" alt="" />
+                <img v-if="reservoirInfo.images" width="200" height="100" :src="reservoirInfo.images" />
               </a-col>
             </a-row>
           </a-card-grid>
@@ -31,7 +31,7 @@
                   <a-col>综合安全等级</a-col>
                 </a-row>
                 <a-row>
-                  <a-col>正常</a-col>
+                  <a-col>{{ reservoirInfo.safeLevel }}</a-col>
                 </a-row>
               </a-col>
               <a-col :span="12">
@@ -39,7 +39,7 @@
                   <a-col :span="24">预警数</a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="24">13</a-col>
+                  <a-col :span="24">{{ reservoirInfo.warnCount }}</a-col>
                 </a-row>
               </a-col>
             </a-row>
@@ -50,6 +50,7 @@
                 <!-- <img src="static/img/u289.png" alt="" /> -->
                 <div :style="{ width: '100%', height: '220px' }">
                   <component
+                    v-if="radarData.length > 2"
                     :is="'EchartsRadar'"
                     refid="radar"
                     :data="radarData"
@@ -58,11 +59,11 @@
                 </div>
               </a-col>
               <a-col :span="12" :style="{ marginTop: '25px' }">
-                <a-row>
-                  <a-col :span="12">雨情监测</a-col>
-                  <a-col :span="12">正常</a-col>
+                <a-row v-for="item in reservoirInfo.monitorList" :key="item.name">
+                  <a-col :span="12">{{ item.name }}</a-col>
+                  <a-col :span="12">{{ item.warnLevel }}</a-col>
                 </a-row>
-                <a-row>
+                <!-- <a-row>
                   <a-col :span="12">水情监测</a-col>
                   <a-col :span="12">正常</a-col>
                 </a-row>
@@ -81,14 +82,14 @@
                 <a-row>
                   <a-col :span="12">微动监测</a-col>
                   <a-col :span="12">正常</a-col>
-                </a-row>
+                </a-row> -->
               </a-col>
             </a-row>
           </a-card-grid>
         </a-card>
       </a-col>
       <a-col :span="12" :style="{ height: '100%' }">
-        <a-card title="水库可视化">
+        <a-card title="水库可视化" :bodyStyle="{ padding: '5px' }">
           <a-select
             slot="extra"
             v-model="scene"
@@ -98,15 +99,15 @@
           >
             <a-select-option
               v-for="item in sceneData"
-              :value="item.id"
-              :key="item.id"
+              :value="item.sceneId"
+              :key="item.sceneId"
             >
-              {{ item.name }}
+              {{ item.sceneName }}
             </a-select-option>
           </a-select>
-          <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+          <div style="width: 100%;height:420px; text-align: center;overflow: auto;padding: 5px;">
             <design :data="designData"></design>
-          </a-card-grid>
+          </div>
         </a-card>
       </a-col>
     </a-row>
@@ -118,6 +119,7 @@
         <a-card title="安全管理预案">
           <a-select
             slot="extra"
+            style="width:120px;"
             v-model="plan"
             placeholder="预案类型"
             option-filter-prop="children"
@@ -134,24 +136,9 @@
           <a-card-grid style="width: 100%; text-align: center">
             <a-table
               bordered
-              :data-source="dataSource"
+              :data-source="aqglyadataSource"
               :columns="aqglyacolumns"
             >
-              <template slot="name" slot-scope="text, record">
-                <editable-cell
-                  :text="text"
-                  @change="onCellChange(record.key, 'name', $event)"
-                />
-              </template>
-              <template slot="operation" slot-scope="text, record">
-                <a-popconfirm
-                  v-if="dataSource.length"
-                  title="Sure to delete?"
-                  @confirm="() => onDelete(record.key)"
-                >
-                  <a href="javascript:;">Delete</a>
-                </a-popconfirm>
-              </template>
             </a-table>
           </a-card-grid>
         </a-card>
@@ -183,7 +170,7 @@
               style="width: 240px"
               @change="onDateChange"
             />
-            <a-button type="primary"> 查询 </a-button>
+            <a-button @click="getTrendStatistics" type="primary"> 查询 </a-button>
             <a-button type="primary"> 导出 </a-button>
           </div>
           <a-card-grid style="width: 100%">
@@ -193,14 +180,17 @@
                   <a-input-search
                     v-model="searchStr"
                     style="margin-bottom: 8px"
-                    placeholder="Search"
+                    placeholder="搜索监测点"
                     @change="onChange"
                   />
                   <a-tree
                     checkable
+                    @check="onChecked"
+                    :checkedKeys="checkedKeys"
                     :expandedKeys="expandedKeys"
-                    :auto-expand-parent="true"
+                    :autoExpandParent="autoExpandParent"
                     :replaceFields="replaceFields"
+                    :defaultExpandAll="defaultExpandAll"
                     :treeData="treeData"
                     @expand="onExpand"
                   >
@@ -244,20 +234,36 @@
               <a-col :span="2">
                 <img width="36" height="34" src="static/img/u295.png" alt="" />
               </a-col>
-              <a-col :span="22">
+              <a-col :span="19">
                 <a-row>
                   <a-col>
                     <h4 style="float: left">雨情</h4>
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="3"> 安全状态 </a-col>
+                  <a-col :span="4"> 安全状态 </a-col>
                   <a-col :span="3"> 正常 </a-col>
-                  <a-col :span="3"> 当前降水量 </a-col>
+                  <a-col :span="4"> 当前降水量 </a-col>
                   <a-col :span="3"> 29.2mm </a-col>
-                  <a-col :span="3"> 日降水量 </a-col>
-                  <a-col :span="3"> 52.2mm </a-col>
+                  <a-col :span="4"> 日降水量 </a-col>
+                  <a-col :span="6"> 52.2mm </a-col>
                 </a-row>
+              </a-col>
+              <a-col :span="3">
+                <a-select
+                  v-model="monitor"
+                  placeholder="监测点"
+                  option-filter-prop="children"
+                  @change="handleMonitorChange"
+                >
+                  <a-select-option
+                    v-for="item in monitorData"
+                    :value="item.id"
+                    :key="item.id"
+                  >
+                    {{ item.name }}
+                  </a-select-option>
+                </a-select>
               </a-col>
             </a-row>
           </a-card-grid>
@@ -281,20 +287,36 @@
               <a-col :span="2">
                 <img width="36" height="34" src="static/img/u319.png" alt="" />
               </a-col>
-              <a-col :span="22">
+              <a-col :span="19">
                 <a-row>
                   <a-col>
                     <h4 style="float: left">水情</h4>
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="3"> 安全状态 </a-col>
+                  <a-col :span="4"> 安全状态 </a-col>
                   <a-col :span="3"> 正常 </a-col>
-                  <a-col :span="3"> 当前水位 </a-col>
+                  <a-col :span="4"> 当前水位 </a-col>
                   <a-col :span="3"> 29.2mm </a-col>
-                  <a-col :span="3"> 历史最大水位 </a-col>
-                  <a-col :span="3"> 39.2mm </a-col>
+                  <a-col :span="5"> 历史最大水位 </a-col>
+                  <a-col :span="5"> 39.2mm </a-col>
                 </a-row>
+              </a-col>
+              <a-col :span="3">
+                <a-select
+                  v-model="monitor"
+                  placeholder="监测点"
+                  option-filter-prop="children"
+                  @change="handleMonitorChange"
+                >
+                  <a-select-option
+                    v-for="item in monitorData"
+                    :value="item.id"
+                    :key="item.id"
+                  >
+                    {{ item.name }}
+                  </a-select-option>
+                </a-select>
               </a-col>
             </a-row>
           </a-card-grid>
@@ -514,6 +536,14 @@
         </a-card>
       </a-col>
     </a-row>
+    <a-modal v-model="planVisible" title="安全预案管理">
+      <div v-html="planDetail"></div>
+      <template slot="footer">
+        <a-button type="primary">
+          关闭
+        </a-button>
+      </template>
+    </a-modal>
   </div>
 </template>
 <script>
@@ -534,9 +564,13 @@ export default {
   },
   data() {
     return {
+      autoExpandParent: true,
+      defaultExpandAll: true,
+      planVisible: false,
+      planDetail: '',
       reservoirInfo: {},
-      radarData: ['a'],
-      relationshipData: ['1'],
+      radarData: [],
+      relationshipData: [],
       dateTimeValue: [
         moment(new Date(), "YYYY-MM-DD"),
         moment(new Date(), "YYYY-MM-DD"),
@@ -548,58 +582,35 @@ export default {
         { name: "近一周", value: "week" },
         { name: "近一月", value: "month" },
       ],
-      designData: [],
+      designData: {},
       warnData: [],
       monitor: 1,
       monitorData: [],
       dataSource: [],
-      expandedKeys: ["0-0-0"],
+      checkedKeys: [],
+      expandedKeys: [],
       replaceFields: { title: "name" },
       searchValue: "",
       searchStr: "",
-      treeData: [
-        {
-          name: "雨情监测站01",
-          key: "0-0",
-          scopedSlots: {
-            title: "title",
-          },
-          children: [
-            {
-              name: "监测点1(202100100044)",
-              key: "0-0-0",
-              scopedSlots: {
-                title: "title",
-              },
-            },
-            {
-              name: "监测点2(202100100044)",
-              key: "0-0-1",
-              scopedSlots: {
-                title: "title",
-              },
-            },
-          ],
-        },
-      ],
+      treeData: [],
       aqglyadataSource: [],
-      scene: 1,
-      sceneData: [
-        { id: 1, name: "场景1" },
-        { id: 2, name: "场景2" },
-        { id: 3, name: "场景3" },
-      ],
+      scene: undefined,
+      sceneData: [],
       monitorData: [
         { id: 1, name: "监测点1" },
         { id: 2, name: "监测点2" },
         { id: 3, name: "监测点3" },
       ],
-      plan: 0,
+      plan: 'all',
       planData: [
-        { id: 0, name: "全部预案" },
-        { id: 1, name: "预案1" },
-        { id: 2, name: "预案2" },
-        { id: 3, name: "预案3" },
+        { id: 'all', name: "全部预案" },
+        { id: '0', name: "综合预案" },
+        { id: '11', name: "渗流监测" },
+        { id: '12', name: "渗压监测" },
+        { id: '13', name: "大坝变形监测" },
+        { id: '14', name: "大坝微动监测" },
+        { id: '15', name: "雨情监测" },
+        { id: '16', name: "水情监测" }
       ],
     };
   },
@@ -617,25 +628,26 @@ export default {
         },
         {
           title: "预案名称",
-          dataIndex: "DateTime",
+          dataIndex: "reserveName",
           align: "center",
           width: "15%",
         },
         {
           title: "预案类型",
-          dataIndex: "Amount",
+          dataIndex: "reserveType",
           align: "center",
           width: "10%",
+          customRender: (text, record, index) => `${this.planData.find(item => item.id === text).name}`
         },
         {
           title: "创建人",
-          dataIndex: "XMBH",
+          dataIndex: "username",
           align: "center",
           width: "10%",
         },
         {
           title: "描述",
-          dataIndex: "HTBH",
+          dataIndex: "desc",
           align: "center",
           width: "50%",
         },
@@ -644,15 +656,21 @@ export default {
           width: "100px",
           align: "center",
           customRender: (record) => (
-            <div>
-              <a
-                onClick={() => {
-                  // this.AddInstance(record)
-                }}
-              >
-                查看
-              </a>
-            </div>
+            record.details ? 
+            (
+              <div>
+                <a
+                  onClick={() => {
+                    this.showPlanDetail(record.details)
+                  }}
+                >
+                  查看
+                </a>
+              </div> 
+            ) : 
+            (
+              ''
+            )
           ),
         },
       ];
@@ -660,10 +678,65 @@ export default {
   },
   mounted() {
     this.getReservoirInfo()
+    this.getDesignConfig()
+    this.getPlanList()
+    this.getTrendStatistics()
+    this.getProjPnTreeList()
+  },
+  watch: {
+    reservoirId (val) { // 监听数据发生改变 刷新图表数据
+      this.getReservoirInfo()
+      this.getDesignConfig()
+      this.getPlanList()
+      this.getTrendStatistics()
+      this.getProjPnTreeList()
+    }
   },
   updated() {},
   methods: {
     moment,
+    showPlanDetail (content) {
+      this.planVisible = true
+      this.planDetail = content
+    },
+    getProjPnTreeList () {
+      const { reservoirId } = this
+      const params = {
+        reservoirId: reservoirId
+      }
+      this.$get('web/reservoirOverview/getProjPnList', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          this.treeData = data.treeData
+        }
+      })
+    },
+    getDesignConfig () {
+      const { reservoirId } = this
+      const params = {
+        hiddenId: reservoirId,
+        sceneType: '0'
+      }
+      this.$get('web/hiddenScene/getHiddenConfigInfo', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          this.sceneData = data
+          if (data.length > 0) {
+            this.scene = data[0].sceneId
+            this.designData = data[0]
+          } else {
+            this.designData = {}
+          }
+          // data.safeLevelObj = this.getWarnText(data.safeLevel)
+          // this.reservoirInfo = data
+          // this.radarData = data.monitorList
+        }
+      })
+    },
     getReservoirInfo () {
       const { reservoirId } = this
       const params = {
@@ -672,9 +745,40 @@ export default {
       this.$get('web/reservoirOverview/safetyOverview', {
         ...params,
       }).then((r) => {
-        if (JSON.stringify(r.data.data) !== "{}") {
+        if (JSON.stringify(r.data.data) !== "{}" && r.data.data !== null) {
           let data = r.data.data
+          // data.safeLevelObj = this.getWarnText(data.safeLevel)
           this.reservoirInfo = data
+          this.radarData = data.monitorList
+        } else {
+          this.reservoirInfo = {}
+          this.radarData = []
+        }
+      })
+    },
+    getWarnText () {
+    },
+    getTrendStatistics () {
+      const { reservoirId } = this
+      const start = moment(this.dateTimeValue[0]).format("YYYY-MM-DD");
+      const end = moment(this.dateTimeValue[1]).format("YYYY-MM-DD");
+      const ids = this.getCheckedIds()
+      console.log(this.checkedKeys)
+      let params = {
+        reservoirId: reservoirId,
+        startTime: start,
+        endTime: end
+      }
+      if (ids.length > 0) {
+        params.projPnIds = ids.join(',')
+      }
+      this.$get('web/reservoirOverview/trendStatistics', {
+        ...params,
+      }).then((r) => {
+        if (JSON.stringify(r.data.data) !== "{}" && r.data.data !== null) {
+          this.relationshipData = r.data.data
+        } else {
+          this.relationshipData = []
         }
       })
     },
@@ -716,8 +820,42 @@ export default {
       this.dateModel = undefined;
     },
     handleMonitorChange() {},
-    handleSceneChange() {},
-    handlePlanChange() {},
+    handleSceneChange(value) {
+      const data = this.sceneData.find(item => item.sceneId === value)
+      this.designData = data
+    },
+    handlePlanChange(value) {
+      this.getPlanList(value)
+    },
+    getPlanList (type) {
+      let params = {}
+      if (type && type !== 'all') {
+        params.reserveType = type
+      }
+      this.$get('web/reservoirPlan/getPlanListNoPage', {
+        ...params,
+      }).then((r) => {
+        if (JSON.stringify(r.data.data) !== "{}" && r.data.data !== null) {
+          this.aqglyadataSource = r.data.data
+        } else {
+          this.aqglyadataSource = []
+        }
+      })
+    },
+    getCheckedIds () {
+      let ids = []
+      let pids = this.treeData.map(item => item.key)
+      let checkedKeys = this.checkedKeys
+      for (let i = 0; i < checkedKeys.length; i++) {
+        if (!pids.includes(checkedKeys[i])) {
+          ids.push(checkedKeys[i])
+        }
+      }
+      return ids
+    },
+    onChecked (checkedKeys, e) {
+      this.checkedKeys = checkedKeys
+    },
     onExpand(expandedKeys) {
       this.expandedKeys = expandedKeys;
       this.autoExpandParent = false;

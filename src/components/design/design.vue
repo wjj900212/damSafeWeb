@@ -1,36 +1,20 @@
 <template>
   <!--场景可视化-->
-  <div>
+  <div :style="{ height: '100%', width: '100%' }">
     <div class="design_content" @click="onClick">
       <!-- <div class="tabs-list">
         <div :title="item.sceneName" @click="changeActive(item.sceneId)" :class="['tabs-button', { active: activeKey === item.sceneId }]" v-for="item in data" :key="item.sceneId" style="text-align: center;">
           {{ item.sceneName }}
         </div>
       </div> -->
-      <div style="position: relative;">
-        <div :class="['tabs-pane', { active: activeKey === item.sceneId }]" v-for="item in data" :key="item.sceneId + 'content'" :style="{ backgroundImage: 'url(' + item.path + ')', backgroundSize: '100% 100%', position: 'relative', width: '765px', height: '398px' }">
-          <div class="summary">
-            <div>监测设备</div>
-            <div>设备在线率</div>
-            <div>当前预警</div>
-            <span style="width:56px;color: #0F89C8;">{{ item.devNum }}</span>
-            <span style="width:60px;color: #3CDB95;">{{ item.devBasicCover }}%</span>
-            <span style="width:56px;color: #FF6C00;">{{ item.warnCount }}</span>
-          </div>
-          <div :title="i.pnName" :class="['title-info', {hidden: i.configId === select.configId}]" v-for="i in item.config" :key="i.configId + 'index'" :style="{position: 'absolute', left: (i.xaxis - 5) + 'px', top: (i.yaxis - 40) + 'px'}">{{ i.pnName }}</div>
-          <div @click="(e)=>{ showDetail(e, i) }" v-for="i in item.config" :key="i.configId" :style="{ width: i.width - 22 + 'px', height: i.height - 22 + 'px', backgroundImage: 'url(' + i.path + ')', backgroundSize: 'contain', position: 'absolute', left: i.xaxis + 'px', top: i.yaxis + 'px' }">
+      <div style="position: relative;width: 100%;height: 100%;">
+        <div :class="['tabs-pane', { active: activeKey === data.sceneId }]" :style="{ backgroundImage: 'url(' + data.path + ')', backgroundSize: '100% 100%', position: 'relative', width: '765px', height: '398px', display: 'block' }">
+          <div :title="i.pnName" :class="['title-info', {hidden: i.configId === select.configId}]" v-for="i in data.config" :key="i.configId + 'index'" :style="{position: 'absolute', left: (i.xaxis - 5) + 'px', top: (i.yaxis - 40) + 'px'}">{{ i.pnName }}</div>
+          <div @click="(e)=>{ showDetail(e, i) }" v-for="i in data.config" :key="i.configId" :style="{ width: i.width - 22 + 'px', height: i.height - 22 + 'px', backgroundImage: 'url(' + i.path + ')', backgroundSize: 'contain', position: 'absolute', left: i.xaxis + 'px', top: i.yaxis + 'px' }">
           </div>
         </div>
       </div>
-        <!-- <a-tabs type="card">
-          <a-tab-pane v-for="item in data" :key="item.sceneId" :tab="item.sceneName" style="text-align: center;">
-            <div :style="{ backgroundImage: 'url(' + item.path + ')', backgroundSize: 'contain', display: 'inline-block', position: 'relative', width: '900px', height: '600px' }">
-              <div v-for="i in item.config" :key="i.configId + 'index'" :style="{position: 'absolute', left: i.xaxis + 'px', top: (i.yaxis - 30) + 'px', background: 'aliceblue'}">{{ i.pnName }}</div>
-              <div @click="(e)=>{ showDetail(e, i) }" v-for="i in item.config" :key="i.configId" :style="{ width: i.width + 'px', height: i.height + 'px', backgroundImage: 'url(' + i.path + ')', backgroundSize: 'contain', position: 'absolute', left: i.xaxis + 'px', top: i.yaxis + 'px' }">
-              </div>
-            </div>
-          </a-tab-pane>
-        </a-tabs> -->
+        
     </div>
     <div class="pointer_info Monitor" :style="{ left: (select.xaxis + 70) + 'px', top: (select.yaxis + 66) + 'px', display: select.display }">
       <div class="a-row">
@@ -67,8 +51,8 @@ export default {
   },
   props: {
     data: {
-      type: Array,
-      default: () => []
+      type: Object,
+      default: () => {}
     }
   },
   watch: {
@@ -175,7 +159,8 @@ export default {
     padding: 10px;
   }
   .design_content {
-    margin-top: 20px;
+    width: 100%;
+    height: 100%;
     // padding: 10px;
     // height: 650px;
   }
@@ -220,6 +205,7 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     padding: 10px;
+    color: white;
   }
   .title-info.hidden {
     display: none;
@@ -227,7 +213,7 @@ export default {
   .pointer_info {
     position: absolute;
     display: none;
-    width: 305px;
+    width: 205px;
     height: 180px;
     line-height: 24px;
     background: white;
