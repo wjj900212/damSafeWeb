@@ -203,9 +203,9 @@
             obj[k] = this.delParams[k]
           })
         }
-        obj.arr = this.delImg.join(',')
+        obj.html = this.delImg.join(',')
         // console.log(obj)
-        this.$postDate(this.delUrl, obj).then(res => {
+        this.$post(this.delUrl, obj).then(res => {
           this.delImg = []
         })
       }

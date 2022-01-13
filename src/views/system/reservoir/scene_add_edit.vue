@@ -32,7 +32,11 @@
       </div>
     </a-form-item>
     <a-form-item label="联系人" v-bind="formItemLayout">
+<<<<<<< Updated upstream
       <a-input v-decorator="['hiddenCharge']" placeholder="请输入"></a-input>
+=======
+      <a-input v-decorator="['hiddenCharge']" placeholder="请输入" />
+>>>>>>> Stashed changes
     </a-form-item>
     <a-form-item label="测站编码" v-bind="formItemLayout">
       <a-input v-decorator="['stationCode']" placeholder="请输入" />

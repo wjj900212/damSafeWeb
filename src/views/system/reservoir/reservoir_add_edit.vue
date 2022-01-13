@@ -66,8 +66,8 @@
       <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['notes']" />
     </a-form-item>
     <a-form-item label="详细介绍" v-bind="formItemLayout">
-      <editorCom ref="editorBox" putUrl="/web/reservoirAdmin/uploadDetailsImage"
-        delUrl="/web/reservoirAdmin/deleteDetailsImage"></editorCom>
+      <editorCom ref="editorBox" putUrl="/file/uploadDetailsImage"
+        delUrl="/file/deleteDetailsImage"></editorCom>
     </a-form-item>
     <div class="title"><span class="line"></span>自定义信息</div>
     <a-row>

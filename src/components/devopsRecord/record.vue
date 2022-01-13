@@ -35,10 +35,10 @@
     },
     {
       title: '类型',
-      dataIndex: 'level',
-      key: 'level',
+      dataIndex: 'type',
+      key: 'type',
       scopedSlots: {
-        customRender: 'level'
+        customRender: 'type'
       },
     },
     {
