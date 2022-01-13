@@ -1,6 +1,6 @@
 <template>
   <!-- 安全管理预案 -->
-  <a-modal v-model="safeVisible" title="安全管理预案" width="750px" @cancel="handleCancel">
+  <a-modal :visible="safeVisible" title="安全管理预案" width="750px" @cancel="handleCancel">
     <a-tabs v-model="tabKey" tab-position="top">
       <a-tab-pane v-for="v,i in articleArr" :key="(i+1)">
         <template slot="tab">
@@ -9,8 +9,8 @@
         <div v-html="v.desc"></div>
         <div v-html="v.details"></div>
       </a-tab-pane>
-      <!-- <a-empty v-if="articleArr.length==0" ></a-empty> -->
     </a-tabs>
+    <!-- <a-empty v-if="articleArr.length==0" /> -->
     <template slot="footer">
       <div class="steps-action">
         <a-button @click="handleCancel">

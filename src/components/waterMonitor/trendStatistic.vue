@@ -14,7 +14,7 @@
           <a-select-option value="3">近一周</a-select-option>
           <a-select-option value="4">近一月</a-select-option>
         </a-select>
-        <a-button type="primary">数据导出</a-button>
+        <a-button type="primary" @click="portData">数据导出</a-button>
       </div>
     </div>
     <div class="trendCon">
@@ -93,7 +93,17 @@
       // },
       pnList: {
         handler: function (n, o) {
-          if (!n) return
+          if (!n||n.length==0){
+            this.queryParams.pnId=''
+            this.pnName=''
+            this.tableData=[]
+            this.devCode=''
+            this.warnValue=[]
+            setTimeout(() => {
+              this.drawChart()
+            }, 300);
+            return
+          }
           if (n.length > 0) {
             this.queryParams.pnId = n[0].pnId
             this.pnName = n[0].pnName
@@ -107,6 +117,10 @@
       moment,
       getData(init) {
         // this.queryParams.pageNum = this.pagination.current
+        if(!this.queryParams.pnId){
+          this.$message.error('请选择监测点')
+          return
+        }
         this.queryParams.pnStrId = this.queryParams.pnId + '_meas'
         this.$get("/web/monitorScene/monitorDataList", this.queryParams).then(res => {
           let rr = res.data
@@ -297,6 +311,14 @@
           option.series[0].markLine.data.splice(i, 1)
         }
         this.myChart.setOption(option, true);
+      },
+      portData(){
+        if(!this.queryParams.pnId){
+          this.$message.error('请选择监测点')
+          return
+        }
+        this.queryParams.pnStrId = this.queryParams.pnId + '_meas'
+        this.$export("/web/monitorScene/exportMonitorDataWater",this.queryParams)
       }
     },
   }

@@ -16,6 +16,9 @@
 
 <script>
   // import chartTU from "../echarts/EchartsArrLine.vue"
+  import {
+    mapState
+  } from 'vuex'
   import moment from 'moment';
   const columns = [{
       title: '库水位(m)',
@@ -23,7 +26,7 @@
       key: 'depth'
     },
     {
-      title: '库容(百万m³)',
+      title: '库容(亿m³)',
       dataIndex: 'capacity',
       key: 'capacity',
     },
@@ -50,6 +53,11 @@
         waterLevel: ''
       };
     },
+    computed: {
+      ...mapState({
+        reservoirId: state => state.account.reservoirId
+      }),
+    },
     watch: {
       waterValue: {
         handler: function (n, o) {
@@ -74,6 +82,9 @@
           }
         },
         immediate: true
+      },
+      reservoirId(n) {
+        this.getData()
       }
     },
     methods: {
@@ -82,7 +93,7 @@
         console.log(date, dateString);
       },
       getData() {
-        this.$get('/web/monitorScene/getCapacityCurveByReserveId?reserveId=' + 9).then(res => {
+        this.$get('/web/monitorScene/getCapacityCurveByReserveId?reserveId=' + this.reservoirId).then(res => {
           let rr = res.data
           if (rr.code != 1) {
             this.$message.error(rr.msg)
@@ -118,7 +129,7 @@
             type: 'inside'
           }],
           xAxis: {
-            name: '库容(百万m³)',
+            name: '库容(亿m³)',
             nameLocation: 'middle',
             nameGap: 25,
             type: 'category',

@@ -46,6 +46,11 @@
         <a-input v-decorator="['capacity']" placeholder="请输入" /> <span style="margin-left:5px">亿m³</span>
       </div>
     </a-form-item>
+    <a-form-item label="最大水位" v-bind="formItemLayout">
+      <div style="display: flex;align-items: center;white-space: nowrap;">
+        <a-input v-decorator="['depth']" placeholder="请输入" /> <span style="margin-left:5px">m</span>
+      </div>
+    </a-form-item>
     <a-form-item label="建设时间" v-bind="formItemLayout">
       <!-- :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }" -->
       <a-date-picker format="YYYY-MM-DD HH:mm:ss" valueFormat="YYYY-MM-DD HH:mm:ss" placeholder="请选择" v-decorator="['buildTime']" />

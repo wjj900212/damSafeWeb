@@ -27,7 +27,8 @@
         <span class="btnt" :class="queryParams.dateType==3?'act':''" @click="dateChange(3)">近一月</span>
       </div>
     </div>
-    <a-table :columns="columns" :data-source="warnData.list" :pagination="pagination" :rowKey="(record,index)=>{return index}">
+    <a-table :columns="columns" :data-source="warnData.list" :pagination="pagination"
+      :rowKey="(record,index)=>{return index}">
       <a slot="level" slot-scope="text"
         :style="{color:text==4?'#FF2626':text==3?'#FF9F00':text==2?'#F9D044':'#3399FF'}">{{ text==4?'红色预警':text==3?'橙色预警':text==2?'黄色预警':text==1?'蓝色预警':'' }}</a>
     </a-table>
@@ -52,7 +53,7 @@
       scopedSlots: {
         customRender: 'level'
       },
-      width:90
+      width: 90
     },
     {
       title: '预警值(mm)',
@@ -87,7 +88,7 @@
         pagination: {
           current: 1,
           pageSize: 5,
-          total:0,
+          total: 0,
           onChange: (cur, size) => {
             this.pagination.current = cur;
             this.getWarnMsg()
@@ -98,7 +99,10 @@
     watch: {
       hiddenId: {
         handler: function (n, o) {
-          if (!n) return
+          if (!n) {
+            this.warnData = []
+            return
+          }
           this.getWarnMsg()
         },
         immediate: true
@@ -107,7 +111,7 @@
     methods: {
       // 获取预警信息
       getWarnMsg() {
-        if(!this.hiddenId)return
+        if (!this.hiddenId) return
         this.queryParams.hiddenId = this.hiddenId
         this.queryParams.pageNum = this.pagination.current
         this.queryParams.pageSize = this.pagination.pageSize
@@ -119,13 +123,13 @@
           }
           let data = rr.data
           this.warnData = data
-          this.pagination.total=data.total
+          this.pagination.total = data.total
         })
       },
       // i 	1今日 2近一周 3近一个月
-      dateChange(i){
-        if(i==this.queryParams.dateType)return false
-        this.queryParams.dateType=i
+      dateChange(i) {
+        if (i == this.queryParams.dateType) return false
+        this.queryParams.dateType = i
         this.getWarnMsg()
       }
     },

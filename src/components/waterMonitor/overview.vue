@@ -124,7 +124,11 @@
       pnList: {
         handler: function (n, o) {
           let that = this
-          if (!n) return
+          if (!n||n.length<0) {
+            that.currentPoint=''
+            this.monitorPnData=[]
+            return
+          }
           if (n.length > 0) {
             that.currentPoint = n[0].pnId
             that.pointChange()
