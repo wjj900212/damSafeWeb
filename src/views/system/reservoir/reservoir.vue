@@ -68,7 +68,6 @@ export default {
       queryParams: {
         name: '',
         levelCode: '',
-        reservoirStatus: '',
         scale: ''
       },
       areaList: [], // 城市列表
@@ -127,22 +126,7 @@ export default {
               case '2':
                 return '险情'
             }
-          },
-          filters: [{
-            text: '正常',
-            value: '0'
-          },
-          {
-            text: '异常',
-            value: '1'
-          },
-          {
-            text: '险情',
-            value: '2'
           }
-          ],
-          filterMultiple: false,
-          filteredValue:filteredInfo.reservoirStatus||null
         }, {
           title: '监测场景',
           dataIndex: 'sceneCount'
@@ -261,7 +245,6 @@ export default {
       // 如果分页信息为空，则设置为默认值
       params.pageSize = this.pagination.pageSize
       params.pageNum = this.pagination.current
-      if (params.reservoirStatus) params.reservoirStatus = params.reservoirStatus.join(',')
       if (params.scale) params.scale = params.scale.join(',')
       this.$get('/web/reservoirAdmin/reservoirList', params).then(res => {
         let rr = res.data

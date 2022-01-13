@@ -3,14 +3,14 @@
   <div class="visual">
     <div class="tit">
       <span>场景可视化</span>
-      <a-select v-model="current">
-        <a-select-option value="jack">Jack (100)</a-select-option>
-        <a-select-option value="lucy">Lucy (101)</a-select-option>
+      <a-select v-model="currentScene" @change="sceneChange">
+        <a-select-option v-for="v,i in sceneDataArr" :key="i" :value="v.sceneId">{{v.sceneName}}</a-select-option>
       </a-select>
     </div>
 
     <a-card-grid style="width: 100%; text-align: center; padding: 5px">
-      <design :data="designData"></design>
+      <!-- :activeKey="currentScene" -->
+      <design :data="sceneData"></design>
     </a-card-grid>
   </div>
 </template>
@@ -18,25 +18,59 @@
 <script>
   import design from "../design/design.vue"
   export default {
-    props: ["pointId"],
+    props: ["hiddenId"],
     components: {
       design
     },
     data() {
       return {
-        current: 'jack',
-        designData: [],
+        currentScene: '',
+        sceneDataArr: [], //二维列表
+        sceneData: {}
       };
     },
     watch: {
-      pointId: {
+      hiddenId: {
         handler: function (n, o) {
-          console.log(n)
+          // console.log(n)
+          if (n) this.getData()
+          else {
+            this.currentScene = ''
+            this.sceneDataArr = []
+            this.sceneData = {}
+          }
         },
         immediate: true
       }
     },
-    methods: {},
+    methods: {
+      getData() {
+        let o = {
+          hiddenId: this.hiddenId,
+          sceneType: 1
+        }
+        this.currentScene = ''
+        this.sceneDataArr = []
+        this.sceneData = {}
+        this.$get("/web/hiddenScene/getHiddenConfigInfo", o).then(res => {
+          let rr = res.data
+          if (rr.code != 1) {
+            this.$message.error(rr.msg)
+            return
+          }
+          if (rr.data.length > 0) {
+            this.currentScene = rr.data[0].sceneId
+            this.sceneDataArr = rr.data
+            this.sceneData = rr.data[0]
+          }
+        })
+      },
+      sceneChange() {
+        this.sceneData = this.sceneDataArr.find(v => {
+          return v.sceneId == this.currentScene
+        })
+      }
+    },
   }
 
 </script>
