@@ -3,16 +3,14 @@
   <div class="trendStatistic">
     <a-card title="降水量趋势统计">
       <template slot="extra">
-        <a-select v-model="current">
-          <a-select-option value="jack">监测点_001</a-select-option>
-          <a-select-option value="lucy">监测点_002</a-select-option>
-          <a-select-option value="lucy">监测点_003</a-select-option>
+        <a-select v-model="current" :style="{width:'20rem'}">
+          <a-select-option v-for="pn in overViewData.pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
         </a-select>
         <a-range-picker @change="onChange" style="width:250px;"/>
         <a-select v-model="current">
-          <a-select-option value="jack">日数据</a-select-option>
-          <a-select-option value="lucy">月数据</a-select-option>
-          <a-select-option value="lili">年数据</a-select-option>
+          <a-select-option value="0">日数据</a-select-option>
+          <a-select-option value="1">月数据</a-select-option>
+          <a-select-option value="2">年数据</a-select-option>
         </a-select>
         <a-button type="primary">数据导出</a-button>
       </template>
@@ -24,29 +22,43 @@
 </template>
 
 <script>
-import moment from 'moment';
-  export default {
-    props: ["pointId"],
-    data() {
-      return {
-        current: 'jack'
-      };
-    },
-    watch: {
-      pointId: {
-        handler: function (n, o) {
-          console.log(n)
-        },
-        immediate: true
-      }
-    },
-    methods: {
-        moment,
-      onChange(date, dateString) {
-        console.log(date, dateString);
+import moment from 'moment'
+export default {
+  props: ['hiddenId'],
+  data () {
+    return {
+      current: '',
+      overViewData: {}
+    }
+  },
+  watch: {
+    hiddenId: {
+      handler: function (n, o) {
+        this.getMonitorConditionRain()
       },
+      immediate: true
+    }
+  },
+  methods: {
+    moment,
+    getMonitorConditionRain () {
+      let _this = this
+      this.$get('web/monitorScene/monitorConditionRain', {
+        hiddenId: _this.hiddenId
+      }).then((res) => {
+        if (res.data.code === 1) {
+          _this.current = res.data.data.pnList[0].pnName
+          _this.overViewData = res.data.data
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
     },
+    onChange (date, dateString) {
+      console.log(date, dateString)
+    }
   }
+}
 
 </script>
 <style lang="less" scoped>

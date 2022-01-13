@@ -1,13 +1,14 @@
 <template>
   <!--雨情监测-->
   <div class="rainTabs">
-    <a-tabs :default-active-key="rainScene[0].id" @change="callback" class="tabs">
+    <a-tabs @change="callback" class="tabs">
       <a-tab-pane v-for="rain in rainScene" :key="rain.id" :tab="rain.name">
       </a-tab-pane>
     </a-tabs>
     <div class="com">
       <rain-monitor
-        :pointId="pointId"
+        :hiddenId="hiddenId"
+        :reservoirId="reservoirId"
       ></rain-monitor>
     </div>
   </div>
@@ -15,6 +16,7 @@
 
 <script>
 import RainMonitor from './rainMonitor/rainMonitor'
+import { mapState } from 'vuex'
 export default {
   name: 'rain',
   components: {
@@ -22,8 +24,23 @@ export default {
   },
   data () {
     return {
-      rainScene: [],
-      pointId: -1
+      rainScene: [], // 雨情监测场景列表
+      hiddenId: -1 // 监测场景id
+    }
+  },
+  computed: {
+    ...mapState({
+      reservoirId: state => state.account.reservoirId
+    })
+  },
+  watch: {
+    hiddenId (newVal) {
+      this.hiddenId = newVal
+    },
+    reservoirId (newVal) {
+      if (newVal) {
+        this.getHiddenListByReservoir()
+      }
     }
   },
   mounted () {
@@ -31,15 +48,15 @@ export default {
   },
   methods: {
     callback (key) {
-      this.pointId = key
+      this.hiddenId = key
     },
     // 获取水库下的场景
     getHiddenListByReservoir (params = {}) {
-      params.reservoirId = 9
+      params.reservoirId = this.reservoirId
       params.type = 15
       this.$get('web/monitorScene/getHiddenListByReservoirId', {...params}).then((res) => {
         if (res.data.code === 1) {
-          this.pointId = res.data.data[0].id
+          this.hiddenId = res.data.data[0].id
           this.rainScene = res.data.data
         } else {
           this.$message.error(res.data.msg)

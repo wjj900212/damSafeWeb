@@ -21,7 +21,7 @@
         <div class="stateMsg">
           <div class="s_left">
             <div>
-              <div>降水状态</div>
+              <div>所在位置</div>
               <div style="font-size:1.8rem;color:#1a94ff;">{{overViewData.waterState || '无'}}</div>
             </div>
           </div>
@@ -36,7 +36,7 @@
           <div class="data_tit">
             <div>
               <span>当前</span>
-              <a-select v-model="current" :style="{width:'20rem'}">
+              <a-select v-model="current" :style="{width:'20rem'}" @change="handlePnPoint">
                 <a-select-option v-for="pn in overViewData.pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
               </a-select>
             </div>
@@ -51,16 +51,14 @@
             </div>
             <div class="dataV" v-else v-for="(pnRain,index) in pnRainData" :key="index">
               <div>
-                <span>当前库水位(m)</span>
+                <span>{{pnRain.target}}</span>
                 <span class="cricle"></span>
               </div>
               <div>
-                <span style="color:#1a94ff;">5.0</span>
-                <span>07-20 23:12</span>
+                <span style="color:#1a94ff;">{{pnRain.value}}</span>
+                <span>{{pnRain.time}}</span>
               </div>
             </div>
-            <div style="width:22.5%;"></div>
-            <div style="width:22.5%;"></div>
           </div>
         </div>
       </a-card-grid>
@@ -71,7 +69,7 @@
 <script>
 export default {
   props: {
-    pointId: {
+    hiddenId: {
       type: Number,
       default: -1
     }
@@ -80,13 +78,14 @@ export default {
     return {
       current: '',
       overViewData: {},
-      pnRainData: []
+      pnRainData: [],
+      pnId: ''
     }
   },
   watch: {
-    pointId: {
+    hiddenId: {
       handler: function (n, o) {
-        console.log(n)
+        this.getMonitorConditionRain()
       },
       immediate: true
     }
@@ -95,10 +94,15 @@ export default {
     this.getMonitorConditionRain()
   },
   methods: {
+    handlePnPoint(value){
+      this.pnId = value.toString()
+      this.monitorPnDataRain(value)
+      console.log('选中监测点', value)
+    },
     getMonitorConditionRain () {
       let _this = this
       this.$get('web/monitorScene/monitorConditionRain', {
-        hiddenId: _this.pointId
+        hiddenId: _this.hiddenId
       }).then((res) => {
         if (res.data.code === 1) {
           if (res.data.data.pnList.length !== 0) {
@@ -121,6 +125,19 @@ export default {
           _this.pnRainData = res.data.data
         } else {
           this.$message.error(res.data.msg)
+        }
+      })
+    },
+    // 召测
+    reqrtd(pnId){
+      let _this = this
+      this.$get('web/monitorScene/reqrtd', {
+        pnId: pnId
+      }).then((res) => {
+        if (res.data.code === 1) {
+          _this.$message.success(res.data.msg)
+        } else {
+          _this.$message.error(res.data.msg)
         }
       })
     }
@@ -165,7 +182,7 @@ export default {
 
   .stateMsg {
     display: flex;
-    align-items: center;
+    align-items: left;
     /* justify-content: space-around; */
     padding: 1rem 0;
     border-bottom: 1px solid #f2f2f2;
@@ -179,9 +196,6 @@ export default {
   }
 
   .s_left {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-right: 1px solid #f2f2f2;
   }
 
@@ -235,7 +249,7 @@ export default {
     margin-top: 1rem;
 }
   .dataV{
-    width: 22.5%;
+    width: 30%;
     padding: 8px;
     box-shadow: 2px 2px 15px rgba(76,89,248,16%);
     margin-bottom: 1rem;
@@ -245,5 +259,11 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+  .cricle {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color:#1a94ff;
   }
 </style>

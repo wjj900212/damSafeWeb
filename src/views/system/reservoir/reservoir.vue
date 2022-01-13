@@ -126,7 +126,9 @@ export default {
               case '2':
                 return '险情'
             }
-          }
+          },
+          filterMultiple: false,
+          filteredValue: filteredInfo.reservoirStatus || null
         }, {
           title: '监测场景',
           dataIndex: 'sceneCount'
@@ -170,7 +172,7 @@ export default {
           }
           ],
           filterMultiple: false,
-          filteredValue:filteredInfo.scale||null
+          filteredValue: filteredInfo.scale || null
         },
         {
           title: '创建时间',
@@ -220,10 +222,10 @@ export default {
       })
     },
     // 重置
-    resetFilter(){
-      this.queryParams={}
-      this.pagination.current=1
-      this.pagination.pageSize=10
+    resetFilter () {
+      this.queryParams = {}
+      this.pagination.current = 1
+      this.pagination.pageSize = 10
       this.getReservoirList({
         ...this.queryParams
       })
@@ -247,10 +249,14 @@ export default {
       params.pageNum = this.pagination.current
       if (params.scale) params.scale = params.scale.join(',')
       this.$get('/web/reservoirAdmin/reservoirList', params).then(res => {
-        let rr = res.data
-        let data = rr.data
-        this.pagination.total = data.total
-        this.dataSource = data.records
+        if (res.data.code === 1) {
+          let rr = res.data
+          let data = rr.data
+          this.pagination.total = data.total
+          this.dataSource = data.records
+        } else {
+          this.$message.error(res.data.msg)
+        }
       })
     },
     searchTable () {

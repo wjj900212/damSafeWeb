@@ -45,6 +45,9 @@ export default {
     Weather,
     WarnMsg,
     Record
+  },
+  methods: {
+
   }
 }
 </script>

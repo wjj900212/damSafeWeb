@@ -1,0 +1,240 @@
+<template>
+  <div ref="echart" style="width:100%;height:26rem;" />
+</template>
+
+<script>
+import * as echarts from 'echarts'
+export default {
+  name: 'future-echarts',
+  props: {
+    chartData: {
+      type: Array,
+      required: true
+    }
+  },
+  data () {
+    return {
+      chart: null
+    }
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler (val) {
+        this.setOptions(val)
+      }
+    }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.initChart()
+    })
+  },
+  beforeDestroy () {
+    if (!this.chart) {
+      return
+    }
+    this.chart.dispose()
+    this.chart = null
+  },
+  methods: {
+    initChart () {
+      this.chart = echarts.init(this.$refs.echart)
+      this.setOptions(this.chartData)
+    },
+    setOptions (data) {
+      let option = {
+        grid: {
+          show: true,
+          backgroundColor: 'transparent',
+          opacity: 0.3,
+          borderWidth: '0',
+          top: '180',
+          bottom: '0'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          show: false
+        },
+        xAxis: [
+          // 日期
+          {
+            type: 'category',
+            boundaryGap: false,
+            position: 'top',
+            offset: 130,
+            zlevel: 100,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: [
+                '{a|{value}}'
+              ].join('\n'),
+              rich: {
+                a: {
+                  fontSize: 14
+                }
+              }
+            },
+            nameTextStyle: {
+            },
+            data: data.map((item) => {
+              return item.week
+            })
+          },
+          // 星期
+          {
+            type: 'category',
+            boundaryGap: false,
+            position: 'top',
+            offset: 110,
+            zlevel: 100,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: [
+                '{a|{value}}'
+              ].join('\n'),
+              rich: {
+                a: {
+                  fontSize: 14
+                }
+              }
+            },
+            nameTextStyle: {
+              fontWeight: 'bold',
+              fontSize: 14
+            },
+            data: data.map((item) => {
+              return item.date
+            })
+          },
+          // 天气图标
+          {
+            type: 'category',
+            boundaryGap: false,
+            position: 'top',
+            offset: 50,
+            zlevel: 100,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: function (value, index) {
+                return '{' + index + '| }\n{b|' + value + '}'
+              },
+              rich: {
+                b: {
+                  backgroundColor: {
+                    // image: 'static/img/weather/' + this.weaPic[] + '@2x.png'
+                    image: data.map((item) => {
+                      console.log('天气图片-----', item)
+                      return 'static/img/weather/' + item.code + '@2x.png'
+                    })
+                  },
+                  height: 40,
+                  width: 40
+                }
+              }
+            },
+            nameTextStyle: {
+              fontWeight: 'bold',
+              fontSize: 14
+            },
+            data: data.map((item) => {
+              return item.wether
+            })
+          }
+        ],
+        yAxis: {
+          type: 'value',
+          show: false,
+          axisLabel: {
+            formatter: '{value} °C',
+            color: 'white'
+          }
+        },
+        series: [
+          {
+            name: '最高气温',
+            type: 'line',
+            data: data.map((item) => {
+              return item.high
+            }),
+            symbol: 'emptyCircle',
+            symbolSize: 10,
+            showSymbol: true,
+            smooth: true,
+            itemStyle: {
+              normal: {
+                color: '#C95843'
+              }
+            },
+            label: {
+              show: true,
+              position: 'top',
+              formatter: '{c} °C'
+            },
+            lineStyle: {
+              width: 1
+            },
+            areaStyle: {
+              opacity: 1,
+              color: 'transparent'
+            }
+          },
+          {
+            name: '最低气温',
+            type: 'line',
+            data: data.map((item) => {
+              return item.low
+            }),
+            symbol: 'emptyCircle',
+            symbolSize: 10,
+            showSymbol: true,
+            smooth: true,
+            itemStyle: {
+              normal: {
+                color: 'blue'
+              }
+            },
+            label: {
+              show: true,
+              position: 'bottom',
+              formatter: '{c} °C'
+            },
+            lineStyle: {
+              width: 1
+            },
+            areaStyle: {
+              opacity: 1,
+              color: 'transparent'
+            }
+          }
+        ]
+      }
+      option && this.chart.setOption(option)
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
