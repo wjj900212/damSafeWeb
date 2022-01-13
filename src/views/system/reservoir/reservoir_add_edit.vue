@@ -53,7 +53,8 @@
     </a-form-item>
     <a-form-item label="建设时间" v-bind="formItemLayout">
       <!-- :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }" -->
-      <a-date-picker format="YYYY-MM-DD HH:mm:ss" valueFormat="YYYY-MM-DD HH:mm:ss" placeholder="请选择" v-decorator="['buildTime']" />
+      <a-date-picker format="YYYY-MM-DD HH:mm:ss" valueFormat="YYYY-MM-DD HH:mm:ss" placeholder="请选择"
+        v-decorator="['buildTime']" />
     </a-form-item>
     <a-form-item label="实景图" v-bind="formItemLayout">
       <a-upload list-type="picture-card" :file-list="sjImgsList" :multiple="true" :remove="handleImgsRemove"
@@ -68,11 +69,11 @@
       </a-modal>
     </a-form-item>
     <a-form-item label="水库介绍" v-bind="formItemLayout">
-      <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['notes']" />
+      <!-- <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['notes']" /> -->
+      <editorCom ref="notesBox" :isEasy="true"></editorCom>
     </a-form-item>
     <a-form-item label="详细介绍" v-bind="formItemLayout">
-      <editorCom ref="editorBox" putUrl="/file/uploadDetailsImage"
-        delUrl="/file/deleteDetailsImage"></editorCom>
+      <editorCom ref="editorBox" putUrl="/file/uploadDetailsImage" delUrl="/file/deleteDetailsImage"></editorCom>
     </a-form-item>
     <div class="title"><span class="line"></span>自定义信息</div>
     <a-row>
@@ -272,6 +273,7 @@
             'buildTime': !data.buildTime ? null : moment(data.buildTime, 'YYYY-MM-DD HH:mm:ss'),
           })
           this.$refs.editorBox.content = data.introduct
+          this.$refs.notesBox.content = data.notes
           if (data.customParam) this.customField = JSON.parse(data.customParam)
           if (data.images) {
             let imgArr = data.images.split('||')
@@ -303,6 +305,7 @@
               } else formData.append(k, values[k] === undefined || values[k] === null ? '' : values[k])
             })
             formData.append('introduct', this.$refs.editorBox.content)
+            formData.append("notes", this.$refs.notesBox.content)
             if (this.customField.length > 0) formData.append('customParam', JSON.stringify(this.customField))
             // 修改
             if (reservoirId && isEditReservoir) {

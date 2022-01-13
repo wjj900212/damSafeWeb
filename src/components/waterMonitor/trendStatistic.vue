@@ -82,7 +82,7 @@
           pageSize: ''
         },
         tableData: [],
-        devCode:'',
+        devCode: '',
         myChart: ''
       };
     },
@@ -93,12 +93,12 @@
       // },
       pnList: {
         handler: function (n, o) {
-          if (!n||n.length==0){
-            this.queryParams.pnId=''
-            this.pnName=''
-            this.tableData=[]
-            this.devCode=''
-            this.warnValue=[]
+          if (!n || n.length == 0) {
+            this.queryParams.pnId = ''
+            this.pnName = ''
+            this.tableData = []
+            this.devCode = ''
+            this.warnValue = []
             setTimeout(() => {
               this.drawChart()
             }, 300);
@@ -117,7 +117,7 @@
       moment,
       getData(init) {
         // this.queryParams.pageNum = this.pagination.current
-        if(!this.queryParams.pnId){
+        if (!this.queryParams.pnId) {
           this.$message.error('请选择监测点')
           return
         }
@@ -146,7 +146,7 @@
             // console.log(this.columns)
           }
           this.tableData = rr.data.list
-          this.devCode=rr.data.devCode
+          this.devCode = rr.data.devCode
           this.pagination.total = rr.data.total
           this.drawChart()
         })
@@ -312,13 +312,13 @@
         }
         this.myChart.setOption(option, true);
       },
-      portData(){
-        if(!this.queryParams.pnId){
+      portData() {
+        if (!this.queryParams.pnId) {
           this.$message.error('请选择监测点')
           return
         }
         this.queryParams.pnStrId = this.queryParams.pnId + '_meas'
-        this.$export("/web/monitorScene/exportMonitorDataWater",this.queryParams)
+        this.$export("/web/monitorScene/exportMonitorDataWater", this.queryParams)
       }
     },
   }

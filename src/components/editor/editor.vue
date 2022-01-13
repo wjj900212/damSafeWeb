@@ -69,6 +69,10 @@
           return {}
         }
       },
+      isEasy: {
+        type: Boolean,
+        default: false
+      },
       delParams: {
         type: Object,
         default: function () {
@@ -84,6 +88,19 @@
         default: ''
       }
     },
+    watch: {
+      isEasy: {
+        handler: function (n) {
+          if (n) {
+            this.init.toolbar2 =
+              "bullist numlist | blockquote subscript superscript | hr insertdatetime | formatselect fontselect fontsizeselect"
+            tinymce.init({})
+            this.randomKey = new Date().getTime()
+          }
+        },
+        immediate:true
+      }
+    },
     data() {
       let _this = this
       return {
@@ -96,7 +113,7 @@
           skin_url: 'static/tinymce/skins/ui/oxide', // 皮肤：浅色
           readonly: 1,
           // 避免图片地址和链接地址转换成相对路径
-          relative_urls: false, 
+          relative_urls: false,
           remove_script_host: false,
           convert_urls: false,
           // object_resizing:false, //禁止图片调整大小
@@ -104,7 +121,7 @@
           // 工具栏1
           toolbar1: 'forecolor backcolor bold italic underline strikethrough link anchor | alignleft aligncenter alignright alignjustify outdent indent lineheight',
           // // 工具栏2 去掉的 print 打印  formatpainter axupimgs 等等
-          toolbar2: 'bullist numlist | blockquote subscript superscript | table image hr pagebreak insertdatetime | searchreplace | formatselect fontselect fontsizeselect',
+          toolbar2: 'bullist numlist | blockquote subscript superscript | table image hr insertdatetime | searchreplace | formatselect fontselect fontsizeselect',
           menubar: false, // 菜单栏配置,'file edit'，设为false则隐藏，不配置则默认显示全部菜单，也可自定义配置--查看 http://tinymce.ax-z.cn/configure/editor-appearance.php --搜索“自定义菜单”
 
           fontsize_formats: '12px 14px 16px 18px 20px 22px 24px 28px 32px 36px 48px 56px 72px', // 字体大小
