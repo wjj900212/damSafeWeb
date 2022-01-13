@@ -79,35 +79,24 @@ export default {
             },
           ],
           yAxis: data.map(item => {
-            if (item.showType === '1') {
-              return {
+            return {
+                id: item.unit,
                 name: item.unit,
-                position: "left",
+                position: item.showType === "1" ? "left" : "right",
                 nameLocation: "center",
                 type: "value",
-                inverse: true,
+                inverse: item.showType === "1" ? true : false,
                 axisLine: {
                   show: true
                 }
               }
-            } else {
-              return {
-                name: item.unit,
-                type: "value",
-                nameLocation: "center",
-                position: "right",
-                axisLine: {
-                  show: true
-                }
-              }
-            }
           }),
-          series: data.map(item => {
-            if (item.showType === '1') {
-              return {
+          series: data.map((item, index) => {
+            return {
+                id: item.unit,
                 name: item.targetName,
-                type: "bar",
-                yAxisIndex: 1,
+                type: item.showType === "1" ? "bar" : "line",
+                yAxisIndex: index,
                 lineStyle: {
                   width: 1,
                 },
@@ -118,21 +107,6 @@ export default {
                   return it
                 })
               }
-            } else {
-              return {
-                name: item.targetName,
-                type: "line",
-                lineStyle: {
-                  width: 1,
-                },
-                emphasis: {
-                  focus: "series",
-                },
-                data: item.list.map(it => {
-                  return it
-                })
-              }
-            } 
           })
         },
         true

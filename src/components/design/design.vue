@@ -16,27 +16,18 @@
       </div>
         
     </div>
-    <div class="pointer_info Monitor" :style="{ left: (select.xaxis + 70) + 'px', top: (select.yaxis + 66) + 'px', display: select.display }">
-      <div class="a-row">
-        <div class="popupheader">
-          <div class="point"></div>
-          <span class="popuptitle" :title="select.pnName">{{ select.pnName }}</span>
-          <div class="detailbutton Monitor" @click="showMDetail">详情</div>
-        </div>
-        <!-- <div class="" style="text-align: left;"><div class="point"></div></div> -->
-        <!-- <div class="ant-col ant-col-14 ant-col-content"><a @click="showMDetail">详情</a></div> -->
-        <div class="popupcontent">
-          <div>
-            <div class="ant-col ant-col-10" style="text-align: left;">设备类型</div>
-            <div class="ant-col ant-col-14 ant-col-content" :title="select.devModelName">{{ select.devModelName }}</div>
-            <div class="ant-col ant-col-10" style="text-align: left;">设备编号</div>
-            <div class="ant-col ant-col-14 ant-col-content" :title="select.devCode">{{ select.devCode }}</div>
-            <div class="ant-col ant-col-10" style="text-align: left;">设备状态</div>
-            <div class="ant-col ant-col-14 ant-col-content" :title="select.devstatus" style="color:#02CDAB">{{ select.devstatus }}</div>
-            <div class="ant-col ant-col-10" style="text-align: left;">预警状态</div>
-            <div class="ant-col ant-col-14 ant-col-content" :title="select.warnStatus" style="color:#FF6C00">{{ select.warnStatus }}</div>
-          </div>
-        </div>
+    <div class="pointer_info" :style="{ left: (select.xaxis + 70) + 'px', top: (select.yaxis + 66) + 'px', display: select.display }">
+      <div class="headtitle">
+        <a-row>
+          <a-col :span="20" :style="{ textAlign: 'left'}">{{ select.pnName }}</a-col>
+          <a-col :span="4"><a-icon type="snippets" :style="{ cursor: 'pointer' }" /></a-col>
+        </a-row>
+      </div>
+      <div class="bodybox">
+        <a-row v-for="(item, index) in select.list" :key="index">
+          <a-col :span="12" :style="{ textAlign: 'left'}">{{ item.targetName }}</a-col>
+          <a-col :span="12" :style="{ textAlign: 'right'}">{{ item.value }}</a-col>
+        </a-row>
       </div>
     </div>
   </div>
@@ -102,20 +93,22 @@ export default {
       this.$emit('onClose')
     },
     showDetail (e, obj) {
-      let status = ''
-      let num = ''
-      let warnStatus = this.getWarnType(obj.status)
-      if (obj.bonline === '') {
-        status = '未绑定设备'
-      } else {
-        status = obj.bonline === 0 ? '在线' : '离线'
+      const projPnId = obj.projPnId
+      const params = {
+        projPnId: projPnId
       }
-      if (obj.devCode === '') {
-        num = '无'
-      } else {
-        num = obj.devCode
-      }
-      this.select = { ...obj, display: 'block', devstatus: status, num: num, warnStatus: warnStatus}
+      this.$get('web/hiddenScene/getConfiguredSomePnInfo', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          console.log(data)
+          this.select = { ...obj, display: 'block', list: []}
+          this.select.list = data.list
+        } else {
+          this.$message.success(r.data.msg)
+        }
+      })
       e.stopPropagation()
     },
     onClick () {
@@ -214,10 +207,17 @@ export default {
     position: absolute;
     display: none;
     width: 205px;
-    height: 180px;
     line-height: 24px;
     background: white;
     background-position: center;
     background-size: 100% 100%;
+    border-radius: 5px;
+  }
+  .headtitle {
+    border-bottom: 1px solid #aaa;
+    padding: 5px 10px;
+  }
+  .bodybox {
+    padding: 10px;
   }
 </style>

@@ -127,23 +127,40 @@
 						"hasParent": true,
 						"hasChildren": false
 					},
-          {
-            "icon": "audit",
-            "path": "/reservoir/monitor/rain",
-            "component": "reservoir/monitorScene/rain",
-            "name": "雨情监测",
-            "hidden": false,
-            "isItem": "0",
-            "meta": {
-              "closeable": true,
-              "isShow": true
-            },
-            "type": "0",
-            "redirect": "",
-            "children": [],
-            "hasParent": true,
-            "hasChildren": false
-          }
+					{
+						"icon": "audit",
+						"path": "/reservoir/monitor/rain",
+						"component": "reservoir/monitorScene/rain",
+						"name": "雨情监测",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					},
+					{
+						"icon": "audit",
+						"path": "/reservoir/monitor/transfusion",
+						"component": "reservoir/monitorScene/transfusion",
+						"name": "渗流监测",
+						"hidden": false,
+						"isItem": "0",
+						"meta": {
+							"closeable": true,
+							"isShow": true
+						},
+						"type": "0",
+						"redirect": "",
+						"children": [],
+						"hasParent": true,
+						"hasChildren": false
+					}
 				],
 				"hasParent": false,
 				"hasChildren": false

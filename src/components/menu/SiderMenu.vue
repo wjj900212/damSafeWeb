@@ -9,7 +9,8 @@
       <!-- <router-link to="/">
         
       </router-link> -->
-      <img src="static/img/logo.png" alt="">
+      <img v-if="mainMenu === 'reservoir'" :style="{marginBottom: '22px'}" src="static/img/logo.png" alt="">
+      <img v-else src="static/img/logo.png" alt="">
       <span class="menutitle" v-if="mainMenu === 'reservoir'">{{ reservoirList.find(item => item.reservoirId === reservoirId ).reservoirName }}</span>
       <a-dropdown v-if="mainMenu === 'reservoir'" :trigger="['click']">
         <a-icon type="unordered-list" :style="{ fontSize: '20px', float: 'right', marginTop: '20px', color: 'white', cursor: 'pointer', marginRight: '10px' }" />
@@ -153,7 +154,6 @@ export default {
         width: 32px;
         display: inline-block;
         vertical-align: initial;
-        margin-bottom: 22px;
       }
     }
   }

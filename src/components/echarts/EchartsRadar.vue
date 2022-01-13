@@ -36,13 +36,16 @@ export default {
           text: ''
         },
         radar: {
-          indicator: [
-            { name: '雨情监测', max: 6500 },
-            { name: '水情监测', max: 16000 },
-            { name: '渗流监测', max: 30000 },
-            { name: '渗压监测', max: 38000 },
-            { name: '变形监测', max: 52000 }
-          ]
+          indicator: data.map(item => {
+            return { name: item.name, max: 4 }
+          })
+          // indicator: [
+          //   { name: '雨情监测', max: 6500 },
+          //   { name: '水情监测', max: 16000 },
+          //   { name: '渗流监测', max: 30000 },
+          //   { name: '渗压监测', max: 38000 },
+          //   { name: '变形监测', max: 52000 }
+          // ]
         },
         series: 
           {
@@ -51,7 +54,10 @@ export default {
             areaStyle: {},
             data: [
               {
-                value: [4200, 3000, 20000, 35000, 50000, 18000],
+                // value: [4, 4, 4, 4, 4, 4],
+                value: data.map(item => {
+                  return (4 - parseInt(item.warnLevel))
+                })
               }
             ]
           }
