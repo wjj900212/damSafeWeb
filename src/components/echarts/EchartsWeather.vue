@@ -118,7 +118,8 @@ export default {
               fontSize: 14
             },
             data: data.map((item) => {
-              return item.date
+              let time = item.date.split('-')
+              return time[1] + '/' + time[2]
             })
           },
           // 天气图标
@@ -144,7 +145,6 @@ export default {
                   backgroundColor: {
                     // image: 'static/img/weather/' + this.weaPic[] + '@2x.png'
                     image: data.map((item) => {
-                      console.log('天气图片-----', item)
                       return 'static/img/weather/' + item.code + '@2x.png'
                     })
                   },

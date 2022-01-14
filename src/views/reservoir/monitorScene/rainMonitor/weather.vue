@@ -54,9 +54,9 @@
             <div>24小时天气</div>
             <div class="chartBox">
               <a-icon type="left" class="slipbtn" @click="turnleft"/>
-              <div class="yAxis">
+              <!--<div class="yAxis">
                 <span v-for="(v,i) in yAxisV" :key="i">{{v+'°'}}</span>
-              </div>
+              </div>-->
               <div class="chartWarp" ref="chartWarp">
                  <div ref="weatherChart" class="chart"></div>
               </div>
@@ -143,76 +143,168 @@ export default {
     chartInit (data) {
       var chartDom = this.$refs.weatherChart
       this.weaChart = this.$echarts.init(chartDom)
-      var option
-      option = {
-        tooltip: {
-          trigger: 'axis',
-          textStyle: {
-            color: '#333'
-          },
-          axisPointer: {
-            type: 'line' // 默认为直线，可选为：'line' | 'shadow'
-          },
-          formatter: function (val) {
-            let str = ''
-            str +=
-              val[0].value + '°' + '  ' + weaChartData[val[0].dataIndex].wether
-            return str
-          }
-        },
+      let weatherIcons = {}
+      for (let i = 0; i < data.length; i++) {
+        weatherIcons[data[i].wether] = data[i].code
+      }
+      console.log('天气图标对应', weatherIcons)
+      var option = {
         grid: {
-          top: 10,
-          left: 15,
-          right: 18,
-          bottom: 18
+          show: true,
+          backgroundColor: 'transparent',
+          opacity: 0.3,
+          borderWidth: '0',
+          top: '180',
+          bottom: '0'
         },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: weaChartData.map((v) => {
-            return v.time + ':00'
-          }),
-          axisLabel: {
-            color: '#333',
-            formatter: function (params) {
-              let str = params.substr(10)
-              return str
-            }
-          },
-          axisTick: {
-            show: false
-          }
+        tooltip: {
+          trigger: 'axis'
         },
-        yAxis: {
+        legend: {
           show: false
+        },
+        xAxis: [
+          // 时间
+          {
+            type: 'category',
+            boundaryGap: false,
+            position: 'top',
+            offset: 130,
+            zlevel: 100,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: [
+                '{a|{value}}'
+              ].join('\n'),
+              rich: {
+                a: {
+                  fontSize: 14
+                }
+              }
+            },
+            nameTextStyle: {
+            },
+            data: data.map((item) => {
+              return item.time.split(' ')[1] + '时'
+            })
+          },
+          // 天气
+          {
+            type: 'category',
+            boundaryGap: false,
+            position: 'top',
+            offset: 100,
+            zlevel: 100,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: function (value, index) {
+                // console.log('天气图片 ****** ', index + ' ' + value)
+                return '{' + index + '| }\n{b|' + value + '}'
+              },
+              rich: {
+                b: {
+                  backgroundColor: {
+                    image: 'static/img/weather/0@2x.png'
+                    /* image: data.map((item) => {
+                      // console.log('天气图标code=' + item.code)
+                      let iconPic = `static/img/weather/0@2x.png`
+                      // console.log('图片路径', 'static/img/weather/' + item.code + '@2x.png')
+                      return iconPic
+                    }) */
+                  },
+                  height: 40,
+                  width: 40
+                }
+              }
+            },
+            nameTextStyle: {
+              fontWeight: 'bold',
+              fontSize: 14
+            },
+            data: data.map((item) => {
+              return item.wether
+            })
+          },
+          // 天气图标
+          {
+            type: 'category',
+            boundaryGap: false,
+            position: 'top',
+            offset: 50,
+            zlevel: 100,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: [
+                '{a|{value}}'
+              ].join('\n'),
+              rich: {
+                a: {
+                  fontSize: 14
+                }
+              }
+            },
+            nameTextStyle: {
+              fontWeight: 'bold',
+              fontSize: 14
+            },
+            data: data.map((item) => {
+              return item.temp + '℃'
+            })
+          }
+        ],
+        yAxis: {
+          type: 'value',
+          show: false,
+          axisLabel: {
+            formatter: '{value} °C',
+            color: 'white'
+          }
         },
         series: [
           {
             name: '温度',
-            data: weaChartData.map((v) => {
-              return v.temp
-            }),
             type: 'line',
+            data: data.map((item) => {
+              return item.temp
+            }),
+            symbol: 'emptyCircle',
+            symbolSize: 10,
+            showSymbol: true,
             smooth: true,
             itemStyle: {
               normal: {
-                color: '#333', // 折点颜色
-                lineStyle: {
-                  color: '#32B7E9' // 折线颜色
-                }
+                color: '#C95843'
               }
             },
+            label: {
+              show: true,
+              position: 'top',
+              formatter: '{c} °C'
+            },
+            lineStyle: {
+              width: 1
+            },
             areaStyle: {
-              color: this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: '#32B7E933'
-                },
-                {
-                  offset: 1,
-                  color: '#000'
-                }
-              ])
+              opacity: 1,
+              color: 'transparent'
             }
           }
         ]
@@ -335,12 +427,12 @@ export default {
     font-size: 1.4rem;
   }
   .s_left,
-  .s_center,
   .s_right {
     flex: 1;
     padding: 1rem;
   }
   .s_center {
+    width:35%;
     border-right: 1px solid #f2f2f2;
     border-left: 1px solid #f2f2f2;
   }
@@ -443,14 +535,12 @@ export default {
     overflow: hidden;
   }
   .chartWarp {
-    width: calc(100% - 6rem - 8px);
+    width: calc(100% - 3rem - 8px);
     height: 26rem;
     overflow: hidden;
-    margin-right: 1rem;
   }
   .chart {
-   // width: 400%;
-    width: 100%;
+    width: 400%;
     height: 26rem;
     float: left;
     transition: all .3s ease;
