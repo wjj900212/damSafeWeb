@@ -5,11 +5,19 @@
     width="750px"
     @cancel="handleCancel"
   >
-    <a-textarea
-      v-model="value"
-      placeholder="请输入警示信息内容"
-      :auto-size="{ minRows: 3, maxRows: 5 }"
-    />
+    <div>
+      <span>预警别称:</span>
+      <a-input style="width:210px;" v-model="queryParams.message" placeholder="请输入" />
+    </div>
+    <div>
+      <span>编辑警示信息内容:</span>
+      <a-textarea
+        v-model="queryParams.value"
+        placeholder="请输入警示信息内容"
+        :auto-size="{ minRows: 3, maxRows: 5 }"
+      />
+    </div>
+
     <div
       :style="{
         position: 'absolute',
@@ -45,7 +53,7 @@ export default {
   },
   data () {
     return {
-      value: ''
+      queryParams: {}
     }
   },
   methods: {

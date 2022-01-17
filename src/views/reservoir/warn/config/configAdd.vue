@@ -6,9 +6,26 @@
     @cancel="handleCancel"
   >
     <div class="steps-content">
-      <first @updateThresholdDev="updateThresholdDev" :thresholdEditMoreObj="thresholdEditMoreObj" :typeList="typeList" v-if="steps[current].index === '1'"></first>
-      <second @updateThresholdTag="updateThresholdTag" :thresholdEditMoreObj="thresholdEditMoreObj" :projList="projList" v-if="steps[current].index === '2'"></second>
-      <third ref="thirdRef" @updateThresholdData="updateThresholdData" @getFlag="getFlag" @getEditable="getEditable" :thresholdEditMoreObj="thresholdEditMoreObj" :tagList="tagList" :data="thresholdEditData" v-if="steps[current].index === '3'"></third>
+      <first
+        @updateThresholdDev="updateThresholdDev"
+        :thresholdEditMoreObj="thresholdEditMoreObj"
+        :typeList="typeList"
+        :devTypeList="devTypeList"
+        v-if="steps[current].index === '1'"></first>
+      <second
+        @updateThresholdTag="updateThresholdTag"
+        :thresholdEditMoreObj="thresholdEditMoreObj"
+        :devTypeList="devTypeList"
+        v-if="steps[current].index === '2'"></second>
+      <third
+        ref="thirdRef"
+        @updateThresholdData="updateThresholdData"
+        @getFlag="getFlag"
+        @getEditable="getEditable"
+        :thresholdEditMoreObj="thresholdEditMoreObj"
+        :tagList="tagList"
+        :data="thresholdEditData"
+        v-if="steps[current].index === '3'"></third>
     </div>
     <template slot="footer">
       <div class="steps-action">
@@ -67,9 +84,10 @@ export default {
         third: {}
       },
       typeList: [],
+      devTypeList: [],
       selectDev: {},
       tagList: [],
-      thresholdEditData: {},
+      thresholdEditData: [],
       editable: false,
       flag: 0
     }
@@ -79,11 +97,9 @@ export default {
       type: Boolean,
       default: false
     },
-    devTypeList: {
-      type: Array,
-      default: () => {
-        return []
-      }
+    tabPane: {
+      type: Number,
+      default: -1
     },
     projList: {
       type: Array,
@@ -93,8 +109,11 @@ export default {
     }
   },
   watch: {
-    devTypeList (newVal) {
-      this.typeList = newVal
+    visible (newVal) {
+      if (newVal) {
+        this.findHiddenList()
+        this.findDevModelList()
+      }
     },
     thresholdEditMoreObj (newVal) {
       this.thresholdEditMoreObj = newVal
@@ -111,8 +130,33 @@ export default {
       this.$emit('search')
       this.$emit('onClose')
     },
+    // 获取监测场景列表
+    findHiddenList () {
+      this.$get('web/warnConfig/findHiddenList', {
+        type: this.tabPane
+      }).then((r) => {
+        if (r.data.code === 1) {
+          let data = r.data.data
+          this.typeList = data
+        } else {
+          this.$message.error(r.data.msg)
+        }
+      })
+    },
+    // 获取设备类型列表
+    findDevModelList () {
+      this.$get('web/warnConfig/findDevModelList', {
+        type: this.tabPane
+      }).then((r) => {
+        if (r.data.code === 1) {
+          let data = r.data.data
+          this.devTypeList = data
+        } else {
+          this.$message.error(r.data.msg)
+        }
+      })
+    },
     updateThresholdDev (dev) {
-      // console.log('获取设备类型', dev)
       this.thresholdEditMoreObj.first = dev
     },
     updateThresholdTag (secondParams, tagList) {
@@ -133,18 +177,18 @@ export default {
     },
     next () {
       if (this.current === 0) {
-        // if (JSON.stringify(this.thresholdEditMoreObj.first) !== '{}') {
-        this.current++
-        // } else {
-        //  this.$message.warning('请先选择设备类型')
-        // }
+        if (JSON.stringify(this.thresholdEditMoreObj.first) !== '{}' && this.thresholdEditMoreObj.first.devModelId !== undefined) {
+          this.current++
+        } else {
+          this.$message.warning('请先选择监测场景和设备类型')
+        }
       } else if (this.current === 1) {
-        // if (this.thresholdEditMoreObj.second.tagList !== undefined) {
-        this.current++
-        //  this.getThresholdDetail(this.thresholdEditMoreObj.second.tagList[0])
-        // } else {
-        //  this.$message.warning('请先选择需要修改阈值的设备')
-        // }
+        if (this.thresholdEditMoreObj.second.tagList !== undefined) {
+          this.current++
+          this.getThresholdDetail(this.thresholdEditMoreObj.first.devModelId)
+        } else {
+          this.$message.warning('请先选择需要修改阈值的设备')
+        }
       }
       console.log('当前thresholdEditMoreObj', this.thresholdEditMoreObj)
     },
@@ -157,9 +201,9 @@ export default {
       }
     },
     // 查看设备的指标阈值
-    getThresholdDetail (devCode) {
-      let params = { devCode: devCode }
-      this.$get('admin/thresholdManage/getThresholdDetail', {
+    getThresholdDetail (devModelId) {
+      let params = { devModelId: devModelId }
+      this.$get('web/warnConfig/findDevValueList', {
         ...params
       }).then((r) => {
         let data = r.data.data

@@ -1,8 +1,8 @@
 <template>
     <div>
       <div class="box">
-        <div class="block">批量修改设备数量：<a href="#">{{tagList.length}}个</a></div>
-        <div class="block">设备类型：<a href="#">{{data.devModelName}}</a></div>
+        <div class="block">已选中监测点：<a href="#">{{tagList.length}}个</a></div>
+        <div class="block">设备类型：<a href="#">{{thresholdEditMoreObj.first.devModelName}}</a></div>
         <div style="margin-left:auto;"><a  @click="recoveryThreshold">恢复默认</a></div>
       </div>
       <a-table ref="TableEdit"
@@ -22,11 +22,11 @@
             <a-input
               v-if="record.editable"
               style="margin: -5px 0"
-              :value="text === 9999 || text === '9999' ? '' : text"
+              :value="text === '9999.0' ? '' : text"
               @change="e => handleChange(e.target.value, record.sort, col)"
             />
             <template v-else>
-              {{ text === 9999 || text === '9999' ? '' : text }}
+              {{ text === '9999.0' ? '' : text }}
             </template>
           </div>
         </template>
@@ -66,9 +66,7 @@ export default {
       loading: false,
       selectedRowKeys: [],
       pagination: false,
-      dataSource: [
-        {targetName: '瞬时降水量', warnBlue: '1', warnBlueMsg: '', warnYellow: '2', warnYellowMsg: '', warnOrange: '3', warnOrangeMsg: '', warnRed: '4', warnRedMsg: ''}
-      ],
+      dataSource: [],
       editable: false,
       flag: 0,
       isShowConfigMsg: false
@@ -169,7 +167,7 @@ export default {
   },
   watch: {
     data (newVal) {
-      // this.dataSource = newVal.targetList
+      this.dataSource = newVal
     }
   },
   methods: {

@@ -1,40 +1,23 @@
 <template>
     <div class="standardList">
-      <a-tabs border="1" type="card" @change="callback">
-        <a-tab-pane key="1" tab="雨情监测">
+      <a-tabs border="1" type="card" v-model="tabPane" @change="callback">
+        <a-tab-pane v-for="v in sceneTypeList" :key="v.ID" :tab="v.NAME">
           <a-button type="primary" style="margin-bottom:10px;" @click="addConfig">添加规则</a-button>
           <div class="operator">
-            <table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>
-          </div>
-        </a-tab-pane>
-        <a-tab-pane key="2" tab="水情监测">
-          <a-button type="primary" style="margin-bottom:10px;">添加规则</a-button>
-          <div class="operator">
-            <table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>
-          </div>
-        </a-tab-pane>
-        <a-tab-pane key="3" tab="渗压监测">
-          <a-button type="primary" style="margin-bottom:10px;">添加规则</a-button>
-          <div class="operator">
-            <table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>
-          </div>
-        </a-tab-pane>
-        <a-tab-pane key="4" tab="渗流监测">
-          <a-button type="primary" style="margin-bottom:10px;">添加规则</a-button>
-          <div class="operator">
-            <table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>
-          </div>
-        </a-tab-pane>
-        <a-tab-pane key="5" tab="变形监测">
-          <a-button type="primary" style="margin-bottom:10px;">添加规则</a-button>
-          <div class="operator">
-            <table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>
+            <a-table ref="TableInfo"
+                     :columns="columns"
+                     :dataSource="dataSource"
+                     :pagination="pagination"
+                     :loading="loading"
+                     @change="handleTableChange">
+            </a-table>
           </div>
         </a-tab-pane>
       </a-tabs>
       <!--添加预警规则-->
       <config-add
         :visible="isShowConfigAdd"
+        :tabPane="tabPane"
         @onClose="()=>{isShowConfigAdd=false}"
       ></config-add>
       <!--编辑预警规则-->
@@ -46,23 +29,19 @@
 </template>
 
 <script>
-import TableList from '@/components/table/TableList'
 import ConfigAdd from './configAdd'
 import ConfigEdit from './configEdit'
 export default {
   name: 'config',
   components: {
-    TableList,
     ConfigAdd,
     ConfigEdit
   },
   data () {
     return {
+      tabPane: -1,
       paginationInfo: null,
-      dataSource: [
-        {devCode: '雨情测报站-01', devStatus: '翻斗式雨量计-01', devModelName: '翻斗式雨量计', secureKey: '202101100045', devOnline: '0'},
-        {devCode: '雨情测报站-02', devStatus: '翻斗式雨量计-02', devModelName: '翻斗式雨量计', secureKey: '202101100046', devOnline: '0'}
-      ],
+      dataSource: [],
       loading: false,
       pagination: {
         pageSizeOptions: ['10', '20', '30', '40', '100'],
@@ -73,7 +52,8 @@ export default {
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
       isShowConfigAdd: false,
-      isShowConfigEdit: false
+      isShowConfigEdit: false,
+      sceneTypeList: []
     }
   },
   computed: {
@@ -110,9 +90,69 @@ export default {
       }]
     }
   },
+  mounted () {
+    this.getHiddenDangerTypeList()
+  },
   methods: {
     callback (key) {
+      this.tabPane = key
+      this.getWarnConfigList({
+        type: key
+      })
       console.log(key)
+    },
+    // 获取场景类型列表
+    getHiddenDangerTypeList () {
+      this.$get('web/hidden/getHiddenDangerTypeList').then((r) => {
+        this.sceneTypeList = r.data.data
+        this.tabPane = r.data.data[0].ID
+        this.getWarnConfigList({
+          type: r.data.data[0].ID
+        })
+      })
+    },
+    reset () {
+      // 重置分页
+      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
+      if (this.paginationInfo) {
+        this.paginationInfo.current = this.pagination.defaultCurrent
+        this.paginationInfo.pageSize = this.pagination.defaultPageSize
+      }
+    },
+    // 预警配置列表
+    getWarnConfigList (params = {}) {
+      this.loading = true
+      if (this.paginationInfo) {
+        // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
+        this.$refs.TableInfo.pagination.current = this.paginationInfo.current
+        this.$refs.TableInfo.pagination.pageSize = this.paginationInfo.pageSize
+        params.pageSize = this.paginationInfo.pageSize
+        params.pageNum = this.paginationInfo.current
+      } else {
+        // 如果分页信息为空，则设置为默认值
+        params.pageSize = this.pagination.defaultPageSize
+        params.pageNum = this.pagination.defaultCurrent
+      }
+      this.$get('web/warnConfig/getWarnConfigList', {
+        ...params
+      }).then((r) => {
+        if (r.data.code === 1) {
+          let data = r.data.data
+          const pagination = { ...this.pagination }
+          pagination.total = data.total
+          this.dataSource = data.records
+          this.pagination = pagination
+        } else {
+          this.$message.error(r.data.msg)
+        }
+        // 数据加载完毕，关闭loading
+        this.loading = false
+      })
+    },
+    handleTableChange (pagination) {
+      // 将这三个参数赋值给Vue data，用于后续使用
+      this.paginationInfo = pagination
+      this.getWarnConfigList()
     },
     addConfig () {
       this.isShowConfigAdd = true
