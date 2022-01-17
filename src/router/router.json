@@ -2,7 +2,7 @@
 	{
 		"icon": "home",
 		"path": "/",
-		"component": "HomePageView",
+		"component": "MenuView",
 		"name": "首页-大屏",
 		"hidden": null,
 		"isItem": "",
@@ -11,8 +11,28 @@
 			"isShow": true
 		},
 		"type": "",
-		"redirect": "",
-		"children": [],
+		"redirect": "/home",
+		"children": [
+			{
+				"id": "",
+				"parentId": "",
+				"icon": "home",
+				"path": "/home",
+				"component": "HomePageView",
+				"name": "首页",
+				"hidden": null,
+				"isItem": "",
+				"meta": {
+					"closeable": false,
+					"isShow": true
+				},
+				"type": "",
+				"redirect": "",
+				"children": [],
+				"hasParent": false,
+				"hasChildren": false
+			}
+		],
 		"hasParent": false,
 		"hasChildren": false
 	},

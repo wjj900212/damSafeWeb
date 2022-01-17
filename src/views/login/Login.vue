@@ -103,7 +103,7 @@ export default {
                 setTimeout(() => {
                   this.loading = false
                   console.log('跳转页面')
-                  this.$router.push('/system/user/User')
+                  this.$router.push('/')
                 }, 500)
                 // this.$router.push('/')
                 if (this.checked === true) {
