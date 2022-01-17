@@ -13,8 +13,9 @@
     >
       <a-form-item v-bind="formItemLayout" label='预案名称'>
         <a-input
+          v-model="safetyParams.reserveName"
           v-decorator="[
-            'name',
+            'reserveName',
             {
               rules: [{ required: true,message: '请填写预案名称' }]
             }
@@ -25,29 +26,31 @@
       <a-form-item v-bind="formItemLayout" label='预案类型'>
         <a-select
           :allowClear="true"
+          v-model="safetyParams.reserveType"
           v-decorator="[
-            'type',
+            'reserveType',
             {
               rules: [{ required: true,message: '请填写预案类型' }]
             }
           ]"
           style="width: 100%"
           placeholder="请选择"
-          @change="handleWarnChange">
-          <a-select-option v-for="g in warnLevelList" :key="(g.id).toString()">{{g.label}}</a-select-option>
+          >
+          <a-select-option v-for="g in safetyTypeList" :key="(g.typeId).toString()">{{g.typeName}}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item v-bind="formItemLayout" label='描述'>
         <a-textarea
           placeholder="请输入"
           :auto-size="{ minRows: 2, maxRows: 6 }"
+          v-model="safetyParams.desc"
           v-decorator="[
-            'type1'
+            'desc'
           ]"
         />
       </a-form-item>
       <a-form-item v-bind="formItemLayout" label='详情'>
-        <editorCom ref="addSafetyBox" :key="randomKey" putUrl="admin/proj/uploadProjDetailsImage" delUrl="admin/proj/delProjArticleImage">
+        <editorCom ref="addSafetyBox" :key="randomKey" putUrl="file/uploadDetailsImage" delUrl="file/deleteDetailsImage">
         </editorCom>
       </a-form-item>
     </a-form>
@@ -94,15 +97,39 @@ export default {
       formItemLayout: {
         labelCol: {span: 3},
         wrapperCol: {span: 20}
-      }
+      },
+      safetyParams: {},
+      safetyTypeList: [
+        {typeId: '0', typeName: '综合预案'},
+        {typeId: '11', typeName: '渗流监测'},
+        {typeId: '12', typeName: '渗压监测'},
+        {typeId: '13', typeName: '大坝变形监测'},
+        {typeId: '14', typeName: '大坝微动监测'},
+        {typeId: '15', typeName: '雨情监测'},
+        {typeId: '16', typeName: '水情监测'}
+      ]
     }
   },
   methods: {
     handleCancel () {
       this.$emit('onClose')
     },
+    reset () {
+      this.form.resetFields()
+      this.$emit('onClose')
+    },
     addSafety () {
-
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          this.safetyParams.details = this.$refs.addSafetyBox.content
+          this.$postDate('web/reservoirPlan/addPlan', {
+            ...this.safetyParams
+          }).then((r) => {
+            this.$emit('fetch')
+            this.reset()
+          })
+        }
+      })
     }
   }
 }

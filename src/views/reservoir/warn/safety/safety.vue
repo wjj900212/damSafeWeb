@@ -10,7 +10,7 @@
                     label="关键字"
                     :labelCol="{span: 5}"
                     :wrapperCol="{span: 18, offset: 1}">
-                    <a-input placeholder="请输入" v-model="queryParams.searchName"/>
+                    <a-input placeholder="请输入" v-model="queryParams.keyword"/>
                   </a-form-item>
                 </a-col>
               </div>
@@ -35,6 +35,7 @@
       <!--添加预案-->
       <safety-add
         :visible="isShowSafetyAdd"
+        @fetch="fetch"
         @onClose="()=>{isShowSafetyAdd=false}"
       ></safety-add>
       <!---->
@@ -62,13 +63,7 @@ export default {
       advanced: false,
       queryParams: {},
       paginationInfo: null,
-      dataSource: [
-        {devStatus: '安全管理预案', devModelName: '综合预案', secureKey: '王伟', devOnline: '土石坝安全管理可分为日常巡检、技术处理和应急处置三个层面的工作', projBasicName: '2021-12-21 18:24:21'},
-        {devStatus: '日常巡检预案', devModelName: '综合预案', secureKey: '王伟', devOnline: '日常巡检：根据《土石坝安全监测技术规范》（SL551-2012）要求', projBasicName: '2021-12-21 18:24:21'},
-        {devStatus: '技术处理预案', devModelName: '综合预案', secureKey: '王伟', devOnline: '当安全风险监测发出异常预警后，或遇到大洪水、大暴雨、地震、高水位运行等工况下，需对可能出现险情的部位和工况进行连续监测，对于可能出现的险情要制定针对性的技术方案。', projBasicName: '2021-12-21 18:24:21'},
-        {devStatus: '应急处置预案', devModelName: '综合预案', secureKey: '王伟', devOnline: '当安全风险监测发出险情预警后，或土石坝遭遇强降雨、漫坝等极端工况下，坝体存在溃坝风险，需建立对应的应急处置机制，一方面从监测系统中要实时掌握气象数据、坝体工情数据 ...', projBasicName: '2021-12-21 18:24:21'},
-        {devStatus: '防汛预案', devModelName: '雨情监测预案', secureKey: '王伟', devOnline: '降水量、库水位测报频次原则上每日不少于1次，当出现强降雨、库水位明显变化，或遭遇大洪水、强地震、工程异常等特殊情况时，增加测报频次。', projBasicName: '2021-12-21 18:24:21'}
-      ],
+      dataSource: [],
       loading: false,
       pagination: {
         pageSizeOptions: ['10', '20', '30', '40', '100'],
@@ -86,21 +81,21 @@ export default {
     columns () {
       return [{
         title: '预案名称',
-        dataIndex: 'devStatus'
+        dataIndex: 'reserveName'
       }, {
         title: '适用监测场景',
-        dataIndex: 'devModelName'
+        dataIndex: 'reserveType'
       }, {
         title: '创建人',
-        dataIndex: 'secureKey'
+        dataIndex: 'username'
       }, {
         title: '描述',
-        dataIndex: 'devOnline',
+        dataIndex: 'desc',
         width: '25%',
         ellipsis: true
       }, {
         title: '创建时间',
-        dataIndex: 'projBasicName'
+        dataIndex: 'createTime'
       }, {
         title: '操作',
         dataIndex: 'operation',
@@ -113,6 +108,9 @@ export default {
       }]
     }
   },
+  mounted () {
+    this.fetch()
+  },
   methods: {
     addSafety () {
       this.isShowSafetyAdd = true
@@ -121,8 +119,81 @@ export default {
       this.$refs.safetyEdit.setFormValues(record)
       this.isShowSafetyEdit = true
     },
-    safetyDelete () {
+    search () {
+      this.fetch({
+        ...this.queryParams
+      })
+    },
+    reset () {
+      // 重置分页
+      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
+      if (this.paginationInfo) {
+        this.paginationInfo.current = this.pagination.defaultCurrent
+        this.paginationInfo.pageSize = this.pagination.defaultPageSize
+      }
+      // 重置查询参数
+      this.queryParams = {}
+      this.fetch()
+    },
+    handleTableChange (pagination) {
+      // 将这三个参数赋值给Vue data，用于后续使用
+      this.paginationInfo = pagination
+      this.fetch({
+        ...this.queryParams
+      })
+    },
+    fetch (params = {}) {
+      // 显示loading
+      this.loading = true
+      if (this.paginationInfo) {
+        // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
+        this.$refs.TableInfo.pagination.current = this.paginationInfo.current
+        this.$refs.TableInfo.pagination.pageSize = this.paginationInfo.pageSize
+        params.pageSize = this.paginationInfo.pageSize
+        params.pageNum = this.paginationInfo.current
+      } else {
+        // 如果分页信息为空，则设置为默认值
+        params.pageSize = this.pagination.defaultPageSize
+        params.pageNum = this.pagination.defaultCurrent
+      }
+      this.$get('web/reservoirPlan/getPlanList', {
+        ...params
+      }).then((r) => {
+        if (r.data.code === 1) {
+          let data = r.data.data
+          const pagination = { ...this.pagination }
+          pagination.total = data.total
+          this.dataSource = data.records
+          this.pagination = pagination
+        } else {
+          this.$message.error(r.data.msg)
+        }
+        // 数据加载完毕，关闭loading
+        this.loading = false
+      })
+    },
+    safetyDelete (record) {
+      let that = this
+      this.$confirm({
+        title: '确定删除该用户?',
+        content: '当您点击确定按钮后，该预案将会被彻底删除',
+        centered: true,
+        onOk () {
+          that.$post('web/reservoirPlan/deletePlan', {
+            planId: record.planId
+          }).then((r) => {
+            if (r.data.code === 1) {
+              that.$message.success('删除成功')
+              that.search()
+            } else {
+              that.$message.error(r.data.msg)
+            }
+          })
+        },
+        onCancel () {
 
+        }
+      })
     }
   }
 }
