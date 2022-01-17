@@ -329,7 +329,7 @@
           return
         }
         this.queryParams.pnStrId = this.queryParams.pnId + '_meas'
-        this.$export("/web/monitorScene/exportMonitorDataWater", this.queryParams)
+        this.$export("/web/monitorScene/exportMonitorData", this.queryParams)
       }
     },
   }
