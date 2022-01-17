@@ -32,101 +32,10 @@
       :style="{ marginBottom: '24px' }"
     >
       <a-col :span="12">
-        <a-card title="雨情监测">
-          <a slot="extra" href="#">查看详情</a>
-          <a-card-grid style="width: 100%; text-align: left">
-            <a-row>
-              <a-col :span="2">
-                <img width="36" height="34" src="static/img/u295.png" alt="" />
-              </a-col>
-              <a-col :span="19">
-                <a-row>
-                  <a-col>
-                    <h4 style="float: left">雨情</h4>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="4"> 安全状态 </a-col>
-                  <a-col :span="3"> 正常 </a-col>
-                  <a-col :span="4"> 当前降水量 </a-col>
-                  <a-col :span="3"> 29.2mm </a-col>
-                  <a-col :span="4"> 日降水量 </a-col>
-                  <a-col :span="6"> 52.2mm </a-col>
-                </a-row>
-              </a-col>
-              <a-col :span="3">
-                <a-select
-                  v-model="monitor"
-                  placeholder="监测点"
-                  option-filter-prop="children"
-                  @change="handleMonitorChange"
-                >
-                  <a-select-option
-                    v-for="item in monitorData"
-                    :value="item.id"
-                    :key="item.id"
-                  >
-                    {{ item.name }}
-                  </a-select-option>
-                </a-select>
-              </a-col>
-            </a-row>
-          </a-card-grid>
-          <a-card-grid style="width: 100%; text-align: center">
-            <div :style="{ width: '100%', height: '320px' }">
-              <component
-                :is="'EchartsBarLine'"
-                refid="BarLine"
-                :data="radarData"
-                class="main-content"
-              ></component>
-            </div>
-          </a-card-grid>
-        </a-card>
+        <rain :List="rainList" :data="rainData"></rain>
       </a-col>
       <a-col :span="12">
-        <a-card title="水情监测">
-          <a slot="extra" href="#">查看详情</a>
-          <a-card-grid style="width: 100%; text-align: left">
-            <a-row>
-              <a-col :span="2">
-                <img width="36" height="34" src="static/img/u319.png" alt="" />
-              </a-col>
-              <a-col :span="19">
-                <a-row>
-                  <a-col>
-                    <h4 style="float: left">水情</h4>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="4"> 安全状态 </a-col>
-                  <a-col :span="3"> 正常 </a-col>
-                  <a-col :span="4"> 当前水位 </a-col>
-                  <a-col :span="3"> 29.2mm </a-col>
-                  <a-col :span="5"> 历史最大水位 </a-col>
-                  <a-col :span="5"> 39.2mm </a-col>
-                </a-row>
-              </a-col>
-              <a-col :span="3">
-                <a-select
-                  v-model="monitor"
-                  placeholder="监测点"
-                  option-filter-prop="children"
-                  @change="handleMonitorChange"
-                >
-                  <a-select-option
-                    v-for="item in monitorData"
-                    :value="item.id"
-                    :key="item.id"
-                  >
-                    {{ item.name }}
-                  </a-select-option>
-                </a-select>
-              </a-col>
-            </a-row>
-          </a-card-grid>
-          <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
-        </a-card>
+        <water :List="waterList" :data="waterData"></water>
       </a-col>
     </a-row>
     <a-row
@@ -134,15 +43,7 @@
       :style="{ marginBottom: '24px' }"
     >
       <a-col :span="24">
-        <a-card title="微动监测数据统计">
-          <div slot="extra">
-            <a-button type="primary"> 查询 </a-button>
-            <a-button type="primary"> 导出 </a-button>
-          </div>
-          <a-card-grid style="width: 100%; text-align: center">
-
-          </a-card-grid>
-        </a-card>
+        <jogging :List="joggingList" :data="joggingData"></jogging>
       </a-col>
     </a-row>
     <a-row
@@ -150,166 +51,13 @@
       :style="{ marginBottom: '24px' }"
     >
       <a-col :span="8">
-        <a-card title="渗流监测">
-          <a slot="extra" href="#">查看详情</a>
-          <a-card-grid style="width: 100%; text-align: left">
-            <a-row>
-              <a-col :span="3">
-                <img width="36" height="34" src="static/img/u309.png" alt="" />
-              </a-col>
-              <a-col :span="15">
-                <a-row>
-                  <a-col>
-                    <h4 style="float: left">渗流</h4>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8"> 安全状态 </a-col>
-                  <a-col :span="16"> 正常 </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8"> 当前降水量 </a-col>
-                  <a-col :span="16"> 29.2mm </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8"> 日降水量 </a-col>
-                  <a-col :span="16"> 52.2mm </a-col>
-                </a-row>
-              </a-col>
-              <a-col :span="6">
-                <a-select
-                  v-model="monitor"
-                  placeholder="监测点"
-                  option-filter-prop="children"
-                  @change="handleMonitorChange"
-                >
-                  <a-select-option
-                    v-for="item in monitorData"
-                    :value="item.id"
-                    :key="item.id"
-                  >
-                    {{ item.name }}
-                  </a-select-option>
-                </a-select>
-              </a-col>
-            </a-row>
-          </a-card-grid>
-          <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
-        </a-card>
+        <transfusion :List="transfusionList" :data="transfusionData"></transfusion>
       </a-col>
       <a-col :span="8">
-        <a-card title="渗压监测">
-          <a slot="extra" href="#">查看详情</a>
-          <a-card-grid style="width: 100%; text-align: left">
-            <a-row>
-              <a-col :span="3">
-                <img width="36" height="34" src="static/img/u550.png" alt="" />
-              </a-col>
-              <a-col :span="15">
-                <a-row>
-                  <a-col>
-                    <h4 style="float: left">240断面渗压</h4>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8"> 安全状态 </a-col>
-                  <a-col :span="16"> 正常 </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8"> 水位高程 </a-col>
-                  <a-col :span="16">
-                    <a-row>
-                      <a-col :span="8">45m(坝顶) </a-col>
-                      <a-col :span="8">34m(坝中) </a-col>
-                      <a-col :span="8">23m(坝底)</a-col>
-                    </a-row>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8"> 水头 </a-col>
-                  <a-col :span="16">
-                    <a-row>
-                      <a-col :span="8">5m(坝顶) </a-col>
-                      <a-col :span="8">4m(坝中) </a-col>
-                      <a-col :span="8">3m(坝底)</a-col>
-                    </a-row>
-                  </a-col>
-                </a-row>
-              </a-col>
-              <a-col :span="6">
-                <a-select
-                  v-model="monitor"
-                  placeholder="监测点"
-                  option-filter-prop="children"
-                  @change="handleMonitorChange"
-                >
-                  <a-select-option
-                    v-for="item in monitorData"
-                    :value="item.id"
-                    :key="item.id"
-                  >
-                    {{ item.name }}
-                  </a-select-option>
-                </a-select>
-              </a-col>
-            </a-row>
-          </a-card-grid>
-          <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
-        </a-card>
+        <piezometric :List="piezometricList" :data="piezometricData"></piezometric>
       </a-col>
       <a-col :span="8">
-        <a-card title="变形监测">
-          <a slot="extra" href="#">查看详情</a>
-          <a-card-grid style="width: 100%; text-align: left">
-            <a-row>
-              <a-col :span="3">
-                <img width="36" height="34" src="static/img/u209.png" alt="" />
-              </a-col>
-              <a-col :span="15">
-                <a-row>
-                  <a-col>
-                    <h4 style="float: left">变形监测-01</h4>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8"> 安全状态 </a-col>
-                  <a-col :span="16"> 正常 </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8"> 最大位移值 </a-col>
-                  <a-col :span="16">
-                    <a-row>
-                      <a-col :span="24">位移X （东）+0.2mm </a-col>
-                    </a-row>
-                    <a-row>
-                      <a-col :span="24">位移Y （北）+0.2mm </a-col>
-                    </a-row>
-                    <a-row>
-                      <a-col :span="24">位移Z （高）+0.2mm </a-col>
-                    </a-row>
-                  </a-col>
-                </a-row>
-              </a-col>
-              <a-col :span="6">
-                <a-select
-                  v-model="monitor"
-                  placeholder="监测点"
-                  option-filter-prop="children"
-                  @change="handleMonitorChange"
-                >
-                  <a-select-option
-                    v-for="item in monitorData"
-                    :value="item.id"
-                    :key="item.id"
-                  >
-                    {{ item.name }}
-                  </a-select-option>
-                </a-select>
-              </a-col>
-            </a-row>
-          </a-card-grid>
-          <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
-        </a-card>
+        <transshape :List="transshapeList" :data="transshapeData"></transshape>
       </a-col>
     </a-row>
     <a-row
@@ -348,23 +96,45 @@
 
 import safetyOverview from "./components/safetyOverview.vue"
 import scene from "./components/scene.vue"
-import EchartsBarLine from "@/components/echarts/EchartsBarLine.vue";
 import { mapState } from 'vuex'
 import moment from "moment";
 import SafetyPlan from './components/safetyPlan.vue';
 import trend from './components/trend.vue'
+import rain from './components/rain.vue'
+import water from './components/water.vue';
+import transfusion from './components/transfusion.vue';
+import piezometric from './components/piezometric.vue';
+import transshape from './components/transshape.vue';
+import jogging from './components/jogging.vue';
 
 export default {
   name: "generalview",
   components: {
-    EchartsBarLine,
     safetyOverview,
     scene,
     SafetyPlan,
-    trend
+    trend,
+    rain,
+    water,
+    transfusion,
+    piezometric,
+    transshape,
+    jogging
   },
   data() {
     return {
+      rainList: [],
+      rainData: [],
+      waterList: [],
+      waterData: [],
+      transfusionList: [],
+      transfusionData: [],
+      piezometricList: [],
+      piezometricData: [],
+      transshapeList: [],
+      transshapeData: [],
+      joggingList: [],
+      joggingData: [],
       reservoirInfo: {},
       radarData: [],
       relationshipData: [],
@@ -380,6 +150,14 @@ export default {
         { id: 2, name: "监测点2" },
         { id: 3, name: "监测点3" },
       ],
+      sceneType: [
+        { id: 11, name: "渗流监测" },
+        { id: 12, name: "渗压监测" },
+        { id: 13, name: "大坝变形监测" },
+        { id: 14, name: "大坝微动监测" },
+        { id: 15, name: "雨情监测" },
+        { id: 16, name: "水情监测" }
+      ],
     };
   },
   computed: {
@@ -393,6 +171,8 @@ export default {
     this.getPlanList()
     this.getTrendStatistics()
     this.getProjPnTreeList()
+    this.getProjPnidsGroup()
+    this.getSectionList()
   },
   watch: {
     reservoirId (val) { // 监听数据发生改变 刷新图表数据
@@ -401,11 +181,49 @@ export default {
       this.getPlanList()
       this.getTrendStatistics()
       this.getProjPnTreeList()
+      this.getProjPnidsGroup()
+      this.getSectionList()
     }
   },
   updated() {},
   methods: {
     moment,
+    handleMonitorChange (value) {
+    },
+    getSectionList () {
+      const { reservoirId } = this
+      const params = {
+        reservoirId: reservoirId
+      }
+      this.$get('web/reservoirOverview/getSectionList', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          this.piezometricList = data
+          // this.treeData = data.treeData
+        }
+      })
+    },
+    getProjPnidsGroup () {
+      const { reservoirId } = this
+      const params = {
+        reservoirId: reservoirId
+      }
+      this.$get('web/reservoirOverview/getProjPnidsGroup', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          this.rainList = data.find(item => item.typeId === 15) ? data.find(item => item.typeId === 15).hiddenList : []
+          this.waterList = data.find(item => item.typeId === 16) ? data.find(item => item.typeId === 16).hiddenList : []
+          this.transfusionList = data.find(item => item.typeId === 11) ? data.find(item => item.typeId === 11).hiddenList : []
+          this.transshapeList = data.find(item => item.typeId === 13) ? data.find(item => item.typeId === 13).hiddenList : []
+          this.joggingList = data.find(item => item.typeId === 14) ? data.find(item => item.typeId === 14).hiddenList : []
+          // this.treeData = data.treeData
+        }
+      })
+    },
     getProjPnTreeList () {
       const { reservoirId } = this
       const params = {
@@ -517,7 +335,6 @@ export default {
         }
       })
     },
-    handleMonitorChange() {},
     getPlanList (type) {
       let params = {}
       if (type && type !== 'all') {
