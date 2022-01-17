@@ -9,7 +9,7 @@
 <script>
 import {mapState} from 'vuex'
 import mapviewer from 'utils/viewer'
-import {addModels} from 'utils/addYanQingModels'
+// import {addModels} from 'utils/addYanQingModels'
 export default {
   name: 'cesiumPage',
   props: ['isSpin'],
@@ -155,12 +155,12 @@ export default {
     //   url: 'http://39.100.228.243/web/map/dadem',
     //   requestWaterMask: false
     // })
-    let terrainProvider = new Cesium.CesiumTerrainProvider({
-      url: 'http://isafety.hazardscience.com.cn/web/map/dadem',
-     // url: 'http://8.142.13.191/web/map/dadem',
-      requestWaterMask: false
-    })
-    viewer.scene.terrainProvider = terrainProvider
+    // let terrainProvider = new Cesium.CesiumTerrainProvider({
+    //   url: 'http://isafety.hazardscience.com.cn/web/map/dadem',
+    //  // url: 'http://8.142.13.191/web/map/dadem',
+    //   requestWaterMask: false
+    // })
+    // viewer.scene.terrainProvider = terrainProvider
     // 禁用默认实体选中时间0
     viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK)
     // 去掉版权信息
@@ -245,7 +245,7 @@ export default {
 
     // })
 
-    addModels(viewer,Cesium);
+    // addModels(viewer,Cesium);
   }
 }
 </script>
