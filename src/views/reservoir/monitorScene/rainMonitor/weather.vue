@@ -54,9 +54,6 @@
             <div>24小时天气</div>
             <div class="chartBox">
               <a-icon type="left" class="slipbtn" @click="turnleft" />
-              <!--<div class="yAxis">
-                <span v-for="(v,i) in yAxisV" :key="i">{{v+'°'}}</span>
-              </div>-->
               <div class="chartWarp" ref="chartWarp">
                 <div ref="weatherChart" class="chart"></div>
               </div>
@@ -73,360 +70,282 @@
 </template>
 
 <script>
-  import {
-    mapState
-  } from 'vuex'
-  import EchartsWeather from '@/components/echarts/EchartsWeather.vue'
-  var weaChartData
-  export default {
-    name: 'weather',
-    components: {
-      EchartsWeather
-    },
-    props: {
-      hiddenId: {
-        type: Number,
-        default: -1
+import {
+  mapState
+} from 'vuex'
+import EchartsWeather from '@/components/echarts/EchartsWeather.vue'
+var weaChartData
+export default {
+  name: 'weather',
+  components: {
+    EchartsWeather
+  },
+  props: {
+    hiddenId: {
+      type: Number,
+      default: -1
+    }
+  },
+  data () {
+    return {
+      weatherMsg: {},
+      weaChart: null,
+      yAxisV: [],
+      weather24Msg: [],
+      weather7DayMsg: []
+    }
+  },
+  computed: {
+    ...mapState({
+      cityCode: state => state.account.cityCode
+    })
+  },
+  watch: {
+    hiddenId (newVal) {
+      if (newVal) {
+        this.realTimeWeather()
+        this.future24hWeather()
+        this.getHiddenFutureWeather()
       }
-    },
-    data() {
-      return {
-        weatherMsg: {},
-        weaChart: null,
-        yAxisV: [],
-        weather24Msg: [],
-        weather7DayMsg: []
-      }
-    },
-    computed: {
-      ...mapState({
-        cityCode: state => state.account.cityCode
+    }
+  },
+  mounted () {
+    // this.realTimeWeather()
+    //  this.future24hWeather()
+  },
+  methods: {
+    // 获取实时天气
+    realTimeWeather () {
+      this.$get('web/monitorScene/getWeatherData', {
+        hiddenId: this.hiddenId
+      }).then((res) => {
+        if (res.data.code === 1) {
+          this.weatherMsg = res.data.data
+        } else {
+          this.$message.error(res.data.msg)
+        }
       })
     },
-    watch: {
-      hiddenId(newVal) {
-        if (newVal) {
-          this.realTimeWeather()
-          this.future24hWeather()
-          this.getHiddenFutureWeather()
+    // 隐患点未来24小时天气
+    future24hWeather () {
+      this.$get('web/monitorScene/future24hWeather', {
+        hiddenId: this.hiddenId
+      }).then((res) => {
+        console.log('未来24小时天气', res.data)
+        let rr = res.data
+        weaChartData = rr.reverse()
+        let yAxisV = weaChartData.map(v => {
+          return v.temp
+        }).sort((a, b) => {
+          return a - b
+        })
+        let max = Number(yAxisV[yAxisV.length - 1])
+        let min = Number(yAxisV[0])
+        let yy = Math.ceil(max / 4)
+        this.yAxisV = [max, yy * 2 + min, yy + min, min]
+        if (this.weaChart) this.weaChart.dispose()
+        this.chartInit(rr)
+      })
+    },
+    chartInit (data) {
+      var chartDom = this.$refs.weatherChart
+      this.weaChart = this.$echarts.init(chartDom)
+      var richX = {}
+      for (let i = 0; i < 38; i++) {
+        richX['b' + i] = {
+          backgroundColor: {
+            image: `static/img/weather/${i}@2x.png`
+          },
+          height: 40,
+          width: 40
         }
       }
-    },
-    mounted() {
-      // this.realTimeWeather()
-      //  this.future24hWeather()
-    },
-    methods: {
-      // 获取实时天气
-      realTimeWeather() {
-        this.$get('web/monitorScene/getWeatherData', {
-          hiddenId: this.hiddenId
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.weatherMsg = res.data.data
-          } else {
-            this.$message.error(res.data.msg)
-          }
-        })
-      },
-      // 隐患点未来24小时天气
-      future24hWeather() {
-        this.$get('web/monitorScene/future24hWeather', {
-          hiddenId: this.hiddenId
-        }).then((res) => {
-          console.log('未来24小时天气', res.data)
-          let rr = res.data
-          weaChartData = rr.reverse()
-          let yAxisV = weaChartData.map(v => {
-            return v.temp
-          }).sort((a, b) => {
-            return a - b
-          })
-          let max = Number(yAxisV[yAxisV.length - 1])
-          let min = Number(yAxisV[0])
-          let yy = Math.ceil(max / 4)
-          this.yAxisV = [max, yy * 2 + min, yy + min, min]
-          if (this.weaChart) this.weaChart.dispose()
-          this.chartInit(rr)
-        })
-      },
-      chartInit(data) {
-        var chartDom = this.$refs.weatherChart
-        this.weaChart = this.$echarts.init(chartDom)
-        let weatherIcons = {}
-        for (let i = 0; i < data.length; i++) {
-          weatherIcons[data[i].wether] = data[i].code
-        }
-        console.log('天气图标对应', weatherIcons)
-        var richX = {}
-        for (let i = 0; i < 38; i++) {
-          richX['b' + i] = {
-            backgroundColor: {
-              image: `static/img/weather/${i}@2x.png`
-            },
-            height: 40,
-            width: 40
-          }
-        }
-        var option = {
-          grid: {
-            show: true,
-            backgroundColor: 'transparent',
-            opacity: 0.3,
-            borderWidth: '0',
-            top: '180',
-            bottom: '0'
-          },
-          tooltip: {
-            trigger: 'axis'
-          },
-          legend: {
-            show: false
-          },
-          xAxis: [
-            // 时间
-            {
-              type: 'category',
-              boundaryGap: false,
-              position: 'top',
-              offset: 130,
-              zlevel: 100,
-              axisLine: {
-                show: false
-              },
-              axisTick: {
-                show: false
-              },
-              axisLabel: {
-                interval: 0,
-                formatter: [
-                  '{a|{value}}'
-                ].join('\n'),
-                rich: {
-                  a: {
-                    fontSize: 14
-                  }
-                }
-              },
-              nameTextStyle: {},
-              data: data.map((item) => {
-                return item.time.split(' ')[1] + '时'
-              })
-            },
-            // 天气
-            {
-              type: 'category',
-              boundaryGap: false,
-              position: 'top',
-              offset: 100,
-              zlevel: 100,
-              axisLine: {
-                show: false
-              },
-              axisTick: {
-                show: false
-              },
-              axisLabel: {
-                interval: 0,
-                formatter: function (value, index) {
-                  // console.log('天气图片 ****** ', index + ' ' + value)
-                  console.log(data[index].code, value)
-                  // return '{' + index + '| }\n{b|' + value + '}'
-                  return `{b${data[index].code}|${value}}`
-                },
-                rich: richX
-              },
-              nameTextStyle: {
-                fontWeight: 'bold',
-                fontSize: 14
-              },
-              data: data.map((item) => {
-                return item.wether
-              })
-            },
-            // 天气图标
-            {
-              type: 'category',
-              boundaryGap: false,
-              position: 'top',
-              offset: 50,
-              zlevel: 100,
-              axisLine: {
-                show: false
-              },
-              axisTick: {
-                show: false
-              },
-              axisLabel: {
-                interval: 0,
-                formatter: [
-                  '{a|{value}}'
-                ].join('\n'),
-                rich: {
-                  a: {
-                    fontSize: 14
-                  }
-                }
-              },
-              nameTextStyle: {
-                fontWeight: 'bold',
-                fontSize: 14
-              },
-              data: data.map((item) => {
-                return item.temp + '℃'
-              })
-            }
-          ],
-          yAxis: {
-            type: 'value',
-            show: false,
-            axisLabel: {
-              formatter: '{value} °C',
-              color: 'white'
-            }
-          },
-          series: [{
-            name: '温度',
-            type: 'line',
-            data: data.map((item) => {
-              console.log(item)
-              return item.temp
-            }),
-            symbol: 'emptyCircle',
-            symbolSize: 10,
-            showSymbol: true,
-            smooth: true,
-            itemStyle: {
-              normal: {
-                color: '#C95843'
-              }
-            },
-            label: {
-              show: true,
-              position: 'top',
-              formatter: '{c} °C'
-            },
-            lineStyle: {
-              width: 1
-            },
-            areaStyle: {
-              opacity: 1,
-              color: 'transparent'
-            }
-          }]
-        }
-
-        option && this.weaChart.setOption(option)
-        /* option = {
-          tooltip: {
-            trigger: 'axis',
-            textStyle: {
-              color: '#333'
-            },
-            axisPointer: {
-              type: 'line' // 默认为直线，可选为：'line' | 'shadow'
-            },
-            formatter: function (val) {
-              let str = ''
-              str +=
-                val[0].value + '°' + '  ' + weaChartData[val[0].dataIndex].wether
-              return str
-            }
-          },
-          grid: {
-            top: 10,
-            left: 15,
-            right: 18,
-            bottom: 18
-          },
-          xAxis: {
+      var option = {
+        grid: {
+          show: true,
+          backgroundColor: 'transparent',
+          opacity: 0.3,
+          borderWidth: '0',
+          top: '180',
+          bottom: '0',
+          left: '30',
+          right: '30'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          show: false
+        },
+        xAxis: [
+          // 时间
+          {
             type: 'category',
             boundaryGap: false,
-            data: weaChartData.map((v) => {
-              return v.time + ':00'
-            }),
-            axisLabel: {
-              color: '#333',
-              formatter: function (params) {
-                let str = params.substr(10)
-                return str
-              }
+            position: 'top',
+            offset: 130,
+            zlevel: 100,
+            axisLine: {
+              show: false
             },
             axisTick: {
               show: false
-            }
-          },
-          yAxis: {
-            show: false
-          },
-          series: [
-            {
-              name: '温度',
-              data: weaChartData.map((v) => {
-                return v.temp
-              }),
-              type: 'line',
-              smooth: true,
-              itemStyle: {
-                normal: {
-                  color: '#333', // 折点颜色
-                  lineStyle: {
-                    color: '#32B7E9' // 折线颜色
-                  }
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: [
+                '{a|{value}}'
+              ].join('\n'),
+              rich: {
+                a: {
+                  fontSize: 14
                 }
-              },
-              areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
-                    offset: 0,
-                    color: '#32B7E933'
-                  },
-                  {
-                    offset: 1,
-                    color: '#000'
-                  }
-                ])
               }
-            }
-          ]
-        }
-
-        option && this.weaChart.setOption(option) */
-      },
-      turnleft() {
-        let x = this.$refs.weatherChart.style.transform.match(/\d+(.\d+)?/g)
-        let w = this.$refs.chartWarp.offsetWidth
-        if (!Array.isArray(x)) x = [0]
-        x = Number(x[0])
-        if (x > 0) {
-          this.$refs.weatherChart.style.transform = `translateX(-${x - w}px)`
-        }
-      },
-      turnright() {
-        let x = this.$refs.weatherChart.style.transform.match(/\d+(.\d+)?/g)
-        let w = this.$refs.chartWarp.offsetWidth
-        if (!Array.isArray(x)) x = [0]
-        x = Number(x[0])
-        if (x < w * 3) {
-          this.$refs.weatherChart.style.transform = `translateX(-${x + w}px)`
-        }
-      },
-      // 隐患点未来7天天气
-      getHiddenFutureWeather() {
-        let _this = this
-        this.$get('web/monitorScene/getHiddenFutureWeather', {
-          hiddenId: _this.hiddenId,
-          count: 7
-        }).then((res) => {
-          if (res.data.code === 1) {
-            _this.weather7DayMsg = res.data.data.data
-          } else {
-            _this.$message.error(res.data.msg)
+            },
+            nameTextStyle: {},
+            data: data.map((item) => {
+              return item.time.split(' ')[1] + '时'
+            })
+          },
+          // 天气
+          {
+            type: 'category',
+            boundaryGap: false,
+            position: 'top',
+            offset: 80,
+            zlevel: 100,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: function (value, index) {
+                // console.log('天气图片 ****** ', index + ' ' + value)
+                console.log(data[index].code, value)
+                // return '{' + index + '| }\n{b|' + value + '}'
+                return `{b${data[index].code}|${value}}`
+              },
+              rich: richX
+            },
+            nameTextStyle: {
+              fontWeight: 'bold',
+              fontSize: 14
+            },
+            data: data.map((item) => {
+              return item.wether
+            })
+          },
+          // 天气图标
+          {
+            type: 'category',
+            boundaryGap: false,
+            position: 'top',
+            offset: 50,
+            zlevel: 100,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: [
+                '{a|{value}}'
+              ].join('\n'),
+              rich: {
+                a: {
+                  fontSize: 14
+                }
+              }
+            },
+            nameTextStyle: {
+              fontWeight: 'bold',
+              fontSize: 14
+            },
+            data: data.map((item) => {
+              return item.temp + '℃'
+            })
           }
-        })
+        ],
+        yAxis: {
+          type: 'value',
+          show: false,
+          axisLabel: {
+            formatter: '{value} °C',
+            color: 'white'
+          }
+        },
+        series: [{
+          name: '温度',
+          type: 'line',
+          data: data.map((item) => {
+            console.log(item)
+            return item.temp
+          }),
+          symbol: 'emptyCircle',
+          symbolSize: 10,
+          showSymbol: true,
+          smooth: true,
+          itemStyle: {
+            normal: {
+              color: '#C95843'
+            }
+          },
+          label: {
+            show: true,
+            position: 'top',
+            formatter: '{c} °C'
+          },
+          lineStyle: {
+            width: 1
+          },
+          areaStyle: {
+            opacity: 1,
+            color: 'transparent'
+          }
+        }]
       }
+
+      option && this.weaChart.setOption(option)
+    },
+    turnleft () {
+      let x = this.$refs.weatherChart.style.transform.match(/\d+(.\d+)?/g)
+      let w = this.$refs.chartWarp.offsetWidth
+      if (!Array.isArray(x)) x = [0]
+      x = Number(x[0])
+      if (x > 0) {
+        this.$refs.weatherChart.style.transform = `translateX(-${x - w}px)`
+      }
+    },
+    turnright () {
+      let x = this.$refs.weatherChart.style.transform.match(/\d+(.\d+)?/g)
+      let w = this.$refs.chartWarp.offsetWidth
+      if (!Array.isArray(x)) x = [0]
+      x = Number(x[0])
+      if (x < w * 3) {
+        this.$refs.weatherChart.style.transform = `translateX(-${x + w}px)`
+      }
+    },
+    // 隐患点未来7天天气
+    getHiddenFutureWeather () {
+      let _this = this
+      this.$get('web/monitorScene/getHiddenFutureWeather', {
+        hiddenId: _this.hiddenId,
+        count: 7
+      }).then((res) => {
+        if (res.data.code === 1) {
+          _this.weather7DayMsg = res.data.data.data
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      })
     }
   }
+}
 
 </script>
 

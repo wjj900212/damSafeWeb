@@ -43,6 +43,16 @@ export default {
       this.setOptions(this.chartData)
     },
     setOptions (data) {
+      var richX = {}
+      for (let i = 0; i < 38; i++) {
+        richX['b' + i] = {
+          backgroundColor: {
+            image: `static/img/weather/${i}@2x.png`
+          },
+          height: 40,
+          width: 40
+        }
+      }
       let option = {
         grid: {
           show: true,
@@ -127,7 +137,7 @@ export default {
             type: 'category',
             boundaryGap: false,
             position: 'top',
-            offset: 50,
+            offset: 60,
             zlevel: 100,
             axisLine: {
               show: false
@@ -138,20 +148,10 @@ export default {
             axisLabel: {
               interval: 0,
               formatter: function (value, index) {
-                return '{' + index + '| }\n{b|' + value + '}'
+                console.log(data[index].code, value)
+                return `{b${data[index].code}|${value}}`
               },
-              rich: {
-                b: {
-                  backgroundColor: {
-                    // image: 'static/img/weather/' + this.weaPic[] + '@2x.png'
-                    image: data.map((item) => {
-                      return 'static/img/weather/' + item.code + '@2x.png'
-                    })
-                  },
-                  height: 40,
-                  width: 40
-                }
-              }
+              rich: richX
             },
             nameTextStyle: {
               fontWeight: 'bold',
