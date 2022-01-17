@@ -14,7 +14,7 @@
       <a-form-item v-bind="formItemLayout" label='预案名称'>
         <a-input
           v-decorator="[
-            'name',
+            'reserveName',
             {
               rules: [{ required: true,message: '请填写预案名称' }]
             }
@@ -26,7 +26,7 @@
         <a-select
           :allowClear="true"
           v-decorator="[
-            'type',
+            'reserveType',
             {
               rules: [{ required: true,message: '请填写预案类型' }]
             }
@@ -34,7 +34,7 @@
           style="width: 100%"
           placeholder="请选择"
           @change="handleWarnChange">
-          <a-select-option v-for="g in warnLevelList" :key="(g.id).toString()">{{g.label}}</a-select-option>
+          <a-select-option v-for="g in safetyTypeList" :key="(g.typeId).toString()">{{g.typeName}}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item v-bind="formItemLayout" label='描述'>
@@ -42,12 +42,12 @@
           placeholder="请输入"
           :auto-size="{ minRows: 2, maxRows: 6 }"
           v-decorator="[
-            'type1'
+            'desc'
           ]"
         />
       </a-form-item>
       <a-form-item v-bind="formItemLayout" label='详情'>
-        <editorCom ref="addSafetyBox" :key="randomKey" putUrl="admin/proj/uploadProjDetailsImage" delUrl="admin/proj/delProjArticleImage">
+        <editorCom ref="editSafetyBox" :key="randomKey" putUrl="admin/proj/uploadProjDetailsImage" delUrl="admin/proj/delProjArticleImage">
         </editorCom>
       </a-form-item>
     </a-form>
@@ -67,7 +67,7 @@
       <a-button :style="{ marginRight: '8px' }" @click="handleCancel()">
         关闭
       </a-button>
-      <a-button type="primary" @click="addSafety()">
+      <a-button type="primary" @click="editSafety">
         确认
       </a-button>
     </div>
@@ -94,26 +94,54 @@ export default {
       formItemLayout: {
         labelCol: {span: 3},
         wrapperCol: {span: 20}
-      }
+      },
+      safetyTypeList: [
+        {typeId: '0', typeName: '综合预案'},
+        {typeId: '11', typeName: '渗流监测'},
+        {typeId: '12', typeName: '渗压监测'},
+        {typeId: '13', typeName: '大坝变形监测'},
+        {typeId: '14', typeName: '大坝微动监测'},
+        {typeId: '15', typeName: '雨情监测'},
+        {typeId: '16', typeName: '水情监测'}
+      ]
     }
   },
   methods: {
     handleCancel () {
       this.$emit('onClose')
     },
-    setFormValues({...proj}) {
-      let fields = ['name', 'type', 'type1']
-      Object.keys(proj).forEach((key) => {
+    setFormValues ({...safetyInfo}) {
+      let fields = ['reserveName', 'reserveType', 'desc', 'details']
+      this.planId = safetyInfo.planId
+      Object.keys(safetyInfo).forEach((key) => {
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)
           let obj = {}
-          obj[key] = proj[key]
+          obj[key] = safetyInfo[key]
           this.form.setFieldsValue(obj)
         }
       })
       setTimeout(() => {
-        this.$refs.addSafetyBox.content = proj.projDetails
-      }, 300);
+        this.$refs.editSafetyBox.content = safetyInfo.details
+      }, 300)
+    },
+    reset () {
+      this.form.resetFields()
+      this.$emit('onClose')
+    },
+    editSafety () {
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          let safetyInfo = this.form.getFieldsValue()
+          safetyInfo.planId = this.planId
+          this.$post('web/reservoirPlan/editPlan', {
+            ...safetyInfo
+          }).then((r) => {
+            this.$emit('fetch')
+            this.reset()
+          })
+        }
+      })
     }
   }
 }
