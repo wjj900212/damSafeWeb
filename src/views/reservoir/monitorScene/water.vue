@@ -6,7 +6,7 @@
       </a-tab-pane>
     </a-tabs>
     <div class="com">
-      <!-- //基本信息 -->
+      <!-- 基本信息 -->
       <overview :hiddenId="hiddenId" :hiddenMsg="hiddenMsg" :pnList="hiddenMsg.pnList" style="width:48%" />
       <!-- 场景可视化 -->
       <visual :hiddenId="hiddenId" style="width:48%" />

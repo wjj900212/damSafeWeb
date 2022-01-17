@@ -93,7 +93,7 @@
       </a-form>
     </a-modal>
     <!-- 安全管理预案 -->
-    <safePlanArticle :safeVisible="safeVisible" :reserveType="16" @onClose="()=>{safeVisible=false}"/>
+    <safePlanArticle :safeVisible="safeVisible" :reserveType="16" @onClose="()=>{safeVisible=false}" />
   </div>
 </template>
 
@@ -113,7 +113,7 @@
         form: this.$form.createForm(this, {
           name: 'coordinated'
         }),
-        safeVisible:false
+        safeVisible: false
       };
     },
     watch: {
@@ -124,12 +124,11 @@
       pnList: {
         handler: function (n, o) {
           let that = this
-          if (!n||n.length<0) {
-            that.currentPoint=''
-            this.monitorPnData=[]
+          if (!n || n.length == 0) {
+            this.currentPoint = ''
+            this.monitorPnData = []
             return
-          }
-          if (n.length > 0) {
+          }else {
             that.currentPoint = n[0].pnId
             that.pointChange()
           }

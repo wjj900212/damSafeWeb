@@ -39,17 +39,6 @@
 
 <script>
   import moment from 'moment';
-  var columns = [{
-      title: '库水位',
-      dataIndex: 'value',
-      key: 'value'
-    },
-    {
-      title: '时间',
-      dataIndex: 'time',
-      key: 'time'
-    }
-  ];
   var option
 
   export default {
@@ -99,6 +88,17 @@
             this.tableData = []
             this.devCode = ''
             this.warnValue = []
+            this.columns=[{
+                title: '库水位',
+                dataIndex: 'value',
+                key: 'value'
+              },
+              {
+                title: '时间',
+                dataIndex: 'time',
+                key: 'time'
+              }
+            ];
             setTimeout(() => {
               this.drawChart()
             }, 300);
@@ -130,6 +130,17 @@
           }
           if (init) {
             let col = []
+            var columns = [{
+                title: '库水位',
+                dataIndex: 'value',
+                key: 'value'
+              },
+              {
+                title: '时间',
+                dataIndex: 'time',
+                key: 'time'
+              }
+            ];
             this.warnValue.forEach(v => {
               col.push({
                 title: v.target,
@@ -318,7 +329,7 @@
           return
         }
         this.queryParams.pnStrId = this.queryParams.pnId + '_meas'
-        this.$export("/web/monitorScene/exportMonitorDataWater", this.queryParams)
+        this.$export("/web/monitorScene/exportMonitorData", this.queryParams)
       }
     },
   }
