@@ -32,7 +32,7 @@
       </a-col>
       <a-col :span="12">
         <a-form-item label="位置坐标" v-bind="formItemLayout">
-          <div style="display: flex;align-items: center;white-space: nowrap;">
+          <div style="height:50px;display: flex;align-items: center;white-space: nowrap;">
             <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
               placeholder="请填写经度" />
             <span style="margin-left:5px"></span>
@@ -97,13 +97,17 @@
           </a-modal>
         </a-form-item>
       </a-col>
-      <a-form-item label="水库介绍" v-bind="formItemLayoutLong">
-        <!-- <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['notes']" /> -->
-        <editorCom ref="notesBox" :isEasy="true"></editorCom>
-      </a-form-item>
-      <a-form-item label="详细介绍" v-bind="formItemLayoutLong">
-        <editorCom ref="editorBox" putUrl="/file/uploadDetailsImage" delUrl="/file/deleteDetailsImage"></editorCom>
-      </a-form-item>
+      <a-col :span="24">
+        <a-form-item label="水库介绍" v-bind="formItemLayoutLong">
+          <!-- <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['notes']" /> -->
+          <editorCom ref="notesBox" :isEasy="true"></editorCom>
+        </a-form-item>
+      </a-col>
+      <a-col :span="24">
+        <a-form-item label="详细介绍" v-bind="formItemLayoutLong">
+          <editorCom ref="editorBox" putUrl="/file/uploadDetailsImage" delUrl="/file/deleteDetailsImage"></editorCom>
+        </a-form-item>
+      </a-col>
       <a-col :span="24" style="margin-bottom:15px;">
         <a-col :span="3">
           <span class="title">自定义信息</span>
@@ -115,16 +119,20 @@
           <div style="display: flex;align-items: center;white-space: nowrap;">
             <a-input placeholder="请填写" v-model="v.value" />
             <span style="margin-left:5px"></span>
-            <a-icon type="form" title="编辑名称" :style="{ fontSize: '16px', color: '#1890FF' }" @click="editCustomName(v,i)" />
+            <a-icon type="form" title="编辑名称" :style="{ fontSize: '16px', color: '#1890FF' }"
+              @click="editCustomName(v,i)" />
             <span style="margin-left:5px"></span>
-            <a-icon type="delete" title="删除" :style="{ fontSize: '16px', color: '#1890FF' }" @click="customField.splice(i,1)" />
+            <a-icon type="delete" title="删除" :style="{ fontSize: '16px', color: '#1890FF' }"
+              @click="customField.splice(i,1)" />
           </div>
         </a-form-item>
       </a-col>
     </a-row>
-    <div class="bottomArea">
-    <a-button type="primary" html-type="submit">保存</a-button>
-    </div>
+    <a-col :span="24">
+      <div class="bottomArea">
+        <a-button type="primary" html-type="submit">保存</a-button>
+      </div>
+    </a-col>
 
     <!-- 自定义字段弹框 -->
     <a-modal v-model="customFieldModal" title="自定义字段" @ok="customFieldOk">
@@ -470,7 +478,8 @@
     margin-right: 14px;
     color: #1890FF;
   }
-  .bottomArea{
+
+  .bottomArea {
     display: flex;
     align-items: center;
     justify-content: center;
