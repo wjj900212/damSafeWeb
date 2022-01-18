@@ -22,14 +22,23 @@
             <a-input
               v-if="record.editable"
               style="margin: -5px 0"
-              :value="text === '9999.0' ? '' : text"
+              :value="text === 9999 || text === '9999.0' ? '' : text"
               @change="e => handleChange(e.target.value, record.sort, col)"
             />
             <template v-else>
-              {{ text === '9999.0' ? '' : text }}
+              {{ text === 9999 || text === '9999.0' ? '' : text }}
             </template>
           </div>
         </template>
+        <!--<template
+          v-for="col in ['blue', 'yellow', 'orange', 'red']"
+          :slot="col"
+          slot-scope="text, record, index"
+        >
+          <div :key="col">
+            <a-icon type="form" style="font-size:1.6rem;" @click="e => addWarnMsg(record.sort, col)"/>
+          </div>
+        </template>-->
         <template slot="operation" slot-scope="text, record, index">
           <div class="editable-row-operations">
         <span v-if="record.editable">
@@ -44,21 +53,18 @@
           <a-checkbox v-if="text === '0'"  @change="onChange(record.sort,$event)"></a-checkbox>
           <a-checkbox v-else checked @change="onChange(record.sort,$event)"></a-checkbox>
         </template>
-        <template slot="display" slot-scope="text, record">
-          <a-checkbox v-if="text === '0'"  @change="onDisplayChange(record.sort,$event)"></a-checkbox>
-          <a-checkbox v-else checked @change="onDisplayChange(record.sort,$event)"></a-checkbox>
-        </template>
       </a-table>
       <!--警示信息-->
       <config-warn-msg
         :visible="isShowConfigMsg"
+        @getWarnMsg="getWarnMsg"
         @onClose="()=>{isShowConfigMsg=false}"
       ></config-warn-msg>
     </div>
 </template>
 
 <script>
-  import ConfigWarnMsg from '../configWarnMsg'
+import ConfigWarnMsg from '../configWarnMsg'
 export default {
   name: 'third',
   data () {
@@ -69,7 +75,10 @@ export default {
       dataSource: [],
       editable: false,
       flag: 0,
-      isShowConfigMsg: false
+      isShowConfigMsg: false,
+      msgKey: -1,
+      msgCol: '',
+      warnMsgInfo: {}
     }
   },
   props: {
@@ -84,8 +93,9 @@ export default {
       }
     },
     data: {
-      type: Object,
+      type: Array,
       default: () => {
+        return []
       }
     }
   },
@@ -105,11 +115,12 @@ export default {
         scopedSlots: {customRender: 'warnBlue'}
       }, {
         title: '蓝色警示信息',
-        dataIndex: 'warnBlueMsg',
-        width: '11%',
+        dataIndex: 'blue',
+        width: '8%',
+        // scopedSlots: {customRender: 'blue'}
         customRender: (text, record) => (
           <div>
-            <a-icon type="form" style="font-size:1.6rem;" onClick={() => this.addWarnMsg(record)}/>
+            <a-icon type="form" style="font-size:1.6rem;" onClick={() => this.addWarnMsg(record.sort, 'blue')}/>
           </div>
         )
       }, {
@@ -119,11 +130,12 @@ export default {
         scopedSlots: {customRender: 'warnYellow'}
       }, {
         title: '黄色警示信息',
-        dataIndex: 'warnYellowMsg',
-        width: '11%',
+        dataIndex: 'yellow',
+        width: '8%',
+        // scopedSlots: {customRender: 'yellow'}
         customRender: (text, record) => (
           <div>
-            <a-icon type="form" style="font-size:1.6rem;"/>
+            <a-icon type="form" style="font-size:1.6rem;" onClick={() => this.addWarnMsg(record.sort, 'yellow')}/>
           </div>
         )
       }, {
@@ -133,11 +145,12 @@ export default {
         scopedSlots: {customRender: 'warnOrange'}
       }, {
         title: '橙色警示信息',
-        dataIndex: 'warnOrangeMsg',
-        width: '11%',
+        dataIndex: 'orange',
+        width: '8%',
+        // scopedSlots: {customRender: 'orange'}
         customRender: (text, record) => (
           <div>
-            <a-icon type="form" style="font-size:1.6rem;" />
+            <a-icon type="form" style="font-size:1.6rem;" onClick={() => this.addWarnMsg(record.sort, 'orange')}/>
           </div>
         )
       }, {
@@ -147,13 +160,19 @@ export default {
         scopedSlots: {customRender: 'warnRed'}
       }, {
         title: '红色警示信息',
-        dataIndex: 'warnRedMsg',
-        width: '11%',
+        dataIndex: 'red',
+        width: '8%',
+        //  scopedSlots: {customRender: 'red'}
         customRender: (text, record) => (
           <div>
-            <a-icon type="form" style="font-size:1.6rem;" />
+            <a-icon type="form" style="font-size:1.6rem;" onClick={() => this.addWarnMsg(record.sort, 'red')} />
           </div>
         )
+      }, {
+        title: '是否警示',
+        dataIndex: 'alarmflag',
+        width: '8%',
+        scopedSlots: {customRender: 'alarmflag'}
       }, {
         title: '操作',
         dataIndex: 'operation',
@@ -185,15 +204,33 @@ export default {
       if (target) {
         target.alarmflag = e.target.checked ? '1' : '0'
         this.dataSource = dataSource
-        this.flag = 1
-        this.$emit('getFlag', this.flag)
+        /* this.flag = 1
+        this.$emit('getFlag', this.flag) */
       }
     },
     // 添加警示信息
-    addWarnMsg(record){
+    addWarnMsg (key, col) {
+      this.msgKey = key
+      this.msgCol = col
+      console.log('警示信息', key, col)
       this.isShowConfigMsg = true
     },
-    onDisplayChange (key, e) {
+    // 获取预警警示信息
+    getWarnMsg (warnMsg) {
+      const dataSource = [...this.dataSource]
+      const target = dataSource.find(item => item.sort === this.msgKey)
+      if (target) {
+        /* let warnInfo = {}
+        warnInfo[this.msgCol] = warnMsg */
+        this.warnMsgInfo[this.msgCol] = warnMsg
+        target.warnInfo = this.warnMsgInfo
+        this.dataSource = dataSource
+        console.log('修改警示消息之后的内容', dataSource)
+        /* this.flag = 1
+        this.$emit('getFlag', this.flag) */
+      }
+    },
+    /* onDisplayChange (key, e) {
       const dataSource = [...this.dataSource]
       const target = dataSource.find(item => item.sort === key)
       if (target) {
@@ -202,10 +239,11 @@ export default {
         this.flag = 1
         this.$emit('getFlag', this.flag)
       }
-    },
+    }, */
     editThreshold (key) {
       const newData = [...this.dataSource]
       const target = newData.filter(item => key === item.sort)[0]
+      console.log('编辑指标阈值', target)
       if (target) {
         target.editable = true
         this.editable = true
@@ -247,8 +285,8 @@ export default {
         this.editable = false
         this.$emit('getEditable', this.editable)
         this.dataSource = newData
-        this.flag = 1
-        this.$emit('getFlag', this.flag)
+        /* this.flag = 1
+        this.$emit('getFlag', this.flag) */
         this.$emit('updateThresholdData', this.dataSource)
       }
     },
@@ -263,8 +301,8 @@ export default {
           cancelText: '取消',
           onOk () {
             let params = {}
-            params.modelId = that.data.devModel
-            that.$post('admin/thresholdManage/getBasicThreshold', {...params}).then((r) => {
+            params.devModelId = that.data.devModelId
+            that.$post('web/warnConfig/findDevValueList', {...params}).then((r) => {
               if (r.data.code === 1) {
                 that.dataSource = r.data.data
                 that.flag = 0

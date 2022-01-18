@@ -18,11 +18,16 @@
       <config-add
         :visible="isShowConfigAdd"
         :tabPane="tabPane"
+        @search="getWarnConfigList"
         @onClose="()=>{isShowConfigAdd=false}"
       ></config-add>
       <!--编辑预警规则-->
       <config-edit
         :visible="isShowConfigEdit"
+        :warnRule="warnRule"
+        :tabPane="tabPane"
+        @search="getWarnConfigList"
+        :thresholdEditData="thresholdEditData"
         @onClose="()=>{isShowConfigEdit=false}"
       ></config-edit>
     </div>
@@ -53,38 +58,40 @@ export default {
       },
       isShowConfigAdd: false,
       isShowConfigEdit: false,
-      sceneTypeList: []
+      sceneTypeList: [],
+      warnRule: {},
+      thresholdEditData: []
     }
   },
   computed: {
     columns () {
       return [{
         title: '监测场景',
-        dataIndex: 'devCode'
+        dataIndex: 'hiddenName'
       }, {
         title: '监测点',
-        dataIndex: 'devStatus'
+        dataIndex: 'projPnName'
       }, {
         title: '设备类型',
         dataIndex: 'devModelName'
       }, {
         title: '设备ID',
-        dataIndex: 'secureKey'
-      }, {
+        dataIndex: 'devCode'
+      }, /* {
         title: '预警规则',
-        dataIndex: 'devOnline',
+        dataIndex: 'warnRule',
         customRender: (text, record) => (
           <div>
             <a>点击查看</a>
           </div>
         )
-      }, {
+      }, */ {
         title: '操作',
         dataIndex: 'operation',
         customRender: (text, record) => (
           <div>
-            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" class="icon-size" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" class="icon-size" onClick={() => { this.configDelete(record) }} title="删除"></a-icon>
+            <a onClick={() => { this.edit(record) }} style="margin-right:1rem;">编辑</a>
+            <a onClick={() => { this.configDelete(record) }}>删除</a>
           </div>
         )
       }]
@@ -96,9 +103,7 @@ export default {
   methods: {
     callback (key) {
       this.tabPane = key
-      this.getWarnConfigList({
-        type: key
-      })
+      this.getWarnConfigList(key)
       console.log(key)
     },
     // 获取场景类型列表
@@ -106,9 +111,7 @@ export default {
       this.$get('web/hidden/getHiddenDangerTypeList').then((r) => {
         this.sceneTypeList = r.data.data
         this.tabPane = r.data.data[0].ID
-        this.getWarnConfigList({
-          type: r.data.data[0].ID
-        })
+        this.getWarnConfigList(r.data.data[0].ID)
       })
     },
     reset () {
@@ -120,8 +123,9 @@ export default {
       }
     },
     // 预警配置列表
-    getWarnConfigList (params = {}) {
+    getWarnConfigList (tabPane) {
       this.loading = true
+      let params = {}
       if (this.paginationInfo) {
         // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
         this.$refs.TableInfo.pagination.current = this.paginationInfo.current
@@ -133,6 +137,7 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
+      params.type = tabPane
       this.$get('web/warnConfig/getWarnConfigList', {
         ...params
       }).then((r) => {
@@ -158,11 +163,45 @@ export default {
       this.isShowConfigAdd = true
     },
     edit (record) {
+      this.warnRule = record
       this.isShowConfigEdit = true
-      // this.getThresholdDetail(record.devCode)
+      console.log('修改预警规则信息', record)
+      this.getThresholdDetail(record.devCode)
     },
-    configDelete () {
-
+    configDelete (record) {
+      let that = this
+      this.$confirm({
+        title: '确定删除该预警规则?',
+        content: '当您点击确定按钮后，这个预警规则将会被彻底删除',
+        centered: true,
+        onOk () {
+          that.$post('web/warnConfig/deleteWarnConfig', {
+            warnId: record.warnId
+          }).then((r) => {
+            if (r.data.code === 1) {
+              that.$message.success('删除成功')
+              this.getWarnConfigList(this.tabPane)
+            } else {
+              that.$message.error(r.data.msg)
+            }
+          })
+        },
+        onCancel () {}
+      })
+    },
+    // 查看设备的指标阈值
+    getThresholdDetail (devCode) {
+      let params = { devCode: devCode }
+      this.$get('web/warnConfig/viewWarnConfig', {
+        ...params
+      }).then((r) => {
+        if (r.data.code === 1) {
+          let data = r.data.data
+          this.thresholdEditData = data
+        } else {
+          this.$message.error(r.data.msg)
+        }
+      })
     }
   }
 }

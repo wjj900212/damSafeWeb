@@ -77,12 +77,6 @@ export default {
     }
   },
   props: {
-    devTypeList: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    },
     thresholdEditMoreObj: {
       type: Object,
       default: () => {}

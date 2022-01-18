@@ -6,16 +6,16 @@
     @cancel="handleCancel"
   >
     <div class="steps-content">
+      <!--:typeList="typeList"
+        :devTypeList="devTypeList"-->
       <first
+        :tabPane="tabPane"
         @updateThresholdDev="updateThresholdDev"
         :thresholdEditMoreObj="thresholdEditMoreObj"
-        :typeList="typeList"
-        :devTypeList="devTypeList"
         v-if="steps[current].index === '1'"></first>
       <second
         @updateThresholdTag="updateThresholdTag"
         :thresholdEditMoreObj="thresholdEditMoreObj"
-        :devTypeList="devTypeList"
         v-if="steps[current].index === '2'"></second>
       <third
         ref="thirdRef"
@@ -83,8 +83,6 @@ export default {
         second: {},
         third: {}
       },
-      typeList: [],
-      devTypeList: [],
       selectDev: {},
       tagList: [],
       thresholdEditData: [],
@@ -100,21 +98,9 @@ export default {
     tabPane: {
       type: Number,
       default: -1
-    },
-    projList: {
-      type: Array,
-      default: () => {
-        return []
-      }
     }
   },
   watch: {
-    visible (newVal) {
-      if (newVal) {
-        this.findHiddenList()
-        this.findDevModelList()
-      }
-    },
     thresholdEditMoreObj (newVal) {
       this.thresholdEditMoreObj = newVal
     }
@@ -129,32 +115,6 @@ export default {
       this.current = 0
       this.$emit('search')
       this.$emit('onClose')
-    },
-    // 获取监测场景列表
-    findHiddenList () {
-      this.$get('web/warnConfig/findHiddenList', {
-        type: this.tabPane
-      }).then((r) => {
-        if (r.data.code === 1) {
-          let data = r.data.data
-          this.typeList = data
-        } else {
-          this.$message.error(r.data.msg)
-        }
-      })
-    },
-    // 获取设备类型列表
-    findDevModelList () {
-      this.$get('web/warnConfig/findDevModelList', {
-        type: this.tabPane
-      }).then((r) => {
-        if (r.data.code === 1) {
-          let data = r.data.data
-          this.devTypeList = data
-        } else {
-          this.$message.error(r.data.msg)
-        }
-      })
     },
     updateThresholdDev (dev) {
       this.thresholdEditMoreObj.first = dev
@@ -214,23 +174,16 @@ export default {
       if (!this.editable) {
         let params = {}
         let dataSource = this.$refs.thirdRef.dataSource
-        params.devCode = this.tagList
-        params.value = {}
-        params.flag = this.flag
-        for (let i = 0; i < dataSource.length; i++) {
-          params.value[dataSource[i].mark] = {
-            'threshold': {
-              'red': dataSource[i].warnRed,
-              'orange': dataSource[i].warnOrange,
-              'yellow': dataSource[i].warnYellow,
-              'blue': dataSource[i].warnBlue
-            },
-            'alarmflag': dataSource[i].alarmflag,
-            'display': dataSource[i].display
-          }
+        let devCode = []
+        for (let i = 0; i < this.tagList.length; i++) {
+          let rt = /(.+)?(?:\(|（)(.+)(?=\)|）)/.exec(this.tagList[i])
+          devCode.push(rt[2])
         }
+        params.devCodes = devCode.toString()
+        params.list = dataSource
+        console.log('规则dataSource', dataSource)
         console.log('修改指标阈值', params)
-        this.$postDate('admin/thresholdManage/modifyThreshold', {...params}).then((r) => {
+        this.$postDate('web/warnConfig/addWarnConfig', {...params}).then((r) => {
           if (r.data.code === 1) {
             this.$message.success('修改成功')
             this.current = 0
@@ -239,8 +192,9 @@ export default {
               second: {},
               third: {}
             }
-            this.$emit('search')
-            this.$emit('onCancel')
+            this.$refs.thirdRef.warnMsgInfo = {}
+            this.$emit('search', this.tabPane)
+            this.$emit('onClose')
           } else {
             this.$message.warning(r.data.msg)
           }

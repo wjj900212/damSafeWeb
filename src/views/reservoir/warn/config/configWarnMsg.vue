@@ -5,14 +5,14 @@
     width="750px"
     @cancel="handleCancel"
   >
-    <div>
+    <div style="margin-bottom:1rem;">
       <span>预警别称:</span>
-      <a-input style="width:210px;" v-model="queryParams.message" placeholder="请输入" />
+      <a-input style="width:210px;" v-model="queryParams.warninfo" placeholder="请输入" />
     </div>
     <div>
-      <span>编辑警示信息内容:</span>
+      <div style="margin-bottom: 0.5rem;">编辑警示信息内容:</div>
       <a-textarea
-        v-model="queryParams.value"
+        v-model="queryParams.alia"
         placeholder="请输入警示信息内容"
         :auto-size="{ minRows: 3, maxRows: 5 }"
       />
@@ -34,7 +34,7 @@
       <a-button :style="{ marginRight: '8px' }" @click="handleCancel()">
         关闭
       </a-button>
-      <a-button type="primary" @click="handleCancel()">
+      <a-button type="primary" @click="handleOK">
         确认
       </a-button>
     </div>
@@ -49,6 +49,10 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    },
+    msgInfo: {
+      type: Object,
+      default: () => {}
     }
   },
   data () {
@@ -56,8 +60,23 @@ export default {
       queryParams: {}
     }
   },
+  watch: {
+    visible (newVal) {
+      if (newVal) {
+        if (JSON.stringify(this.msgInfo) !== '{}') {
+          this.queryParams = this.msgInfo
+        }
+      }
+    }
+  },
   methods: {
+    handleOK () {
+      let warnInfo = {'warninfo': this.queryParams.warninfo, 'alia': this.queryParams.alia}
+      this.$emit('getWarnMsg', warnInfo)
+      this.$emit('onClose')
+    },
     handleCancel () {
+      this.queryParams = {}
       this.$emit('onClose')
     }
   }
