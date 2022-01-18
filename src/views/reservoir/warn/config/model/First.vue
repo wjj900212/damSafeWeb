@@ -5,12 +5,12 @@
         <a-select
           id="scene"
           style="width:200px;"
-          v-model="thresholdEditMoreObj.first.scene"
-          @change="handleChange"
+          v-model="thresholdEditMoreObj.first.hiddenName"
+          @change="handleSceneChange"
           placeholder="请选择监测场景"
         >
-          <a-select-option v-for="item in devTypeList" :key="item.devModelId" :value="item.devModelName">
-            {{item.devModelName}}
+          <a-select-option v-for="item in typeList" :key="item.hiddenId" :value="item.hiddenName">
+            {{item.hiddenName}}
           </a-select-option>
         </a-select>
       </div>
@@ -20,10 +20,10 @@
           id="devType"
           style="width:200px;"
           v-model="thresholdEditMoreObj.first.devModelName"
-          @change="handleChange"
+          @change="handleDevChange"
           placeholder="请选择设备类型"
         >
-          <a-select-option v-for="item in devTypeList" :key="item.devModelId" :value="item.devModelName">
+          <a-select-option v-for="item in devTypeList" :key="item.devModelId" :value="item.devModelName+'||'+item.devModelId">
             {{item.devModelName}}
           </a-select-option>
         </a-select>
@@ -48,6 +48,12 @@ export default {
         return []
       }
     },
+    devTypeList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
     thresholdEditMoreObj: {
       type: Object,
       default: () => {}
@@ -55,25 +61,24 @@ export default {
   },
   data () {
     return {
-      devTypeList: [],
-      dev: {}
+      scene: {}
     }
   },
   mounted () {
-    this.devTypeList = this.typeList
   },
   watch: {
-    typeList (newVal) {
-      this.devTypeList = newVal
-    }
+
   },
   methods: {
-    handleChange (value, key) {
-      this.dev = {
-        devModelName: value,
-        devModelId: key.data.key
-      }
-      this.$emit('updateThresholdDev', this.dev)
+    handleSceneChange (value, key) {
+      this.scene.hiddenId = key.data.key
+      this.scene.hiddenName = value
+    },
+    handleDevChange (value) {
+      let devInfo = value.split('||')
+      this.scene.devModelId = devInfo[1]
+      this.scene.devModelName = devInfo[0]
+      this.$emit('updateThresholdDev', this.scene)
     }
   }
 }

@@ -10,14 +10,14 @@
           </a-col>
           <a-col :span="12">
             <a-form-item label="设备ID:" v-bind="formItemLayout">
-              <a-input-search style="width:170px;" v-model="queryParams.devCode" placeholder="请输入" enter-button @search="onSearch" />
+              <a-input-search style="width:210px;" v-model="queryParams.devCode" placeholder="请输入" enter-button @search="onSearch" />
             </a-form-item>
           </a-col>
         </a-row>
       </a-form>
       <div style="height:350px;overflow-y: scroll;">
         <div style="margin-bottom:5px;padding-left:10px;text-align: left;">
-          {{ projName | ellipsis}}
+          全部
           <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="onCheckAllChange">
           </a-checkbox>
         </div>
@@ -40,7 +40,7 @@
     </div>
     <div style="flex: 0.25;height:400px;overflow-y: scroll;">
       <div style="padding:10px;">
-        {{ projName | ellipsis}}
+        全部
         <template v-for="tag in tagList">
           <a-tooltip v-if="tag.length > 20" :key="tag" :title="tag">
             <a-tag :key="tag" closable @close="() => handleClose(tag)">
@@ -63,24 +63,21 @@ export default {
     return {
       form: this.$form.createForm(this, { name: 'SecondForm' }),
       formItemLayout: {
-        labelCol: {span: 7},
-        wrapperCol: {span: 16}
+        labelCol: {span: 5},
+        wrapperCol: {span: 18}
       },
-      projName: '全部', // 项目名称
-      hiddenList: [],
       queryParams: {},
       secondParams: {},
       options: [], // 默认所有设备列表
       plainOptions: [], // 展示所有设备列表
       checkedList: [], // 选中设备
       tagList: [],
-      allProjList: [],
       indeterminate: false,
       checkAll: false
     }
   },
   props: {
-    projList: {
+    devTypeList: {
       type: Array,
       default: () => {
         return []
@@ -92,7 +89,6 @@ export default {
     }
   },
   mounted () {
-    this.allProjList = this.projList
     if (this.thresholdEditMoreObj.second.tagList) {
       this.tagList = this.thresholdEditMoreObj.second.tagList
     }
@@ -113,12 +109,10 @@ export default {
         }
       }
     }
-   // this.onSearch()
+    this.fetch()
+    // this.onSearch()
   },
   watch: {
-    projList (newVal) {
-      this.allProjList = newVal
-    },
     queryParams (newVal) {
       if (newVal.devCode) {
         this.secondParams.devCode = newVal.devCode
@@ -133,45 +127,24 @@ export default {
       })
     },
     fetch (params = {}) {
-      params.devModel = this.thresholdEditMoreObj.first.devModelId
-      this.$get('admin/thresholdManage/getEquipmentList', {
+      params.devModelId = this.thresholdEditMoreObj.first.devModelId
+      params.hiddenId = this.thresholdEditMoreObj.first.hiddenId
+      this.$get('web/warnConfig/findDevBasicList', {
         ...params
       }).then((r) => {
         let data = r.data.data
         this.options = data.records
         let equipment = []
         for (let i = 0; i < data.length; i++) {
-          equipment.push(data[i].devCode)
+          equipment.push(data[i].projPnName + '(' + data[i].devCode + ')')
         }
         this.plainOptions = equipment
       })
-    },
-    handleProjChange (value, key) {
-      this.projName = value
-      this.secondParams.projName = value
-      this.secondParams.projectId = key.data.key
-      this.queryParams.projectId = key.data.key
-      this.getHiddenPointList(key.data.key)
-      this.onSearch()
-    },
-    handleHiddenPointChange (value, key) {
-      this.secondParams.hiddenName = value
-      this.secondParams.hiddenId = key.data.key
-      this.queryParams.hiddenId = key.data.key
-      this.onSearch()
     },
     filterOption (input, option) {
       return (
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
       )
-    },
-    // 隐患点列表
-    getHiddenPointList (projId) {
-      let params = { projBasicId: projId }
-      this.$get('admin/projHiddenDangerArea/list', {...params}).then((r) => {
-        let data = r.data.data
-        this.hiddenList = data
-      })
     },
     onChange (checkedList) {
       this.indeterminate = !!checkedList.length && checkedList.length < this.plainOptions.length
