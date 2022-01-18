@@ -7,7 +7,7 @@
     :closable="false"
     @close="onClose"
     :visible="userEditVisiable"
-    style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
+    style="height: 100%;overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
       <a-form-item label='姓名' v-bind="formItemLayout">
         <a-input v-decorator="['userName',{rules: [{ required: true, message: '用户名不能为空'}]}]"/>
