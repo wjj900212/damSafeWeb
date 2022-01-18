@@ -1,98 +1,130 @@
 <template>
   <!-- 添加 / 编辑 水库 -->
-  <a-form :form="form" @submit="handleSubmit" class="reservoir_add_edit" v-bind="formItemLayout">
-    <div class="title"><span class="line"></span>基本信息</div>
-    <a-form-item label="所属项目" v-bind="formItemLayout">
-      <a-select show-search placeholder="请选择" option-filter-prop="children" :filter-option="filterOption" v-decorator="[
-          'projBasicId',{ rules: [{ required: true, message: '请选择所属项目' }] }]">
-        <a-select-option v-for="v,i in projectList" :key="i" :value="v.projBasicId">{{v.projBasicName}}
-        </a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="水库名称" v-bind="formItemLayout">
-      <a-input v-decorator="[
-          'reservoirName',{ rules: [{ required: true, message: '请填写水库名称' }] }]" placeholder="请填写水库名称" />
-    </a-form-item>
-    <a-form-item label="水库地址" v-bind="formItemLayout">
-      <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
-      <a-input style="display: none;" v-decorator="['levelCode',{rules: [{ required: true, message: '请选择'}]}]">
-      </a-input>
-    </a-form-item>
-    <a-form-item label="位置坐标" v-bind="formItemLayout">
-      <div style="display: flex;align-items: center;white-space: nowrap;">
-        <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]" placeholder="请填写经度" />
-        <span style="margin-left:5px"></span>
-        <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]" placeholder="请填写纬度" />
-        <span style="margin-left:5px"></span>
-        <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" />
-      </div>
-    </a-form-item>
-    <a-form-item label="管理单位" v-bind="formItemLayout">
-      <a-input v-decorator="[
-          'managerUnit',{ rules: [{ required: true, message: '请填写管理单位' }] }]" placeholder="请输入" />
-    </a-form-item>
-    <a-form-item label="水库规模" v-bind="formItemLayout">
-      <a-select show-search placeholder="请选择" option-filter-prop="children" :filter-option="filterOption" v-decorator="[
-          'scale',{ rules: [{ required: true, message: '请选择水库规模' }] }]">
-        <a-select-option value="0">大（1）型</a-select-option>
-        <a-select-option value="1">大（2）型</a-select-option>
-        <a-select-option value="2">中型</a-select-option>
-        <a-select-option value="3">小（1）型 </a-select-option>
-        <a-select-option value="4">小（2）型</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="设计库容" v-bind="formItemLayout">
-      <div style="display: flex;align-items: center;white-space: nowrap;">
-        <a-input v-decorator="['capacity']" placeholder="请输入" /> <span style="margin-left:5px">亿m³</span>
-      </div>
-    </a-form-item>
-    <a-form-item label="最大水位" v-bind="formItemLayout">
-      <div style="display: flex;align-items: center;white-space: nowrap;">
-        <a-input v-decorator="['depth']" placeholder="请输入" /> <span style="margin-left:5px">m</span>
-      </div>
-    </a-form-item>
-    <a-form-item label="建设时间" v-bind="formItemLayout">
-      <!-- :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }" -->
-      <a-date-picker format="YYYY-MM-DD HH:mm:ss" valueFormat="YYYY-MM-DD HH:mm:ss" placeholder="请选择"
-        v-decorator="['buildTime']" />
-    </a-form-item>
-    <a-form-item label="实景图" v-bind="formItemLayout">
-      <a-upload list-type="picture-card" :file-list="sjImgsList" :multiple="true" :remove="handleImgsRemove"
-        :before-upload="beforeUpload" @change="handleImgsChange" @preview="handleImgsPreview">
-        <div>
-          <a-icon type="plus" />
-          <div class="ant-upload-text">上传</div>
-        </div>
-      </a-upload>
-      <a-modal :visible="previewImgsVisible" :footer="null" @cancel="previewImgsVisible=false">
-        <img alt="example" style="width: 100%" :src="previewImgs" />
-      </a-modal>
-    </a-form-item>
-    <a-form-item label="水库介绍" v-bind="formItemLayout">
-      <!-- <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['notes']" /> -->
-      <editorCom ref="notesBox" :isEasy="true"></editorCom>
-    </a-form-item>
-    <a-form-item label="详细介绍" v-bind="formItemLayout">
-      <editorCom ref="editorBox" putUrl="/file/uploadDetailsImage" delUrl="/file/deleteDetailsImage"></editorCom>
-    </a-form-item>
-    <div class="title"><span class="line"></span>自定义信息</div>
+  <a-form :form="form" @submit="handleSubmit" class="reservoir_add_edit">
     <a-row>
-      <a-col :span="6">
-        <a-button style="float:right;margin-bottom:8px;" @click="customFieldModal=true">新增字段</a-button>
+      <a-col :span="24">
+        <a-col :span="3">
+          <span class="title">基本信息</span>
+        </a-col>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="所属项目" v-bind="formItemLayout">
+          <a-select show-search placeholder="请选择" option-filter-prop="children" :filter-option="filterOption"
+            v-decorator="[
+          'projBasicId',{ rules: [{ required: true, message: '请选择所属项目' }] }]">
+            <a-select-option v-for="v,i in projectList" :key="i" :value="v.projBasicId">{{v.projBasicName}}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="水库名称" v-bind="formItemLayout">
+          <a-input v-decorator="[
+          'reservoirName',{ rules: [{ required: true, message: '请填写水库名称' }] }]" placeholder="请填写水库名称" />
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="水库地址" v-bind="formItemLayout">
+          <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
+          <a-input style="display: none;" v-decorator="['levelCode',{rules: [{ required: true, message: '请选择'}]}]">
+          </a-input>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="位置坐标" v-bind="formItemLayout">
+          <div style="display: flex;align-items: center;white-space: nowrap;">
+            <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
+              placeholder="请填写经度" />
+            <span style="margin-left:5px"></span>
+            <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
+              placeholder="请填写纬度" />
+            <span style="margin-left:5px"></span>
+            <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" />
+          </div>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="管理单位" v-bind="formItemLayout">
+          <a-input v-decorator="[
+          'managerUnit',{ rules: [{ required: true, message: '请填写管理单位' }] }]" placeholder="请输入" />
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="水库规模" v-bind="formItemLayout">
+          <a-select show-search placeholder="请选择" option-filter-prop="children" :filter-option="filterOption"
+            v-decorator="[
+          'scale',{ rules: [{ required: true, message: '请选择水库规模' }] }]">
+            <a-select-option value="0">大（1）型</a-select-option>
+            <a-select-option value="1">大（2）型</a-select-option>
+            <a-select-option value="2">中型</a-select-option>
+            <a-select-option value="3">小（1）型 </a-select-option>
+            <a-select-option value="4">小（2）型</a-select-option>
+          </a-select>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="设计库容" v-bind="formItemLayout">
+          <div style="display: flex;align-items: center;white-space: nowrap;">
+            <a-input v-decorator="['capacity']" placeholder="请输入" /> <span style="margin-left:5px">亿m³</span>
+          </div>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="最大水位" v-bind="formItemLayout">
+          <div style="display: flex;align-items: center;white-space: nowrap;">
+            <a-input v-decorator="['depth']" placeholder="请输入" /> <span style="margin-left:5px">m</span>
+          </div>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="建设时间" v-bind="formItemLayout">
+          <!-- :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }" -->
+          <a-date-picker format="YYYY-MM-DD HH:mm:ss" valueFormat="YYYY-MM-DD HH:mm:ss" placeholder="请选择"
+            v-decorator="['buildTime']" />
+        </a-form-item>
+      </a-col>
+      <a-col :span="24">
+        <a-form-item label="实景图" v-bind="formItemLayoutLong">
+          <a-upload list-type="picture-card" :file-list="sjImgsList" :multiple="true" :remove="handleImgsRemove"
+            :before-upload="beforeUpload" @change="handleImgsChange" @preview="handleImgsPreview">
+            <div>
+              <a-icon type="plus" />
+              <div class="ant-upload-text">上传</div>
+            </div>
+          </a-upload>
+          <a-modal :visible="previewImgsVisible" :footer="null" @cancel="previewImgsVisible=false">
+            <img alt="example" style="width: 100%" :src="previewImgs" />
+          </a-modal>
+        </a-form-item>
+      </a-col>
+      <a-form-item label="水库介绍" v-bind="formItemLayoutLong">
+        <!-- <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['notes']" /> -->
+        <editorCom ref="notesBox" :isEasy="true"></editorCom>
+      </a-form-item>
+      <a-form-item label="详细介绍" v-bind="formItemLayoutLong">
+        <editorCom ref="editorBox" putUrl="/file/uploadDetailsImage" delUrl="/file/deleteDetailsImage"></editorCom>
+      </a-form-item>
+      <a-col :span="24" style="margin-bottom:15px;">
+        <a-col :span="3">
+          <span class="title">自定义信息</span>
+        </a-col>
+        <a-button @click="customFieldModal=true">新增字段</a-button>
+      </a-col>
+      <a-col :span="12" v-for="v,i in customField" :key="i">
+        <a-form-item v-bind="formItemLayout" :label="v.key">
+          <div style="display: flex;align-items: center;white-space: nowrap;">
+            <a-input placeholder="请填写" v-model="v.value" />
+            <span style="margin-left:5px"></span>
+            <a-icon type="form" title="编辑名称" :style="{ fontSize: '16px', color: '#1890FF' }" @click="editCustomName(v,i)" />
+            <span style="margin-left:5px"></span>
+            <a-icon type="delete" title="删除" :style="{ fontSize: '16px', color: '#1890FF' }" @click="customField.splice(i,1)" />
+          </div>
+        </a-form-item>
       </a-col>
     </a-row>
-    <a-form-item v-bind="formItemLayout" v-for="v,i in customField" :key="i" :label="v.key">
-      <div style="display: flex;align-items: center;white-space: nowrap;">
-        <a-input placeholder="请填写" v-model="v.value" />
-        <span style="margin-left:5px"></span>
-        <a-icon type="form" title="编辑名称" @click="editCustomName(v,i)" />
-        <span style="margin-left:5px"></span>
-        <a-icon type="delete" title="删除" @click="customField.splice(i,1)" />
-      </div>
-    </a-form-item>
-    <a-form-item>
-      <a-button type="primary" html-type="submit">保存</a-button>
-    </a-form-item>
+    <div class="bottomArea">
+    <a-button type="primary" html-type="submit">保存</a-button>
+    </div>
 
     <!-- 自定义字段弹框 -->
     <a-modal v-model="customFieldModal" title="自定义字段" @ok="customFieldOk">
@@ -141,6 +173,14 @@
           },
           wrapperCol: {
             span: 15
+          }
+        },
+        formItemLayoutLong: {
+          labelCol: {
+            span: 3
+          },
+          wrapperCol: {
+            span: 20
           }
         },
         form: this.$form.createForm(this),
@@ -423,20 +463,20 @@
   }
 
   .title {
-    width: 100%;
     font-weight: 500;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     line-height: 30px;
+    float: right;
+    margin-right: 14px;
+    color: #1890FF;
+  }
+  .bottomArea{
     display: flex;
     align-items: center;
-  }
-
-  .line {
-    width: 3px;
-    height: 28px;
-    background-color: #069afe;
-    /* margin: 0 auto; */
-    margin-right: 5px;
+    justify-content: center;
+    padding-top: 18px;
+    margin-top: 10px;
+    border-top: 1px solid #f2f2f2;
   }
 
 </style>
