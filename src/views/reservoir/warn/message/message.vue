@@ -135,11 +135,7 @@ export default {
       tagList: [{id: 0, name: '今日'}, {id: 1, name: '近三天'}, {id: 2, name: '近一周'}, {id: 3, name: '近一月'}],
       flagTime: 3,
       paginationInfo: null,
-      dataSource: [
-        {devCode: '1', devStatus: '库水位', devModelName: '库水位超出以及警戒线', secureKey: '0', devOnline: '密云水库', projBasicName: '场景一', itemNum: '监测点一', installTime: '202100101234', itemNum1: '位移微芯桩', installTime1: '2021-09-26 08:05:08'},
-        {devCode: '3', devStatus: '库水位', devModelName: '库水位超出以及警戒线', secureKey: '1', devOnline: '密云水库1', projBasicName: '场景二', itemNum: '监测点二', installTime: '202100101235', itemNum1: '位移微芯桩', installTime1: '2021-09-27 08:05:08'},
-        {devCode: '2', devStatus: '库水位', devModelName: '库水位超出以及警戒线', secureKey: '0', devOnline: '密云水库2', projBasicName: '场景三', itemNum: '监测点三', installTime: '202100101236', itemNum1: '位移微芯桩', installTime1: '2021-09-28 08:05:08'}
-      ],
+      dataSource: [],
       tabPane: '1',
       tabPaneList: [{key: '1', tab: '设备预警'}, {key: '2', tab: '安全预警'}, {key: '5', tab: '模型预警'}],
       loading: false,
@@ -241,9 +237,10 @@ export default {
       // 显示loading
       this.loading = true
       if (this.paginationInfo) {
+        console.log('切换页数', this.paginationInfo)
         // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
-        this.$refs.TableMessInfo.pagination.current = this.paginationInfo.current
-        this.$refs.TableMessInfo.pagination.pageSize = this.paginationInfo.pageSize
+       /* this.$refs.TableMessInfo.pagination.current = this.paginationInfo.current
+        this.$refs.TableMessInfo.pagination.pageSize = this.paginationInfo.pageSize*/
         params.pageSize = this.paginationInfo.pageSize
         params.pageNum = this.paginationInfo.current
       } else {
@@ -280,7 +277,7 @@ export default {
     },
     resetCond () {
       // 重置分页
-      this.$refs.TableMessInfo.pagination.current = this.pagination.defaultCurrent
+     // this.$refs.TableMessInfo.pagination.current = this.pagination.defaultCurrent
       if (this.paginationInfo) {
         this.paginationInfo.current = this.pagination.defaultCurrent
         this.paginationInfo.pageSize = this.pagination.defaultPageSize
