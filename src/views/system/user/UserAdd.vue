@@ -37,7 +37,7 @@
           <a-select-option v-for="r in roleData" :key="r.roleId">{{r.roleName}}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label='水库权限' v-bind="formItemLayout">
+      <a-form-item v-if="user.roleId !== 601" label='水库权限' v-bind="formItemLayout">
         <a-select
           mode="multiple"
           :allowClear="true"
@@ -125,7 +125,9 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err && this.validateStatus === 'success') {
           this.loading = true
-          this.user.reservoirIds = this.user.reservoirIds.join(',')
+          if (this.user.reservoirIds !== undefined) {
+            this.user.reservoirIds = this.user.reservoirIds.join(',')
+          }
           this.$post('web/user/addUser', {
             ...this.user
           }).then((r) => {

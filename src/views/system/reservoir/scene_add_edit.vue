@@ -32,11 +32,7 @@
       </div>
     </a-form-item>
     <a-form-item label="联系人" v-bind="formItemLayout">
-<<<<<<< Updated upstream
       <a-input v-decorator="['hiddenCharge']" placeholder="请输入"></a-input>
-=======
-      <a-input v-decorator="['hiddenCharge']" placeholder="请输入" />
->>>>>>> Stashed changes
     </a-form-item>
     <a-form-item label="测站编码" v-bind="formItemLayout">
       <a-input v-decorator="['stationCode']" placeholder="请输入" />
@@ -353,6 +349,7 @@
             _this.fileList = []
             _this.RealSceneFileList = []
             _this.form.resetFields()
+            _this.$router.replace("/system/reservoir/scene?reservoirId=" + _this.reservoirId)
           } else {
             _this.$message.warning(r.data.msg)
           }
