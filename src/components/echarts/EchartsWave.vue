@@ -13,6 +13,9 @@ export default {
     data: {
       require: true
     },
+    name: {
+      type: String
+    },
     refid: {
       require: true
     }
@@ -21,6 +24,7 @@ export default {
     drawLine () {
       let myChart = this.$echarts.init(document.getElementById(this.refid))
       window.addEventListener('resize',() => { myChart.resize(); });
+      let name = this.name
       let data = this.data
       if (this.data.length === 0) {
         myChart.setOption({}, true)
@@ -66,6 +70,7 @@ export default {
           }
         },
         yAxis: {
+          name: name,
           type: 'value',
           axisLabel: {
             show: true,

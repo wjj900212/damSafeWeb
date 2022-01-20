@@ -1,5 +1,9 @@
 <template>
-  <a-card title="微动监测数据统计">
+  <a-card>
+    <div slot="title">
+      微动监测数据统计
+      <a style="margin-left: 20px;" href="#">查看详情</a>
+    </div>
     <div slot="extra">
     <a-select
       v-model="select.hiddenId"
@@ -35,7 +39,7 @@
       @change="onDateChange"
     />
     <a-button @click="getInfo" type="primary"> 查询 </a-button>
-    <a-button type="primary"> 导出 </a-button>
+    
     </div>
     <a-card-grid style="width: 100%; text-align: left;height:500px;">
       <a-row>

@@ -140,7 +140,7 @@ export default {
           // this.data = data.xlist
           // this.markLine = data.cordon
           this.componentName = 'EchartsWave'
-          this.name = '水位（m）'
+          this.name = '位移（mm）'
           // this.piezometricList = data
           // this.treeData = data.treeData
         }

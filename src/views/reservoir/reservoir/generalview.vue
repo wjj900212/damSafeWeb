@@ -66,7 +66,7 @@
     >
       <a-col :span="12">
         <div>
-          <warn :data="warnData" @getWarnList="getWarnList"></warn>
+          <warn :reservoirId="reservoirId"></warn>
         </div>
       </a-col>
       <a-col :span="12">
@@ -173,27 +173,11 @@ export default {
       this.getProjPnTreeList()
       this.getProjPnidsGroup()
       this.getSectionList()
-      this.getWarnList()
     }
   },
   updated() {},
   methods: {
     moment,
-    getWarnList () {
-      const { reservoirId } = this
-      const params = {
-        reservoirId: reservoirId
-      }
-      this.$get('web/monitorScene/getDevBasicTargetByPnId', {
-        ...params,
-      }).then((r) => {
-        if (r.data.data !== null) {
-          let data = r.data.data
-          this.warnData = data
-          // this.treeData = data.treeData
-        }
-      })
-    },
     getMonitorList (pnId) {
       const params = {
         pnId: pnId
