@@ -42,17 +42,9 @@ export default {
       type: Boolean,
       default: false
     },
-    typeList: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    },
-    devTypeList: {
-      type: Array,
-      default: () => {
-        return []
-      }
+    tabPane: {
+      type: Number,
+      default: -1
     },
     thresholdEditMoreObj: {
       type: Object,
@@ -61,18 +53,48 @@ export default {
   },
   data () {
     return {
-      scene: {}
+      scene: {},
+      typeList: [],
+      devTypeList: []
     }
   },
   mounted () {
+    this.findHiddenList()
   },
   watch: {
 
   },
   methods: {
+    // 获取监测场景列表
+    findHiddenList () {
+      this.$get('web/warnConfig/findHiddenList', {
+        type: this.tabPane
+      }).then((r) => {
+        if (r.data.code === 1) {
+          let data = r.data.data
+          this.typeList = data
+        } else {
+          this.$message.error(r.data.msg)
+        }
+      })
+    },
+    // 获取设备类型列表
+    findDevModelList (hiddenId) {
+      this.$get('web/warnConfig/findDevModelList', {
+        hiddenId: hiddenId
+      }).then((r) => {
+        if (r.data.code === 1) {
+          let data = r.data.data
+          this.devTypeList = data
+        } else {
+          this.$message.error(r.data.msg)
+        }
+      })
+    },
     handleSceneChange (value, key) {
       this.scene.hiddenId = key.data.key
       this.scene.hiddenName = value
+      this.findDevModelList(key.data.key)
     },
     handleDevChange (value) {
       let devInfo = value.split('||')

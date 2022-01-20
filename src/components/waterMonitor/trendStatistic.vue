@@ -121,7 +121,9 @@ export default {
         this.$message.error('请选择监测点')
         return
       }
-      this.queryParams.pnStrId = this.queryParams.pnId + '_meas'
+      // this.queryParams.pnStrId = this.queryParams.pnId + '_meas'
+        this.queryParams.pnStrId =''
+        this.queryParams.type=16
       this.$get('/web/monitorScene/monitorDataList', this.queryParams).then(res => {
         let rr = res.data
         if (rr.code != 1) {

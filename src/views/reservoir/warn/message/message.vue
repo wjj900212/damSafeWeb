@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <div class="standardList">
     <!-- 搜索区域 -->
@@ -11,7 +12,7 @@
                   label="关键字"
                   :labelCol="{span: 5}"
                   :wrapperCol="{span: 18, offset: 1}">
-                  <a-input placeholder="水库、场景名称、监测点名称" v-model="queryParams.searchName"/>
+                  <a-input placeholder="水库、场景名称、监测点名称" v-model="queryParams.keyword"/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24" >
@@ -36,7 +37,7 @@
                   :wrapperCol="{span: 18, offset: 1}">
                   <a-select
                     :allowClear="true"
-                    v-model="queryParams.status"
+                    v-model="queryParams.dealWith"
                     style="width: 100%"
                     placeholder="请选择"
                     @change="handleWarnChange">
@@ -57,7 +58,7 @@
                   label="设备ID"
                   :labelCol="{span: 5}"
                   :wrapperCol="{span: 18, offset: 1}">
-                  <a-input placeholder="请输入" v-model="queryParams.searchName"/>
+                  <a-input placeholder="请输入" v-model="queryParams.devCode"/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24" >
@@ -65,7 +66,7 @@
                   label="预警信息"
                   :labelCol="{span: 5}"
                   :wrapperCol="{span: 18, offset: 1}">
-                  <a-input placeholder="请输入" v-model="queryParams.searchName"/>
+                  <a-input placeholder="请输入" v-model="queryParams.warnInfo"/>
                 </a-form-item>
               </a-col>
             </div>
@@ -76,13 +77,13 @@
     <a-card :bordered="false" class="card-area" style="margin-top:10px;">
       <div style="display: flex;justify-content: space-between;align-content: space-between;">
         <div>
-          <span>蓝色预警：80</span>
-          <span>黄色预警：80</span>
-          <span>橙色预警：80</span>
-          <span>红色预警：80</span>
+          <span>蓝色预警：{{statisData.blue}}</span>
+          <span>黄色预警：{{statisData.yellow}}</span>
+          <span>橙色预警：{{statisData.orange}}</span>
+          <span>红色预警：{{statisData.red}}</span>
         </div>
         <div>
-          <a-radio-group :defaultValue="selectId" button-style="solid">
+          <a-radio-group :defaultValue="flagTime" button-style="solid" @change="handleRadioChange">
             <a-radio-button v-for="tag in tagList" :key="tag.id" :value="tag.id">
               {{tag.name}}
             </a-radio-button>
@@ -94,14 +95,15 @@
       </div>
       <div>
         <a-tabs default-active-key="1" @change="callback">
-          <a-tab-pane key="1" tab="设备预警">
-            <table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>
-          </a-tab-pane>
-          <a-tab-pane key="2" tab="安全预警">
-            Content of Tab Pane 2
-          </a-tab-pane>
-          <a-tab-pane key="3" tab="模型预警">
-            Content of Tab Pane 3
+          <a-tab-pane v-for="tab in tabPaneList" :key="tab.key" :tab="tab.tab">
+            <!--<table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>-->
+            <a-table ref="TableMessInfo"
+                     :columns="columns"
+                     :dataSource="dataSource"
+                     :pagination="pagination"
+                     :loading="loading"
+                     @change="handleTableChange">
+            </a-table>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -128,16 +130,14 @@ export default {
     return {
       advanced: false,
       queryParams: {},
-      warnLevelList: [{id: 0, label: '蓝色预警'}, {id: 1, label: '黄色预警'}, {id: 2, label: '橙色预警'}, {id: 3, label: '红色预警'}],
-      disposalList: [{id: 0, label: '已处置'}, {id: 1, label: '未处置'}],
+      warnLevelList: [{id: 1, label: '蓝色预警'}, {id: 2, label: '黄色预警'}, {id: 3, label: '橙色预警'}, {id: 4, label: '红色预警'}],
+      disposalList: [{id: 0, label: '未处置'}, {id: 1, label: '已处置'}, {id: 2, label: '不予处置'}],
       tagList: [{id: 0, name: '今日'}, {id: 1, name: '近三天'}, {id: 2, name: '近一周'}, {id: 3, name: '近一月'}],
-      selectId: 0,
+      flagTime: 3,
       paginationInfo: null,
-      dataSource: [
-        {devCode: '1', devStatus: '库水位', devModelName: '库水位超出以及警戒线', secureKey: '0', devOnline: '密云水库', projBasicName: '场景一', itemNum: '监测点一', installTime: '202100101234', itemNum1: '位移微芯桩', installTime1: '2021-09-26 08:05:08'},
-        {devCode: '3', devStatus: '库水位', devModelName: '库水位超出以及警戒线', secureKey: '1', devOnline: '密云水库1', projBasicName: '场景二', itemNum: '监测点二', installTime: '202100101235', itemNum1: '位移微芯桩', installTime1: '2021-09-27 08:05:08'},
-        {devCode: '2', devStatus: '库水位', devModelName: '库水位超出以及警戒线', secureKey: '0', devOnline: '密云水库2', projBasicName: '场景三', itemNum: '监测点三', installTime: '202100101236', itemNum1: '位移微芯桩', installTime1: '2021-09-28 08:05:08'}
-      ],
+      dataSource: [],
+      tabPane: '1',
+      tabPaneList: [{key: '1', tab: '设备预警'}, {key: '2', tab: '安全预警'}, {key: '5', tab: '模型预警'}],
       loading: false,
       pagination: {
         pageSizeOptions: ['10', '20', '30', '40', '100'],
@@ -148,14 +148,16 @@ export default {
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
       isShowDevWarning: false,
-      warnDetailData: {}
+      warnDetailData: {},
+      statisData: {}
+
     }
   },
   computed: {
     columns () {
       return [{
         title: '预警级别',
-        dataIndex: 'devCode',
+        dataIndex: 'warnLevel',
         customRender: (text) => {
           switch (text) {
             case '0':
@@ -170,34 +172,51 @@ export default {
         }
       }, {
         title: '预警指标',
-        dataIndex: 'devStatus'
+        dataIndex: 'devValueMark'
       }, {
         title: '预警信息',
-        dataIndex: 'devModelName',
-        width: '15%',
+        dataIndex: 'warnInfo',
+        width: '10%',
         ellipsis: true
       }, {
         title: '处置状态',
-        dataIndex: 'secureKey',
-        customRender: (text) => text === '0' ? <a-tag color="#42B982">已处置</a-tag> : <a-tag color="#CCCCCC">未处置</a-tag>
+        dataIndex: 'handle',
+        customRender: (text) => {
+          switch (text){
+            case '0':
+              return <a-tag color="#42B982">未处置</a-tag>
+            case '1':
+              return <a-tag color="#CCCCCC">已处置</a-tag>
+            case '2':
+              return <a-tag color="#899DCC">不予处置</a-tag>
+          }
+        }
       }, {
         title: '水库',
-        dataIndex: 'devOnline'
+        dataIndex: 'reservoirName',
+        width: '10%',
+        ellipsis: true
       }, {
         title: '监测场景',
-        dataIndex: 'projBasicName'
+        dataIndex: 'hiddenName'
       }, {
         title: '监测点',
-        dataIndex: 'itemNum'
+        dataIndex: 'projPnName',
+        width: '10%',
+        ellipsis: true
       }, {
         title: '设备ID',
-        dataIndex: 'installTime'
+        dataIndex: 'devCode'
       }, {
         title: '设备类型',
-        dataIndex: 'itemNum1'
+        dataIndex: 'devModelName',
+        width: '10%',
+        ellipsis: true
       }, {
         title: '预警时间',
-        dataIndex: 'installTime1'
+        dataIndex: 'warnTime',
+        width: '10%',
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',
@@ -209,26 +228,60 @@ export default {
       }]
     }
   },
+  mounted () {
+    this.fetch()
+    this.groupStatistics()
+  },
   methods: {
     fetch (params = {}) {
-
+      // 显示loading
+      this.loading = true
+      if (this.paginationInfo) {
+        console.log('切换页数', this.paginationInfo)
+        // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
+       /* this.$refs.TableMessInfo.pagination.current = this.paginationInfo.current
+        this.$refs.TableMessInfo.pagination.pageSize = this.paginationInfo.pageSize*/
+        params.pageSize = this.paginationInfo.pageSize
+        params.pageNum = this.paginationInfo.current
+      } else {
+        // 如果分页信息为空，则设置为默认值
+        params.pageSize = this.pagination.defaultPageSize
+        params.pageNum = this.pagination.defaultCurrent
+      }
+      params.type = this.tabPane
+      params.flag = this.flagTime
+      this.$get('web/earlyWarningBasic/getEarlyWarningList', {
+        ...params
+      }).then((r) => {
+        if (r.data.code === 1) {
+          let data = r.data.data
+          const pagination = { ...this.pagination }
+          pagination.total = data.total
+          this.dataSource = data.records
+          this.pagination = pagination
+        } else {
+          this.$message.error(r.data.msg)
+        }
+        // 数据加载完毕，关闭loading
+        this.loading = false
+      })
     },
     search () {
-
+      this.resetCond()
+      this.fetch({
+        ...this.queryParams
+      })
+      this.groupStatistics({
+        ...this.queryParams
+      })
     },
     resetCond () {
-      // 取消选中
-      this.selectedRowKeys = []
       // 重置分页
-      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
+     // this.$refs.TableMessInfo.pagination.current = this.pagination.defaultCurrent
       if (this.paginationInfo) {
         this.paginationInfo.current = this.pagination.defaultCurrent
         this.paginationInfo.pageSize = this.pagination.defaultPageSize
       }
-      // 重置列过滤器规则
-      this.filteredInfo = null
-      // 重置列排序规则
-      this.sortedInfo = null
     },
     reset () {
       this.resetCond()
@@ -242,15 +295,43 @@ export default {
         delete this.queryParams.warnLevel
       }
     },
-    handleTagChange (checked) {
-      console.log(checked)
+    handleTableChange (pagination) {
+      // 将这三个参数赋值给Vue data，用于后续使用
+      this.paginationInfo = pagination
+      this.fetch({
+        ...this.queryParams
+      })
     },
     callback (key) {
+      this.tabPane = key
+      this.fetch({
+        ...this.queryParams
+      })
       console.log(key)
     },
     warnInfo (record) {
       this.warnDetailData = record
       this.isShowDevWarning = true
+    },
+    handleRadioChange (e) {
+      this.flagTime = e.target.value
+      this.search()
+      console.log('获取时间', e)
+    },
+    //各等级预警数量
+    groupStatistics(params = {}){
+      params.flag = this.flagTime
+      this.$get('web/earlyWarningBasic/groupStatistics', {
+        ...params
+      }).then((r) => {
+        if (r.data.code === 1) {
+          this.statisData = r.data.data
+        } else {
+          this.$message.error(r.data.msg)
+        }
+        // 数据加载完毕，关闭loading
+        this.loading = false
+      })
     }
   }
 }
