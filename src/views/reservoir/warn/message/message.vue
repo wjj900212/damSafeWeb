@@ -109,22 +109,23 @@
       </div>
     </a-card>
     <!--设备预警详情-->
-    <dev-warning
+    <equipment-warning-info
       :visible="isShowDevWarning"
       :warnDetailData="warnDetailData"
+      :cur="tabPane"
+      :warnId="warnId"
+      :ifdisposal="ifdisposal"
       @onClose="()=>{isShowDevWarning=false}"
-    ></dev-warning>
+    ></equipment-warning-info>
   </div>
 </template>
 
 <script>
-import TableList from '@/components/table/TableList'
-import DevWarning from './model/devWarningInfo'
+import EquipmentWarningInfo from './model/equipmentWarningInfo'
 export default {
   name: 'message',
   components: {
-    TableList,
-    DevWarning
+    EquipmentWarningInfo
   },
   data () {
     return {
@@ -149,8 +150,9 @@ export default {
       },
       isShowDevWarning: false,
       warnDetailData: {},
-      statisData: {}
-
+      statisData: {},
+      warnId: 0,
+      ifdisposal: '0' // 预警是否已处置
     }
   },
   computed: {
@@ -310,8 +312,21 @@ export default {
       console.log(key)
     },
     warnInfo (record) {
-      this.warnDetailData = record
+      console.log('预警详情', record)
+      this.viewWarnDetail(record.id)
       this.isShowDevWarning = true
+    },
+    // 预警详情
+    viewWarnDetail(id){
+      this.$get('web/earlyWarningBasic/viewWarnDetail', {
+        id:id
+      }).then((r) => {
+        if (r.data.code === 1) {
+          this.warnDetailData = r.data.data
+        } else {
+          this.$message.error(r.data.msg)
+        }
+      })
     },
     handleRadioChange (e) {
       this.flagTime = e.target.value
