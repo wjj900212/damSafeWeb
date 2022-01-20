@@ -1,457 +1,341 @@
 <template>
-  <div>
-    <div class="potential-label">
-      <ul>
-        <li v-for="mx in list" :key="mx.id" @click="ck(mx.id)" :class="[{active: activeTab === mx.id}]">
-          {{mx.name}}
-        </li>
-      </ul>
-    </div>
-    <div id="pnDataInfo" style="width:100%;" v-if="activeTab === '0'">
-      <component ref="pnDataInfo" :is="componentName" v-bind="$attrs" :HPDevValueNameList="HPDevValueNameList" :HPDevBasic="HPDevBasic" :HPPnDetail="HPPnDetail"></component>
-    </div>
-    <div id="baseInfo" style="width:100%;" v-if="activeTab === '1'">
-      <div class="titleIcon" style="width:100%;padding-left:0.5rem;">
-        <img class="s-img" src="static/imgs/圆角矩形1220.png"/>
-        <span class="s-title">基本信息</span>
-      </div>
-      <div style="margin-top:1rem;">
-        <a-row type="flex" class="info">
-          <a-col :span="3" :order="1" class="info-label">
-            监测点名称
-          </a-col>
-          <a-col :span="9" :order="2" class="info-content">
-            <span :title="HPPnDetail.projPnName">{{HPPnDetail.projPnName | ellipsis}}</span>
-          </a-col>
-          <a-col :span="3" :order="3" class="info-label">
-            所属项目
-          </a-col>
-          <a-col :span="9" :order="4" class="info-content">
-            {{HPPnDetail.projBasicName}}
-          </a-col>
-        </a-row>
-        <a-row type="flex" class="info">
-          <a-col :span="3" :order="1" class="info-label">
-            所属隐患点
-          </a-col>
-          <a-col :span="9" :order="2" class="info-content">
-            <span :title="HPPnDetail.hiddenName">{{HPPnDetail.hiddenName | ellipsis}}</span>
-          </a-col>
-          <a-col :span="3" :order="3" class="info-label">
-            父测点
-          </a-col>
-          <a-col :span="9" :order="4" class="info-content">
-            {{HPPnDetail.hostPnName || '--'}}
-          </a-col>
-        </a-row>
-        <a-row type="flex" class="info">
-          <a-col :span="3" :order="1" class="info-label">
-            经纬度
-          </a-col>
-          <a-col :span="9" :order="2" class="info-content">
-            {{HPPnDetail.projPnLongitude}} E {{HPPnDetail.projPnLatitude}} N
-          </a-col>
-          <a-col :span="3" :order="3" class="info-label">
-            设备类型
-          </a-col>
-          <a-col :span="9" :order="4" class="info-content">
-            {{HPPnDetail.devModelName}}
-          </a-col>
-        </a-row>
-        <a-row type="flex" class="info">
-          <a-col :span="3" :order="1" class="info-label">
-            设备状态
-          </a-col>
-          <a-col :span="9" :order="2" class="info-content">
-            <span style="color:#5affce;font-family:'Microsoft YaHei UI';" v-if="HPDevBasic.devBasicBonline === 0">在线</span>
-            <span style="color:#ff595a;font-family:'Microsoft YaHei UI';" v-else-if="HPDevBasic.devBasicBonline === 1">离线</span>
-          </a-col>
-          <a-col :span="3" :order="3" class="info-label">
-            设备绑定
-          </a-col>
-          <a-col :span="9" :order="4" class="info-content">
-            <span v-if="HPPnDetail.projPnDevId === 0 || HPPnDetail.projPnDevId === null">未绑定</span>
-            <span v-else>已绑定</span>
-          </a-col>
-        </a-row>
-        <a-row type="flex" class="info">
-          <a-col :span="3" :order="1" class="info-label">
-            设备条码
-          </a-col>
-          <a-col :span="21" :order="2" class="info-content">
-          {{HPDevBasic.devBasicStrId}}
-          </a-col>
-        </a-row>
-      </div>
-      <div class="titleIcon" style="width:100%;padding-left:0.5rem;margin-top:1rem;">
-        <img class="s-img" src="static/imgs/指标.png"/>
-        <span class="s-title">指标信息</span>
-      </div>
-      <div style="margin-top:1rem;">
-        <a-row type="flex" class="info">
-          <a-col :span="3" :order="1" class="info-label">
-            指标名称
-          </a-col>
-          <a-col :span="9" :order="2" class="info-content">
-            <a-select
-              v-model="devValueName"
-              style="width:70%"
-            >
-              <a-select-option v-for="item in HPDevValueNameList" @click="handleDevValueNameChange(item)" :key="item.devValueId" :value="item.devValueName">
-                {{ item.devValueName }}
-              </a-select-option>
-            </a-select>
-          </a-col>
-          <a-col :span="3" :order="3" class="info-label">
-            指标阈值
-          </a-col>
-          <a-col :span="9" :order="4" class="info-content">
-            <div v-if="devValueYellowLower === '' && devValueYellowUpper === '' && devValueRedLower === '' && devValueRedUpper === ''">--</div>
-            <div v-else>{{devValueYellowLower || '--'}}/{{devValueYellowUpper || '--'}}/{{devValueRedLower || '--'}}/{{devValueRedUpper || '--'}}</div>
-          </a-col>
-        </a-row>
-      </div>
-      <div class="titleIcon" style="width:100%;padding-left:0.5rem;margin-top:1rem;">
-        <img class="s-img" src="static/imgs/图片.png"/>
-        <span class="s-title">施工图片</span>
-      </div>
-      <div style="width:100%;height:23rem;overflow-y: auto;margin-top:1.5rem;">
-        <div v-if="filePictureList.length === 0" style="margin-top:20px;text-align: center;">
-          <img src="static/imgs/暂无数据.png"/>
-          <span class="no-data">暂无数据</span>
-        </div>
-        <div v-else>
-          <!--<carousel :filePictureList="filePictureList" :carHeight="carHeight"></carousel>-->
-          <viewer :images="filePictureList">
-            <img v-for="(src,index) in filePictureList" :src="src" :key="index" style="width:13rem;height:13rem;border-radius: 4px;margin-left:1rem;">
-          </viewer>
-        </div>
-      </div>
-    </div>
-    <div id="modelIndexInfo" style="width:100%;" v-if="activeTab === '2'">
-      <ModelIndex
-        ref="modalIndex"
-        :pnId="pnId"
-        :CalculateValue="CalculateValue"
-      ></ModelIndex>
-    </div>
-  </div>
-  <!--</a-modal>-->
-</template>
+  <a-row>
+    <a-col :span="14">
+        <div style="margin: 20px;">
 
+            <a-row>
+                <a-col>
+                <div
+                    v-if="list.length >= 5"
+                    style="
+                    overflow-y: hidden;
+                    width: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    "
+                    :style="{ height: hiddenHeight }"
+                >
+                    <div style="width: calc(100% - 90px);z-index: 11;background: white;">
+                    <template v-for="(tag, index) in list">
+                        <a-checkable-tag
+                        color="#585f69"
+                        :closable="false"
+                        :key="index"
+                        :checked="selectedDevTags.indexOf(tag) > -1"
+                        @change="() => onDevValueSelect(tag, index)"
+                        >
+                        {{ tag.devValueName }}
+                        </a-checkable-tag>
+                    </template>
+                    </div>
+                    <div class="ant-tag-more" @click="showMoreTarget()">更多</div>
+                </div>
+                </a-col>
+            </a-row>
+            <div style="height: 400px;position: absolute;top: 50px;width:90%">
+                <component :is="componentName" :refid="'joggingchart'" :boundary="boundary" :data="chartsdata" class="main-content"></component>
+            </div>
+        </div>
+    </a-col>
+    <a-col :span="10">
+      <div style="margin: 20px;">
+        <a-table
+            ref="TableInfo"
+            :columns="columns"
+            :rowKey="(record) => record.id"
+            :data-source="sourceData"
+            :customRow="onClickRow"
+            :rowClassName="setRowClassName"
+            :pagination="pagination"
+            :scroll="{ y: 190 }"
+        >
+            <a slot="name" slot-scope="text">{{ text }}</a>
+            <span slot="customTitle">
+              {{ devItem.devValueName }}
+            </span>
+        </a-table>
+      </div>  
+    </a-col>
+  </a-row>
+</template>
 <script>
-import SurveyDetail from '@/components/survey/SurveyDetail.vue'
-import Carousel from '@/components/carousel/Carousel'
-import WarnSituation from '@/components/warnSituation/warnSituation'
-import ModelIndex from './ModelIndex'
-import '../../views/warn/info.css'
+import Echarts2D from "@/components/echarts/Echarts2D.vue";
+import Echarts from "@/components/echarts/Echarts.vue";
+import EchartsArr from "@/components/echarts/EchartsArr.vue";
+import EchartsoLine from "@/components/echarts/EchartsoLine.vue";
+import EchartsLine from "@/components/echarts/EchartsLine.vue";
+import EchartsThinbar from "@/components/echarts/EchartsThinbar.vue";
+import EchartsPolar from "@/components/echarts/EchartsPolar.vue";
+import EchartsWave from "@/components/echarts/EchartsWave.vue";
+import EchartsScatter from "@/components/echarts/EchartsScatter.vue";
+import moment from "moment";
 export default {
-  name: 'MainContent',
+  name: "MainContent",
   components: {
-    SurveyDetail, // 指标详情
-    Carousel,
-    WarnSituation,
-    ModelIndex
-  },
-  data () {
-    return {
-      dateFormat: 'YYYY-MM-DD',
-      startDate: new Date((new Date()).getFullYear(), (new Date()).getMonth() - 1, (new Date()).getDate()).format('yyyy-MM-dd'),
-      endDate: new Date((new Date()).getFullYear(), (new Date()).getMonth(), (new Date()).getDate()).format('yyyy-MM-dd'),
-      list: [{id: '0', name: '监测数据详情'}, {id: '1', name: '监测点详情'}, {id: '2', name: '模型指数'}],
-      activeTab: '0', // tab选中
-	    componentName: 'SurveyDetail',
-      selectedDevTags: [], // 指标选中列表
-      devValueName: '',
-      projPnBasicInfo: {}, // 监测点详情
-      projPnWarnNumberData: [], // 监测点预警数据
-      devValueStrId: '',
-      devValueRedUpper: '',
-      devValueRedLower: '',
-      devValueYellowUpper: '',
-      devValueYellowLower: '',
-      isShowHistoryWarn: false, // 历史预警抽屉显隐
-      filePictureList: [],
-      type: 3,
-      carHeight: 'calc(38vh)',
-      warnNumberData: '',
-      sourceData: [],
-      CalculateValue: [], // 阈值
-      EChartsData: [], // 趋势图数据
-      modelXAxisValue: [],
-      modelYAxisValue: [],
-      modelValueList: [],
-      total: 0,
-      pagination: {
-        defaultCurrent: 1,
-        defaultPageSize: 10
-      }
-    }
+    Echarts2D,
+    EchartsWave,
+    Echarts,
+    EchartsArr,
+    EchartsoLine,
+    EchartsLine,
+    EchartsThinbar,
+    EchartsPolar,
+    EchartsWave,
+    EchartsScatter
   },
   props: {
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    HPPnDetail: {
-      type: Object,
-      default: () => {}
-    },
-    HPDevBasic: {
-      type: Object,
-      default: () => {}
-    },
-    HPDevValueNameList: {
+    list: {
       type: Array,
-      default: () => {
-        return []
-      }
+      default: () => [],
     },
-    pnId: {
-      required: true
+    dateTimeValue: {
+      type: Array,
+      default: () => [],
     }
   },
-  mounted () {
-    this.getCalculateThreshoid()
-    if (this.HPDevValueNameList.length !== 0) {
-      this.devValueName = this.HPDevValueNameList[0].devValueName
+  data() {
+    return {
+      devItem: {},
+      chartsdata: [],
+      boundary: [],
+      hiddenHeight: "30px",
+      selectedDevTags: [], // 指标选中列表
+      selectRowId: '',
+      componentName: '',
+      clickable: false,
+      sourceData: [],
+      pagination: {
+        defaultCurrent: 1,
+        defaultPageSize: 10,
+        size: "small",
+        showTotal: (total, range) => `共 ${total} 条`,
+      },
+    };
+  },
+  computed: {
+    columns () {
+       return [
+        {
+          title: "序号",
+          customRender: (text, record, index) => `${index + 1}`,
+          width: "15%",
+        },
+        {
+          title: "时间",
+          dataIndex: "time",
+          key: "time",
+          width: "50%",
+        },
+        {
+        //   title: this.devItem,
+          dataIndex: "value",
+          key: "value",
+          width: "35%",
+          scopedSlots: { title: 'customTitle' },
+        },
+      ]
     }
   },
-  methods: {
-    cancelModal () {
-      this.activeTab = '0'
-      this.filePictureList = []
-      this.$emit('onClose')
-    },
-    ck (mx) {
-      let _this = this
-      _this.activeTab = mx
-      if (mx === '2') {
-        setTimeout(function () {
-          _this.$refs.modalIndex.getPnModelChart()
-          _this.$refs.modalIndex.getWarnByPnId(this.pagination)
-        }, 100)
-      }
-    },
-    getCalculateThreshoid () {
-      let _this = this
-      this.$get('warnWeb/calculate/calculateThreshold', {
-      }).then((r) => {
-        let dataList = r.data.data
-        _this.CalculateValue = dataList
-      })
-    },
-    /* // 模型指数趋势图
-    getPnModelChart (startDate, endDate) {
-      let _this = this
-      _this.safetyYAxisVlue = []
-      let params = {}
-      if (startDate === undefined && endDate === undefined) {
-        params.startDate = _this.startDate
-        params.endDate = _this.endDate
-      } else {
-        params.startDate = startDate
-        params.endDate = endDate
-      }
-      params.pnId = _this.pnId
-      this.$get('warnWeb/calculate/calculateChart', {
-        ...params
-      }).then((r) => {
-        if (r.data.data !== null) {
-          let dataList = r.data.data
-          _this.EChartsData = dataList
-          if (dataList.length === 0) {
-            _this.modelXAxisValue = []
-            _this.modelYAxisValue = []
-            return
-          }
-          let xAxisValue = []
-          let modelValue = []
-          for (let i = 0; i < dataList.length; i++) {
-            xAxisValue.push(dataList[i].warnTime)
-            modelValue.push(dataList[i].value)
-          }
-          _this.modelXAxisValue = xAxisValue
-          _this.modelYAxisValue = modelValue
-        }
-      })
-    },
-    getCalculateThreshoid () {
-      let _this = this
-      this.$get('warnWeb/calculate/calculateThreshold', {
-      }).then((r) => {
-        let dataList = r.data.data
-        _this.CalculateValue = dataList
-      })
-    },
-    // 模型指数 - 列表
-    getWarnByPnId (pagination, startDate, endDate) {
-      let _this = this
-      let params = {}
-      if (startDate === undefined && endDate === undefined) {
-        params.startDate = _this.startDate
-        params.endDate = _this.endDate
-      } else {
-        params.startDate = startDate
-        params.endDate = endDate
-      }
-      params.pnId = _this.pnId
-      console.log(pagination)
-      console.log('****进来了****')
-      if (pagination === undefined) {
-        params.pageNum = _this.pagination.defaultCurrent
-        params.pageSize = _this.pagination.defaultPageSize
-      } else {
-        params.pageNum = pagination.defaultCurrent
-        params.pageSize = pagination.defaultPageSize
-      }
-      this.$get('warnWeb/calculate/listCalculateResultHistory', {
-        ...params
-      }).then((r) => {
-        let dataList = r.data.data
-        console.log('*****listCalculateResultHistory*****', dataList)
-        if (dataList.records.length !== 0) {
-          _this.sourceData = dataList.records
-          _this.total = dataList.total
-        } else {
-          _this.sourceData = []
-          _this.total = 0
-          _this.pagination.defaultCurrent = 1
-        }
-      })
-    }, */
-    handleDevValueNameChange (item) {
-      let _this = this
-      if (item.boundary[4] !== 9999) {
-        _this.devValueRedUpper = item.boundary[4]
-        _this.devValueYellowUpper = item.boundary[2]
-        _this.devValueRedLower = item.boundary[3]
-        _this.devValueYellowLower = item.boundary[1]
-      } else {
-        _this.devValueRedUpper = ''
-        _this.devValueYellowUpper = ''
-        _this.devValueRedLower = ''
-        _this.devValueYellowLower = ''
-      }
+  mounted() {
+    if (this.list.length > 0) {
+      this.devItem = this.list[0]
+      this.onDevValueSelect(this.list[0])
     }
   },
   watch: {
-    HPPnDetail (newVal) {
-      if (newVal.sgImage !== '') {
-        this.filePictureList = newVal.sgImage.split('||')
+    list(val) {
+      if (val.length > 0) {
+        this.devItem = val[0]
+        this.onDevValueSelect(val[0])
       }
     },
-    HPDevValueNameList (newVal) {
-      if (this.HPDevValueNameList.length !== 0) {
-        this.devValueName = this.HPDevValueNameList[0].devValueName
-      }
-    }
   },
-  filters: {
-  // 名称过长时用...代替
-    ellipsis (value) {
-      if (!value) {
-        return ''
+  updated() {},
+  methods: {
+    moment,
+    getStringName(str) {
+      let arr = str.split("_");
+      let type = arr[1];
+      let name = [];
+      let objname = [];
+      switch (type) {
+        case "1":
+          name = [
+            "倾角",
+            "倾向",
+            "振动",
+            "温度",
+            "位移X",
+            "位移Y",
+            "位移Z",
+            "最大速度",
+          ];
+          objname = [
+            "inclination",
+            "tendency",
+            "vibration",
+            "temperature",
+            "x",
+            "y",
+            "z",
+            "resVelocity",
+          ];
+          break;
+        case "2":
+          name = ["倾角"];
+          objname = ["inclination"];
+          break;
+        case "3":
+          name = ["倾向"];
+          objname = ["tendency"];
+          break;
+        case "4":
+          name = ["振动"];
+          objname = ["vibration"];
+          break;
+        case "5":
+          name = ["温度"];
+          objname = ["temperature"];
+          break;
+        case "6":
+          name = ["位移X", "位移Y", "位移Z"];
+          objname = ["x", "y", "z"];
+          break;
+        case "43":
+          name = ["位移X", "位移Y", "位移Z", "最大速度"];
+          objname = ["x", "y", "z", "resVelocity"];
+          break;
       }
-      if (value.length > 14) {
-        return value.slice(0, 14) + '...'
+      return { name: name, objname: objname };
+    },
+    onClickRow(record, index) {
+      return {
+        on: {
+          click: () => {
+            console.log("行事件", record, index);
+            if (this.clickable) {
+              this.selectRowId = record.id;
+              let chartParams = {}
+              chartParams.devValueId = this.devValueId;
+              chartParams.id = record.id;
+              this.updateChart2(this.chartParams);
+            }
+            // this.className = 'ant-table-row-selected'
+            // this.rowSelection.selectedRows = []
+            // this.rowSelection.selectedRowKeys = []
+            // this.rowSelection.selectedRowKeys.push(this,pageDate)
+          },
+        },
+      };
+    },
+    
+    setRowClassName(record) {
+      const tableId = this.selectRowId;
+      return record.id === tableId ? "SDactive" : "";
+    },
+    showMoreTarget(){
+      if(this.hiddenHeight === '30px'){
+        this.hiddenHeight = 'auto'
+      }else if(this.hiddenHeight === 'auto'){
+        this.hiddenHeight = '30px'
       }
-      return value
-    }
-  }
-}
+    },
+    onDevValueSelect(item, index) {
+      this.selectedDevTags = []
+      this.selectedDevTags.push(item)
+      this.devItem = item
+      console.log(item);
+    //   if (this.$attrs.indexValueId !== 0) {
+    //     this.selected_index = this.$attrs.indexValueId;
+    //   } else {
+    //     this.selected_index = index;
+    //   }
+      switch (item.showType) {
+        case "0":
+        this.componentName =
+            item.alarmflag === "0" ? "EchartsoLine" : "EchartsLine";
+        this.chartAndListInit(item, "2D");
+        this.clickable = false;
+        break;
+        case "1":
+        this.componentName = "EchartsThinbar";
+        this.chartAndListInit(item, "2D");
+        this.clickable = false;
+        break;
+        case "2":
+        this.componentName = "EchartsPolar";
+        this.chartAndListInit(item, "2D");
+        this.clickable = false;
+        break;
+        case "3":
+        this.componentName = "EchartsScatter";
+        this.chartAndListInit(item, "2D");
+        this.clickable = false;
+        break;
+        case "5":
+        this.componentName = "EchartsWave";
+        this.chartAndListInit(item, "wave");
+        this.clickable = true;
+        break;
+        case "6":
+        this.componentName = "picShow";
+        this.chartAndListInit(item, "pic");
+        this.clickable = true;
+        break;
+      }
+    },
+    chartAndListInit(item, type) {
+      console.log("初始化列表", item);
+      this.boundary = item.boundary
+      let chartParams = {}
+      chartParams.pnStrId = item.devValueId
+      let start = moment(this.dateTimeValue[0]).format("YYYY-MM-DD");
+      let end = moment(this.dateTimeValue[1]).format("YYYY-MM-DD");
+      chartParams.startTime = start
+      chartParams.endTime = end
+      this.updateChart(chartParams);
+    //   this.searchSourceDataList(queryParams);
+      this.selectedDevTags = [];
+      this.selectedDevTags.push(item);
+      // console.log('选中指标:',this.selectedDevTags)
+    //   if (type === "2D") {
+    //     this.updateChart(chartParams);
+    //   }
+    },
+    updateChart (params) {
+      // let url = '/api/data/query/' + params.projPnParentId + '/' + params.devBasicId + '/' + params.devValueStrId + '/' + params.id
+      let url = 'web/reservoirOverview/wdStatistics'
+      this.$get(url, {
+        ...params
+      }).then((r) => {
+        this.chartsdata = r.data.data.list
+        this.sourceData = this.chartsdata.map(item => {
+          return {time: item[0], value: item[1]}   
+        })
+      })
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>
-  .card-container > .ant-tabs-card > .ant-tabs-content {
-    height: 120px;
-    margin-top: -16px;
+  .ant-tag {
+    margin: 5px;
+    border: 1px solid #aaa;
+    opacity: 0.8;
   }
-
-  .card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
-    background: #fff;
-    padding: 16px;
+  .ant-tag-checkable-checked {
+    background: white;
+    color: #1890ff;
+    border-color:#1890ff;
   }
-
-  .card-container > .ant-tabs-card > .ant-tabs-bar {
-    border-color: #fff;
-  }
-
-  .card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
-    border-color: transparent;
-    background: transparent;
-  }
-
-  .card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
-    border-color: #fff;
-    background: #fff;
-  }
-  .ant-tabs{
-    color:#e9e9e9 !important;
-  }
-  .potential-label {
-    width:100%;
-    height:5rem;
-    line-height: 5rem;
-    position: absolute;
-    top:4rem;
-  }
-  .potential-label ul{
-    list-style: none;
-    text-align: center;
-    height:5rem;
-    margin-right:0.8rem;
+  .ant-tag-more {
     cursor: pointer;
+    line-height: 30px;
     position: absolute;
-    right: 10px;
-    li{
-      float: left;
-      width:14rem;
-      height: 4.2rem;
-      line-height: 4.2rem;
-      border: 1px solid #3CDB95;
-      opacity: 0.6;
-      /*background-image: url("../../../static/imgs/组955.png");
-      background-size: 100% 100%;*/
-      font-family: "Microsoft YaHei UI";
-      font-weight: 400;
-      font-size: 1.6rem;
-      color: #3BD996;
-      margin: 5px !important;
-    }
-    li.active{
-      border: 1px solid #3cdb95;
-      background: rgba(70, 255, 172, 0.2);
-      color: #3CDB95;
-      opacity: 1;
-      /* background-image: url("../../../static/imgs/组956.png") !important;
-       background-size: 100% 100%;*/
-    }
+    right: 30px;
   }
-  .index-mark{
-    text-align: center;
-    width:38px;
-    height:98px;
-    background: url("../../../static/images/圆角矩形4拷贝13@2x_97.png") !important;
-    background-size: cover;
-    font-family: 时尚中黑简体;
-    font-size:17px;
-    color:#ebc43d;
-  }
-  @media screen and (max-width:1536px){
-    #pn-base-info{
-      height: calc(30vh) !important;
-      overflow-y: scroll;
-    }
-  }
-  @media screen and (max-width:1366px){
-    #pn-base-info{
-      height: calc(24vh) !important;
-      overflow-y: scroll;
-    }
-  }
-  #pn-base-info{
-    height: calc(35vh);
-    overflow-y: scroll;
+  .ant-tag-more:hover {
+    color: #1890ff;
   }
 </style>

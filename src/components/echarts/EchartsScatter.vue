@@ -40,7 +40,7 @@ export default {
           text: name,
           textStyle: {
             fontSize: 12,
-            color: '#fff'
+            color: '#000'
           }
         },
         tooltip: {
@@ -54,7 +54,7 @@ export default {
           axisLabel: {
             show: true,
             textStyle: {
-              color: '#ffffff'
+              color: '#000'
             }
           }
         },
@@ -66,7 +66,7 @@ export default {
           axisLabel: {
             show: true,
             textStyle: {
-              color: '#ffffff'
+              color: '#000'
             }
           }
         },

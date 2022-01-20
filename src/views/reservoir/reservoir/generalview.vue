@@ -32,10 +32,10 @@
       :style="{ marginBottom: '24px' }"
     >
       <a-col :span="12">
-        <rain :List="rainList" :data="rainData"></rain>
+        <rain :List="rainList"></rain>
       </a-col>
       <a-col :span="12">
-        <water :List="waterList" :data="waterData"></water>
+        <water :List="waterList"></water>
       </a-col>
     </a-row>
     <a-row
@@ -43,7 +43,7 @@
       :style="{ marginBottom: '24px' }"
     >
       <a-col :span="24">
-        <jogging :List="joggingList" :data="joggingData"></jogging>
+        <jogging :List="joggingList" @getMonitorList="getMonitorList" :targetList="targetList"></jogging>
       </a-col>
     </a-row>
     <a-row
@@ -51,13 +51,13 @@
       :style="{ marginBottom: '24px' }"
     >
       <a-col :span="8">
-        <transfusion :List="transfusionList" :data="transfusionData"></transfusion>
+        <transfusion :List="transfusionList"></transfusion>
       </a-col>
       <a-col :span="8">
-        <piezometric :List="piezometricList" :data="piezometricData"></piezometric>
+        <piezometric :List="piezometricList"></piezometric>
       </a-col>
       <a-col :span="8">
-        <transshape :List="transshapeList" :data="transshapeData"></transshape>
+        <transshape :List="transshapeList"></transshape>
       </a-col>
     </a-row>
     <a-row
@@ -65,22 +65,9 @@
       :style="{ marginBottom: '24px' }"
     >
       <a-col :span="12">
-        <a-card>
-          <div slot="title">
-            <span>预警消息</span
-            ><span style="font-size: 10px; margin-left: 10px; color: darkgray"
-              >今日 246条消息</span
-            >
-          </div>
-          <a slot="extra" href="#">更多消息</a>
-          <a-card-grid style="width: 100%; text-align: center; padding: 0px">
-            <a-list bordered :dataSource="warnData">
-              <a-list-item slot="renderItem" slot-scope="item">
-                {{ item }}
-              </a-list-item>
-            </a-list>
-          </a-card-grid>
-        </a-card>
+        <div>
+          <warn :data="warnData" @getWarnList="getWarnList"></warn>
+        </div>
       </a-col>
       <a-col :span="12">
         <a-card title="运维记录">
@@ -106,6 +93,7 @@ import transfusion from './components/transfusion.vue';
 import piezometric from './components/piezometric.vue';
 import transshape from './components/transshape.vue';
 import jogging from './components/jogging.vue';
+import warn from './components/warn.vue';
 
 export default {
   name: "generalview",
@@ -119,7 +107,8 @@ export default {
     transfusion,
     piezometric,
     transshape,
-    jogging
+    jogging,
+    warn
   },
   data() {
     return {
@@ -135,6 +124,7 @@ export default {
       transshapeData: [],
       joggingList: [],
       joggingData: [],
+      targetList: [],
       reservoirInfo: {},
       radarData: [],
       relationshipData: [],
@@ -183,11 +173,41 @@ export default {
       this.getProjPnTreeList()
       this.getProjPnidsGroup()
       this.getSectionList()
+      this.getWarnList()
     }
   },
   updated() {},
   methods: {
     moment,
+    getWarnList () {
+      const { reservoirId } = this
+      const params = {
+        reservoirId: reservoirId
+      }
+      this.$get('web/monitorScene/getDevBasicTargetByPnId', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          this.warnData = data
+          // this.treeData = data.treeData
+        }
+      })
+    },
+    getMonitorList (pnId) {
+      const params = {
+        pnId: pnId
+      }
+      this.$get('web/monitorScene/getDevBasicTargetByPnId', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          this.targetList = data
+          // this.treeData = data.treeData
+        }
+      })
+    },
     handleMonitorChange (value) {
     },
     getSectionList () {
@@ -220,6 +240,12 @@ export default {
           this.transfusionList = data.find(item => item.typeId === 11) ? data.find(item => item.typeId === 11).hiddenList : []
           this.transshapeList = data.find(item => item.typeId === 13) ? data.find(item => item.typeId === 13).hiddenList : []
           this.joggingList = data.find(item => item.typeId === 14) ? data.find(item => item.typeId === 14).hiddenList : []
+          let obj = this.joggingList.length > 0 ? this.joggingList[0] : {}
+          let pnList = obj.pnList || []
+          let pnId = pnList.length > 0 ? pnList[0].projPnId : undefined
+          if (pnId) {
+            this.getMonitorList(pnId)
+          }
           // this.treeData = data.treeData
         }
       })

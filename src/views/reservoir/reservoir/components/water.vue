@@ -44,40 +44,46 @@
           </a-row>
           <a-row>
             <a-col :span="4"> 安全状态 </a-col>
-            <a-col :span="3"> 正常 </a-col>
+            <a-col :span="3"> <span :style="{ color: info.color }">{{ info.safeStatusText }}</span></a-col>
             <a-col :span="4"> 当前水位 </a-col>
-            <a-col :span="3"> 29.2mm </a-col>
+            <a-col :span="3"> {{ info.current }} </a-col>
             <a-col :span="5"> 历史最大水位 </a-col>
-            <a-col :span="5"> 39.2mm </a-col>
+            <a-col :span="5"> {{ info.largest }} </a-col>
           </a-row>
         </a-col>
       </a-row>
     </a-card-grid>
-    <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
+    <a-card-grid style="width: 100%; text-align: center;height: 400px;">
+      <!-- <div > -->
+        <component :is="componentName" :refid="'sqchart'" :markLine="markLine" :name="name" :data="data" class="main-content"></component>
+      <!-- </div> -->
+    </a-card-grid>
   </a-card>
 </template>
 <script>
-import EchartsBarLine from "@/components/echarts/EchartsBarLine.vue";
+import EchartsoLine from "@/components/echarts/EchartsoLine.vue";
+import { getText } from "@/utils/utils";
 export default {
   name: "water",
   components: {
-    EchartsBarLine,
+    EchartsoLine,
   },
   props: {
     List: {
       type: Array,
       default: () => [],
-    },
-    data: {
-      type: Array,
-      default: () => [],
-    },
+    }
   },
   data() {
     return {
+      componentName: '',
+      markLine: [],
       select: {},
+      info: {},
+      name: '',
+      data: [],
       monitor: undefined,
-      monitorData: [],
+      monitorData: []
     };
   },
   computed: {},
@@ -95,12 +101,38 @@ export default {
       this.monitor =
         this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
     },
+    monitor (val) {
+      this.getStatistics(this.monitor)
+    }
   },
   methods: {
     changeHidden(item) {
       this.select = item;
     },
-    handleMonitorChange(value) {},
+    handleMonitorChange(value) {
+      this.getStatistics(value)
+    },
+    getStatistics (projPnId) {
+      const params = {
+        projPnId: projPnId
+      }
+      this.$get('web/reservoirOverview/sqStatistics', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          data.color = getText(data.safeStatus).color
+          data.safeStatusText = getText(data.safeStatus).name
+          this.info = data
+          this.data = data.xlist
+          this.markLine = data.cordon
+          this.componentName = 'EchartsoLine'
+          this.name = '水位（m）'
+          // this.piezometricList = data
+          // this.treeData = data.treeData
+        }
+      })
+    }
   },
 };
 </script>

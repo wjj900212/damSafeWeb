@@ -14,6 +14,10 @@ export default {
     name: {
       type: String
     },
+    markLine: {
+      type: Array,
+      default: () => []
+    },
     refid: {
       require: true
     }
@@ -31,16 +35,18 @@ export default {
       // this.$get('https://echarts.cdn.apache.org/examples/data/asset/data/aqi-beijing.json').then((r) => {
       let data = this.data
       let name = this.name
+      let markLine = this.markLine
+      console.log(data)
       if (this.data.length === 0) {
         myChart.setOption({}, true)
         return
       }
       myChart.setOption({
         title: {
-          text: name,
+        //   text: name,
           textStyle: {
             fontSize: 12,
-            color: '#fff'
+            color: '#000'
           }
         },
         tooltip: {
@@ -53,27 +59,24 @@ export default {
           axisLabel: {
             show: true,
             textStyle: {
-              color: '#ffffff'
+              color: '#000'
             }
           }
         },
         yAxis: {
+          name: name,
           splitLine: {
             show: false
           },
           axisLabel: {
             show: true,
             textStyle: {
-              color: '#ffffff'
+              color: '#000'
             }
           }
         },
         toolbox: {
-          left: 'center',
           feature: {
-            dataZoom: {
-              yAxisIndex: 'none'
-            },
             restore: {},
             saveAsImage: {}
           }
@@ -83,18 +86,35 @@ export default {
           backgroundColor: 'rgba(47,69,84,0.5)',
           dataBackground: { // 数据阴影的样式。
             lineStyle: {
-              color: '#ffffff'
+              color: '#000'
             }, // 阴影的线条样式
             areaStyle: {
-              color: '#ffffff'
+              color: '#000'
             } // 阴影的填充样式
           }
         }, {
           type: 'inside'
         }],
         series: {
-          name: name,
+        //   name: name,
           type: 'line',
+          markLine: {
+            silent: true,
+            symbol:['arrow','none'],
+            data: markLine.map(item => {
+              return {
+                yAxis: item[1],
+                lineStyle: {
+                  color: 'red'
+                },
+                label: {
+                  position: 'middle',
+                  formatter: item[0] + ': {c}',
+                //   color: 'red'
+                }
+              }
+            })
+          },
           data: data.map(function (item) {
             return item[1]
           })

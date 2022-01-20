@@ -44,15 +44,15 @@
           </a-row>
           <a-row>
             <a-col :span="8"> 安全状态 </a-col>
-            <a-col :span="16"> 正常 </a-col>
+            <a-col :span="16"> <span :style="{ color: info.color }">{{ info.safeStatusText }}</span> </a-col>
           </a-row>
           <a-row>
             <a-col :span="8"> 水位高程 </a-col>
             <a-col :span="16">
               <a-row>
-                <a-col :span="8">45m(坝顶) </a-col>
-                <a-col :span="8">34m(坝中) </a-col>
-                <a-col :span="8">23m(坝底)</a-col>
+                <a-col v-for="(sw, index) in info.height" :key="'sw' + index" :span="8"> {{ sw }} </a-col>
+                <!-- <a-col :span="8">34m(坝中) </a-col>
+                <a-col :span="8">23m(坝底)</a-col> -->
               </a-row>
             </a-col>
           </a-row>
@@ -60,38 +60,43 @@
             <a-col :span="8"> 水头 </a-col>
             <a-col :span="16">
               <a-row>
-                <a-col :span="8">5m(坝顶) </a-col>
+                <a-col v-for="(st, index) in info.waterDistance" :key="'st' + index" :span="8">{{ st }}</a-col>
+                <!-- <a-col :span="8">5m(坝顶) </a-col>
                 <a-col :span="8">4m(坝中) </a-col>
-                <a-col :span="8">3m(坝底)</a-col>
+                <a-col :span="8">3m(坝底)</a-col> -->
               </a-row>
             </a-col>
           </a-row>
         </a-col>
       </a-row>
     </a-card-grid>
-    <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
+    <a-card-grid style="width: 100%; text-align: center;height:400px;">
+      <component :is="componentName" :refid="'sychart'" :markLine="markLine" :name="name" :data="data" class="main-content"></component>
+    </a-card-grid>
   </a-card>
 </template>
 <script>
-import EchartsBarLine from "@/components/echarts/EchartsBarLine.vue";
+import EchartsArr from "@/components/echarts/EchartsArr.vue";
+import { getText } from "@/utils/utils";
 export default {
   name: "piezometric",
   components: {
-    EchartsBarLine,
+    EchartsArr,
   },
   props: {
     List: {
       type: Array,
       default: () => [],
-    },
-    data: {
-      type: Array,
-      default: () => [],
-    },
+    }
   },
   data() {
     return {
+      componentName: '',
+      markLine: [],
+      info: {},
+      name: '',
       select: {},
+      data: [],
       monitor: undefined,
       monitorData: [],
     };
@@ -111,12 +116,38 @@ export default {
       this.monitor =
         this.monitorData.length > 0 ? this.monitorData[0].sceneId : undefined;
     },
+    monitor (val) {
+      this.getStatistics(this.monitor)
+    }
   },
   methods: {
     changeHidden(item) {
       this.select = item;
     },
-    handleMonitorChange(value) {},
+    handleMonitorChange(value) {
+      this.getStatistics(value)
+    },
+    getStatistics (projPnId) {
+      const params = {
+        projPnId: projPnId
+      }
+      this.$get('web/reservoirOverview/syStatistics', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          data.color = getText(data.safeStatus).color
+          data.safeStatusText = getText(data.safeStatus).name
+          this.info = data
+          this.data = data.xlist
+          // // this.markLine = data.warnflow
+          this.componentName = 'EchartsArr'
+          this.name = '水位高程（m）'
+          // this.piezometricList = data
+          // this.treeData = data.treeData
+        }
+      })
+    }
   },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="Echarts" style="width: 100%;height:100%;">
-    <div :id="refid" style="width: 100%;height:100%;"></div>
+    <div id="main" style="width: 500px;height:350px;"></div>
   </div>
 </template>
 
@@ -8,20 +8,20 @@
 // import 'echarts-gl'
 
 export default {
-  name: 'EchartsWave',
+  name: 'EchartsArr',
   props: {
     data: {
       require: true
     },
-    refid: {
-      require: true
+    name: {
+      type: String
     }
   },
   methods: {
     drawLine () {
-      let myChart = this.$echarts.init(document.getElementById(this.refid))
-      window.addEventListener('resize',() => { myChart.resize(); });
+      let myChart = this.$echarts.init(document.getElementById('main'))
       let data = this.data
+      let name = this.name
       if (this.data.length === 0) {
         myChart.setOption({}, true)
         return
@@ -31,12 +31,13 @@ export default {
         // title: {
         //   text: '折线图堆叠'
         // },
-        color: ['red', 'yellow', 'blue'],
         tooltip: {
           trigger: 'axis'
         },
         legend: {
-          data: ['x', 'y', 'z'],
+          data: data.map(function (item, index) {
+            return item.projPnName
+          }),
           textStyle: {
             color: '#000'
           }
@@ -88,37 +89,18 @@ export default {
         }, {
           type: 'inside'
         }],
-        series: [
-          {
-            name: 'x',
+        series: data.map(function (item, index1) {
+          return {
+            name: item.projPnName,
             type: 'line',
-            stack: '总量',
-            data: data.map(function (item, index) {
-              return item[0]
-            })
-          },
-          {
-            name: 'y',
-            type: 'line',
-            stack: '总量',
-            data: data.map(function (item, index) {
-              return item[1]
-            })
-          },
-          {
-            name: 'z',
-            type: 'line',
-            stack: '总量',
-            data: data.map(function (item, index) {
-              return item[2]
+            // stack: '总量',
+            data: item.data.map(function (i, index2) {
+              return i
             })
           }
-        ]
+        })
       }
       myChart.setOption(option, true)
-      setTimeout(() => {
-        myChart.resize()
-      },500)
     }
   },
   mounted () {

@@ -36,7 +36,7 @@ export default {
           text: name,
           textStyle: {
             fontSize: 12,
-            color: '#fff'
+            color: '#000'
           }
         },
         toolbox: {
@@ -56,10 +56,10 @@ export default {
               backgroundColor: 'rgba(47,69,84,0.5)',
               dataBackground: { // 数据阴影的样式。
                 lineStyle: {
-                  color: '#ffffff'
+                  color: '#000'
                 }, // 阴影的线条样式
                 areaStyle: {
-                  color: '#ffffff'
+                  color: '#000'
                 } // 阴影的填充样式
               }
             }, {
@@ -78,7 +78,7 @@ export default {
             axisLabel: {
               show: true,
               textStyle: {
-                color: '#ffffff'
+                color: '#000'
               }
             }
         },
@@ -89,7 +89,7 @@ export default {
           axisLabel: {
             show: true,
             textStyle: {
-              color: '#ffffff'
+              color: '#000'
             }
           }
         },

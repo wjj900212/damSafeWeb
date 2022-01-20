@@ -3,9 +3,9 @@
     <div slot="extra">
     <a-select
       v-model="select.hiddenId"
-      placeholder="监测点"
+      placeholder="隐患点"
       option-filter-prop="children"
-      @change="handleMonitorChange"
+      @change="handleHiddenChange"
     >
       <a-select-option
         v-for="item in List"
@@ -34,27 +34,38 @@
       style="width: 240px"
       @change="onDateChange"
     />
-    <a-button type="primary"> 查询 </a-button>
+    <a-button @click="getInfo" type="primary"> 查询 </a-button>
     <a-button type="primary"> 导出 </a-button>
     </div>
-    <a-card-grid style="width: 100%; text-align: center">
-
+    <a-card-grid style="width: 100%; text-align: left;height:500px;">
+      <a-row>
+        <a-col :span="4">
+          <div>当前&nbsp;&nbsp;{{ monitorName }}</div>
+          <div>{{ monitorCode }}</div>
+        </a-col>
+        <a-col :span="20">
+          <main-content :list="targetList" :dateTimeValue="dateTimeValue"></main-content>
+        </a-col>
+      </a-row>
     </a-card-grid>
-    </a-card>
+  </a-card>
 </template>
 <script>
+import moment from "moment";
+import MainContent from '@/components/survey/MainContent.vue';
+
 export default {
   name: 'jogging',
-  components: {},
+  components: {MainContent},
   props: {
     List: {
       type: Array,
       default: () => [],
     },
-    data: {
+    targetList: {
       type: Array,
       default: () => [],
-    },
+    }
   },
   data () {
     return {
@@ -64,6 +75,8 @@ export default {
       ],
       select: {},
       monitor: undefined,
+      monitorName: '',
+      monitorCode: '',
       monitorData: [],
     }
   },
@@ -74,18 +87,43 @@ export default {
     this.monitorData = this.select.pnList || [];
     this.monitor =
       this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+    this.monitorName =
+      this.monitorData.length > 0 ? this.monitorData[0].projPnName : '';
+    this.monitorCode =
+      this.monitorData.length > 0 ? this.monitorData[0].devCode : '';
   },
   updated () {
   },
   watch: {
     List(val) {
-      this.select = val.length > 0 ? val[0] : {};
+      this.select = this.List.length > 0 ? this.List[0] : {};
       this.monitorData = this.select.pnList || [];
       this.monitor =
         this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+      this.monitorName =
+        this.monitorData.length > 0 ? this.monitorData[0].projPnName : '';
+      this.monitorCode =
+        this.monitorData.length > 0 ? this.monitorData[0].devCode : '';
     },
   },
   methods: {
+    moment,
+    getInfo () {
+      this.$emit('getMonitorList', this.monitor)
+    },
+    handleHiddenChange (value) {
+      this.select = value
+      this.monitorData = this.select.pnList || [];
+      this.monitor =
+        this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+      this.monitorName =
+        this.monitorData.length > 0 ? this.monitorData[0].projPnName : '';
+      this.monitorCode =
+        this.monitorData.length > 0 ? this.monitorData[0].devCode : '';
+    },
+    handleMonitorChange (value) {
+
+    },
     onDateChange(dates, dateStrings) {
       console.log(this.dateTimeValue);
       const start = moment(this.dateTimeValue[0]).format("YYYY-MM-DD");

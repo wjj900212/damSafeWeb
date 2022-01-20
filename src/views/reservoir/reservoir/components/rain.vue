@@ -76,15 +76,12 @@ export default {
     List: {
       type: Array,
       default: () => [],
-    },
-    data: {
-      type: Array,
-      default: () => [],
-    },
+    }
   },
   data() {
     return {
       select: {},
+      data: [],
       monitor: undefined,
       monitorData: [],
     };
@@ -95,6 +92,9 @@ export default {
     this.monitorData = this.select.pnList || [];
     this.monitor =
       this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+    if (this.monitor) {
+      this.getStatistics(this.monitor)
+    }
   },
   updated() {},
   watch: {
@@ -103,13 +103,32 @@ export default {
       this.monitorData = this.select.pnList || [];
       this.monitor =
         this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+      if (this.monitor) {
+        this.getStatistics(this.monitor)
+      }
     },
   },
   methods: {
     changeHidden(item) {
       this.select = item;
     },
-    handleMonitorChange(value) {},
+    handleMonitorChange(value) {
+      this.getStatistics(value)
+    },
+    getStatistics (projPnId) {
+      const params = {
+        projPnId: projPnId
+      }
+      // this.$get('web/reservoirOverview/sqStatistics', {
+      //   ...params,
+      // }).then((r) => {
+      //   if (r.data.data !== null) {
+      //     let data = r.data.data
+      //     // this.piezometricList = data
+      //     // this.treeData = data.treeData
+      //   }
+      // })
+    }
   },
 };
 </script>

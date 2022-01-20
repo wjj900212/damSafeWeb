@@ -1,24 +1,24 @@
 <template>
-  <div class="Echarts" style="width: 100%;height:100%;">
-    <div :id="refid" style="width: 100%;height:100%;"></div>
+  <div class="Echarts">
+    <div :id="pnDevId" style="width: 500px;height:350px;"></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EchartsLine',
+  name: 'Echarts2D',
   props: {
     data: {
-      require: true
-    },
-    name: {
-      type: String
+      required: true
     },
     boundary: {
-      require: true
+      required: true
     },
-    refid: {
-      require: true
+    pnDevId: {
+      required: true
+    },
+    yname: {
+      type: String
     }
   },
   data () {
@@ -40,28 +40,23 @@ export default {
       })
       return {p: p, d: d}
     },
-    drawLine () {
-      console.log(this.refid)
-      let myChart = this.$echarts.init(document.getElementById(this.refid))
-      window.addEventListener('resize',() => { myChart.resize(); });
+    drawLine (val) {
+      let myChart = this.$echarts.init(document.getElementById(this.pnDevId))
       // this.$get('https://echarts.cdn.apache.org/examples/data/asset/data/aqi-beijing.json').then((r) => {
-      let data = this.data
+      // let data = this.data
+      let data = val
       let boundary = this.boundary
-      let name = this.name
+      let yname = this.yname
       let obj = this.parseThreshold(boundary)
-      console.log(obj)
       if (this.data.length === 0) {
         myChart.setOption({}, true)
         return
       }
+      console.log('获取划线数据', obj)
       myChart.setOption({
-        title: {
-          text: name,
-          textStyle: {
-            fontSize: 12,
-            color: '#000'
-          }
-        },
+        // title: {
+        //   text: 'Beijing AQI'
+        // },
         tooltip: {
           trigger: 'axis'
         },
@@ -69,6 +64,12 @@ export default {
           data: data.map(function (item) {
             return item[0]
           }),
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000'
+            }
+          },
           axisLabel: {
             show: true,
             textStyle: {
@@ -77,6 +78,17 @@ export default {
           }
         },
         yAxis: {
+          name: yname,
+          nameTextStyle: {
+            color: '#000'
+          },
+          nameLocation: 'end',
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000'
+            }
+          },
           splitLine: {
             show: false
           },
@@ -149,7 +161,7 @@ export default {
           }
         },
         series: {
-          name: name,
+          // name: '监测数据',
           type: 'line',
           data: data.map(function (item) {
             return item[1]
@@ -172,18 +184,15 @@ export default {
         }
       }, true)
       // myChart.refresh()
-      setTimeout(() => {
-        myChart.resize()
-      },500)
     }
   },
   mounted () {
-    this.drawLine()
-    // })
+    console.log('图表数据', this.data)
+    this.drawLine(this.data)
   },
   watch: {
     data (val) { // 监听数据发生改变 刷新图表数据
-      this.drawLine()
+      this.drawLine(val)
     }
   }
 }

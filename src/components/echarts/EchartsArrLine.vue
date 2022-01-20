@@ -37,7 +37,7 @@ export default {
           text: '',
           textStyle: {
             fontSize: 12,
-            color: '#fff'
+            color: '#000'
           }
         },
         tooltip: {
@@ -52,7 +52,7 @@ export default {
             return item[0].time
           }),
           textStyle: {
-            color: '#fff'
+            color: '#000'
           }
         },
         grid: {
@@ -79,7 +79,7 @@ export default {
           axisLabel: {
             show: true,
             textStyle: {
-              color: '#fff'
+              color: '#000'
             }
           }
         },
@@ -89,7 +89,7 @@ export default {
           axisLabel: {
             show: true,
             textStyle: {
-              color: '#fff'
+              color: '#000'
             }
           },
           splitLine: {

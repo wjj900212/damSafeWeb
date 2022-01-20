@@ -44,42 +44,46 @@
           </a-row>
           <a-row>
             <a-col :span="8"> 安全状态 </a-col>
-            <a-col :span="16"> 正常 </a-col>
+            <a-col :span="16"> <span :style="{ color: info.color }">{{ info.safeStatusText }}</span> </a-col>
           </a-row>
           <a-row>
-            <a-col :span="8"> 当前降水量 </a-col>
-            <a-col :span="16"> 29.2mm </a-col>
+            <a-col :span="8"> 瞬时流量 </a-col>
+            <a-col :span="16"> {{ info.flow }} </a-col>
           </a-row>
           <a-row>
-            <a-col :span="8"> 日降水量 </a-col>
-            <a-col :span="16"> 52.2mm </a-col>
+            <a-col :span="8"> 水位差 </a-col>
+            <a-col :span="16"> {{ info.waterLevel }} </a-col>
           </a-row>
         </a-col>
       </a-row>
     </a-card-grid>
-    <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
+    <a-card-grid style="width: 100%; text-align: center;height:400px;">
+      <component :is="componentName" :refid="'slchart'" :markLine="markLine" :name="name" :data="data" class="main-content"></component>
+    </a-card-grid>
   </a-card>
 </template>
 <script>
-import EchartsBarLine from "@/components/echarts/EchartsBarLine.vue";
+import EchartsoLine from "@/components/echarts/EchartsoLine.vue";
+import { getText } from "@/utils/utils";
 export default {
   name: "transfusion",
   components: {
-    EchartsBarLine,
+    EchartsoLine,
   },
   props: {
     List: {
       type: Array,
       default: () => [],
-    },
-    data: {
-      type: Array,
-      default: () => [],
-    },
+    }
   },
   data() {
     return {
+      componentName: '',
+      markLine: [],
+      info: {},
+      name: '',
       select: {},
+      data: [],
       monitor: undefined,
       monitorData: [],
     };
@@ -99,12 +103,36 @@ export default {
       this.monitor =
         this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
     },
+    monitor () {
+      this.getStatistics(this.monitor)
+    }
   },
   methods: {
     changeHidden(item) {
       this.select = item;
     },
-    handleMonitorChange(value) {},
+    handleMonitorChange(value) {
+      this.getStatistics(value)
+    },
+    getStatistics (projPnId) {
+      const params = {
+        projPnId: projPnId
+      }
+      this.$get('web/reservoirOverview/slStatistics', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          data.color = getText(data.safeStatus).color
+          data.safeStatusText = getText(data.safeStatus).name
+          this.info = data
+          this.data = data.list
+          this.markLine = data.warnflow
+          this.componentName = 'EchartsoLine'
+          this.name = '瞬时流量（m³/s）'
+        }
+      })
+    }
   },
 };
 </script>

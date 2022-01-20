@@ -44,48 +44,53 @@
           </a-row>
           <a-row>
             <a-col :span="8"> 安全状态 </a-col>
-            <a-col :span="16"> 正常 </a-col>
+            <a-col :span="16"><span :style="{ color: info.color }">{{ info.safeStatusText }}</span></a-col>
           </a-row>
           <a-row>
             <a-col :span="8"> 最大位移值 </a-col>
             <a-col :span="16">
               <a-row>
-                <a-col :span="24">位移X （东）+0.2mm </a-col>
+                <a-col :span="24">位移X （东）{{ info.maxx }}mm </a-col>
               </a-row>
               <a-row>
-                <a-col :span="24">位移Y （北）+0.2mm </a-col>
+                <a-col :span="24">位移Y （北）{{ info.maxy }}mm </a-col>
               </a-row>
               <a-row>
-                <a-col :span="24">位移Z （高）+0.2mm </a-col>
+                <a-col :span="24">位移Z （高）{{ info.maxz }}mm </a-col>
               </a-row>
             </a-col>
           </a-row>
         </a-col>
       </a-row>
     </a-card-grid>
-    <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
+    <a-card-grid style="width: 100%; text-align: center;height:400px;">
+      <component :is="componentName" :refid="'bxchart'" :markLine="markLine" :name="name" :data="data" class="main-content"></component>
+    </a-card-grid>
   </a-card>
 </template>
 <script>
-import EchartsBarLine from "@/components/echarts/EchartsBarLine.vue";
+import EchartsWave from "@/components/echarts/EchartsWave.vue";
+import { getText } from "@/utils/utils";
 export default {
   name: "transfusion",
   components: {
-    EchartsBarLine,
+    EchartsWave,
   },
   props: {
     List: {
       type: Array,
       default: () => [],
-    },
-    data: {
-      type: Array,
-      default: () => [],
-    },
+    }
   },
   data() {
     return {
+      componentName: '',
+      markLine: [],
       select: {},
+      info: {},
+      name: '',
+      select: {},
+      data: [],
       monitor: undefined,
       monitorData: [],
     };
@@ -105,12 +110,42 @@ export default {
       this.monitor =
         this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
     },
+    monitor (val) {
+      this.getStatistics(this.monitor)
+    }
   },
   methods: {
     changeHidden(item) {
       this.select = item;
     },
-    handleMonitorChange(value) {},
+    handleMonitorChange(value) {
+      this.getStatistics(value)
+    },
+    getStatistics (projPnId) {
+      const params = {
+        projPnId: projPnId
+      }
+      this.$get('web/reservoirOverview/bxStatistics', {
+        ...params,
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          data.color = getText(data.safeStatus).color
+          data.safeStatusText = getText(data.safeStatus).name
+          this.info = data
+          this.data = data.xlist.map((item, index) => {
+            return [item, data.ylist[index], data.zlist[index]]
+          })
+          console.log(this.data)
+          // this.data = data.xlist
+          // this.markLine = data.cordon
+          this.componentName = 'EchartsWave'
+          this.name = '水位（m）'
+          // this.piezometricList = data
+          // this.treeData = data.treeData
+        }
+      })
+    }
   },
 };
 </script>

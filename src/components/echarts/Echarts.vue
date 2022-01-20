@@ -1,6 +1,6 @@
 <template>
   <div class="Echarts" style="width: 100%;height:100%;">
-    <div :id="refid" style="width: 100%;height:100%;"></div>
+    <div id="main" style="width: 100%;height:100%;"></div>
   </div>
 </template>
 
@@ -8,20 +8,28 @@
 // import 'echarts-gl'
 
 export default {
-  name: 'EchartsWave',
+  name: 'Echarts',
   props: {
     data: {
       require: true
     },
-    refid: {
-      require: true
+    name: {
+      type: String
+    },
+    objname: {
+      type: String
+    },
+    yname: {
+      type: String
     }
   },
   methods: {
     drawLine () {
-      let myChart = this.$echarts.init(document.getElementById(this.refid))
-      window.addEventListener('resize',() => { myChart.resize(); });
+      let myChart = this.$echarts.init(document.getElementById('main'))
       let data = this.data
+      let name = this.name
+      let yname = this.yname
+      let objname = this.objname
       if (this.data.length === 0) {
         myChart.setOption({}, true)
         return
@@ -31,16 +39,15 @@ export default {
         // title: {
         //   text: '折线图堆叠'
         // },
-        color: ['red', 'yellow', 'blue'],
         tooltip: {
           trigger: 'axis'
         },
-        legend: {
-          data: ['x', 'y', 'z'],
-          textStyle: {
-            color: '#000'
-          }
-        },
+        // legend: {
+        //   data: ['Z'],
+        //   textStyle: {
+        //     color: '#000'
+        //   }
+        // },
         grid: {
           left: '3%',
           right: '4%',
@@ -55,9 +62,15 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          // data: data.map(function (item, index) {
-          //   return (index + 1)
-          // }),
+          data: data.map(function (item, index) {
+            return (index + 1)
+          }),
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000'
+            }
+          },
           axisLabel: {
             show: true,
             textStyle: {
@@ -67,6 +80,17 @@ export default {
         },
         yAxis: {
           type: 'value',
+          name: yname,
+          nameTextStyle : {
+            color: '#000'
+          },
+          nameLocation: 'center',
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000'
+            }
+          },
           axisLabel: {
             show: true,
             textStyle: {
@@ -74,51 +98,18 @@ export default {
             }
           }
         },
-        dataZoom: [{
-          startValue: '2020-06-01',
-          backgroundColor: 'rgba(47,69,84,0.5)',
-          dataBackground: { // 数据阴影的样式。
-            lineStyle: {
-              color: '#000'
-            }, // 阴影的线条样式
-            areaStyle: {
-              color: '#000'
-            } // 阴影的填充样式
-          }
-        }, {
-          type: 'inside'
-        }],
         series: [
           {
-            name: 'x',
+            name: name,
             type: 'line',
-            stack: '总量',
+            // stack: '总量',
             data: data.map(function (item, index) {
-              return item[0]
-            })
-          },
-          {
-            name: 'y',
-            type: 'line',
-            stack: '总量',
-            data: data.map(function (item, index) {
-              return item[1]
-            })
-          },
-          {
-            name: 'z',
-            type: 'line',
-            stack: '总量',
-            data: data.map(function (item, index) {
-              return item[2]
+              return item[objname]
             })
           }
         ]
       }
       myChart.setOption(option, true)
-      setTimeout(() => {
-        myChart.resize()
-      },500)
     }
   },
   mounted () {

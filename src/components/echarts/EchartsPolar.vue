@@ -36,7 +36,7 @@ export default {
           text: name,
           textStyle: {
             fontSize: 12,
-            color: '#fff'
+            color: '#000'
           }
         },
         tooltip: {

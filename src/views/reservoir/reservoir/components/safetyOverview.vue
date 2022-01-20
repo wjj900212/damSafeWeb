@@ -60,7 +60,7 @@
         <a-col :span="12" :style="{ marginTop: '25px' }">
           <a-row v-for="item in reservoirInfo.monitorList" :key="item.name">
             <a-col :span="12">{{ item.name }}</a-col>
-            <a-col :span="12" :style="{ color: getText(reservoirInfo.safeLevel).color }">{{ getText(item.warnLevel).name }}</a-col>
+            <a-col :span="12" :style="{ color: getText(item.warnLevel).color }">{{ getText(item.warnLevel).name }}</a-col>
           </a-row>
         </a-col>
       </a-row>
