@@ -28,7 +28,8 @@
                 <span :style="{ color: getText(item.warnLevel).color}">{{item.flag === '1' ? '【报警】' : '【资讯】'}} {{ item.title }}</span>
               </a-col>
               <a-col :span="12" style="text-align: right;">
-                <a-badge :color="getText(item.warnLevel).color" :text="item.time" />
+                <a-badge v-if="item.flag === '1'" :color="getText(item.warnLevel).color" :text="item.time" />
+                <span v-else>{{ item.time }}</span>
               </a-col>
             </a-row>
             <a-row>
