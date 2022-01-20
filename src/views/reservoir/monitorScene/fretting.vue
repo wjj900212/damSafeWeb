@@ -78,7 +78,7 @@ export default {
     // 获取水库下的场景
     getHiddenListByReservoir (params = {}) {
       params.reservoirId = this.reservoirId
-      params.type = 11
+      params.type = 13
       this.$get('web/monitorScene/getHiddenListByReservoirId', {...params}).then((res) => {
         if (res.data.code === 1) {
           this.hiddenId = res.data.data[0].id

@@ -28,10 +28,9 @@
 import Design from '@/components/design/design.vue'
 export default {
   components: {Design},
-  props: ['hiddenId', 'reservoirId'],
+  props: ['hiddenId'],
   data () {
     return {
-      current: 'jack',
       scene: '',
       sceneData: [],
       designData: {}

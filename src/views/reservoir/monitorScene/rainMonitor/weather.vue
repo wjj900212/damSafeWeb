@@ -42,11 +42,11 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="early" v-if="weatherMsg.event">
-              <a-icon type="warning" class="ico-horn" theme="filled" />
-              <div class="e_val" ref="eVal">
-                <span class="e_con" ref="eCon">{{ weatherMsg.event }} 事件预警：{{ weatherMsg.eventInfo }}</span>
+              <div class="early" v-if="weatherMsg.event">
+                <a-icon type="warning" class="ico-horn" theme="filled" />
+                <div class="e_val" ref="eVal">
+                  <span class="e_con" ref="eCon">{{ weatherMsg.event }} 事件预警：{{ weatherMsg.eventInfo }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -61,6 +61,7 @@
             </div>
           </div>
           <div class="s_right">
+            <div>7日时天气</div>
             <EchartsWeather :chartData="weather7DayMsg" class="futureChart"></EchartsWeather>
           </div>
         </div>
@@ -74,7 +75,7 @@ import {
   mapState
 } from 'vuex'
 import EchartsWeather from '@/components/echarts/EchartsWeather.vue'
-var weaChartData
+var weaChartData, time
 export default {
   name: 'weather',
   components: {
@@ -109,18 +110,44 @@ export default {
       }
     }
   },
-  mounted () {
-    // this.realTimeWeather()
-    //  this.future24hWeather()
+  beforeDestroy () {
+    clearInterval(time)
   },
   methods: {
+    moveEarly () {
+      let w = this.$refs.eVal.offsetWidth
+      let ww = this.$refs.eCon.offsetWidth
+      // console.log(ww);
+      this.$refs.eCon.style.transition = `all 0s linear`
+      this.$refs.eCon.style.transform = `translateX(${w}px)`
+      if (ww > 0) {
+        this.$refs.eCon.style.transition = `all 0s linear`
+        this.$refs.eCon.style.transform = `translateX(${w}px)`
+        this.onmove(ww)
+        time = setInterval(() => {
+          this.$refs.eCon.style.transition = `all 0s linear`
+          this.$refs.eCon.style.transform = `translateX(${w}px)`
+          this.onmove(ww)
+        }, (ww / 7) * 1000)
+      }
+    },
+    onmove (ww) {
+      setTimeout(() => {
+        this.$refs.eCon.style.transition = `all ${ww / 7}s linear`
+        this.$refs.eCon.style.transform = `translateX(-${ww}px)`
+      }, 100)
+    },
     // 获取实时天气
     realTimeWeather () {
       this.$get('web/monitorScene/getWeatherData', {
         hiddenId: this.hiddenId
       }).then((res) => {
         if (res.data.code === 1) {
-          this.weatherMsg = res.data.data
+          let rr = res.data.data
+          this.weatherMsg = rr
+          setTimeout(() => {
+            if (rr.event) this.moveEarly()
+          }, 300)
         } else {
           this.$message.error(res.data.msg)
         }
@@ -223,9 +250,7 @@ export default {
             axisLabel: {
               interval: 0,
               formatter: function (value, index) {
-                // console.log('天气图片 ****** ', index + ' ' + value)
                 console.log(data[index].code, value)
-                // return '{' + index + '| }\n{b|' + value + '}'
                 return `{b${data[index].code}|${value}}`
               },
               rich: richX
@@ -243,7 +268,7 @@ export default {
             type: 'category',
             boundaryGap: false,
             position: 'top',
-            offset: 50,
+            offset: 60,
             zlevel: 100,
             axisLine: {
               show: false
@@ -359,7 +384,7 @@ export default {
 
   .s_left,
   .s_right {
-    flex: 1;
+    width:30%;
     padding: 1rem;
   }
 
@@ -495,5 +520,22 @@ export default {
     transition: all .3s ease;
     transform: translateX(0);
   }
-
+  .early {
+    width:100%;
+    padding: 1rem;
+    height: 3.4rem;
+    float: left;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .e_val {
+    width: calc(100vh - 2rem);
+    color: #333333;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .e_con {
+    display: inline-block;
+  }
 </style>

@@ -2,7 +2,10 @@
   <!-- 水情概况 -->
   <div class="overview">
     <a-card title="雨情概况" style="width: 100%">
-      <a slot="extra" href="#">安全管理预案</a>
+      <!--<a slot="extra" href="#">安全管理预案</a>-->
+      <a-button slot="extra" @click="safeVisible=true"> 安全管理预案
+        <a-icon type="read" style="fontSize:1.6rem" />
+      </a-button>
       <a-card-grid style="width: 100%; padding: 5px">
         <div class="basicMsg">
           <div class="basicTxt">
@@ -27,7 +30,7 @@
           </div>
           <div class="s_right">
             <div>安全状态</div>
-            <div style="font-size:1.8rem;color:#24C174;">{{overViewData.reservoirStatus || '无'}}</div>
+            <div :style="{ color: safetyColor }">{{ safetyName }}</div>
           </div>
         </div>
       </a-card-grid>
@@ -36,13 +39,13 @@
           <div class="data_tit">
             <div>
               <span>当前</span>
-              <a-select v-model="current" :style="{width:'20rem'}" @change="handlePnPoint">
-                <a-select-option v-for="pn in overViewData.pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
+              <a-select v-model="currentPoint" :style="{width:'20rem'}" @change="handlePnPoint">
+                <a-select-option v-for="pn in pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
               </a-select>
             </div>
             <div>
-              <a-button type="primary" size="small">召测</a-button>
-              <a-button type="primary" size="small">加密采集</a-button>
+              <a-button type="primary" size="small" @click="putReqrtd">召测</a-button>
+              <a-button type="primary" size="small" @click="collectVisible=true">加密采集</a-button>
             </div>
           </div>
           <div class="dataVBox">
@@ -63,57 +66,88 @@
         </div>
       </a-card-grid>
     </a-card>
+    <!-- 加密采集 -->
+    <a-modal v-model="collectVisible" title="加密采集" :confirm-loading="confirmLoading" @ok="handleOk"
+             @cancel="collectVisible=false">
+      <a-form :form="form">
+        <a-form-item label="加密监测时长" :label-col="{ span: 6 }" :wrapper-col="{ span:  16}">
+          <div style="display:flex;align-items: center;">
+            <a-input v-decorator="['timeLong', { rules: [{ required: true, message: '请输入' }] }]" />
+            <span style="margin-left:5px">h</span>
+          </div>
+        </a-form-item>
+        <a-form-item label="数据采集周期" :label-col="{ span: 6 }" :wrapper-col="{ span:  16}">
+          <div style="display:flex;align-items: center;">
+            <a-input v-decorator="['cycle', { rules: [{ required: true, message: '请输入' }] }]" />
+            <span style="margin-left:5px">s</span>
+          </div>
+        </a-form-item>
+      </a-form>
+    </a-modal>
+    <!-- 安全管理预案 -->
+    <safePlanArticle :safeVisible="safeVisible" :reserveType="15" @onClose="()=>{safeVisible=false}" />
   </div>
 </template>
 
 <script>
+import safePlanArticle from '@/components/safePlanArticle/safePlanArticle.vue'
+import { getText } from '@/utils/utils'
 export default {
   props: {
+    pnList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    overViewData: {
+      type: Object,
+      default: () => {}
+    },
     hiddenId: {
       type: Number,
       default: -1
     }
   },
+  components: {safePlanArticle},
   data () {
     return {
-      current: '',
+      currentPoint: '',
       overViewData: {},
       pnRainData: [],
-      pnId: ''
+      pnId: '',
+      safeVisible: false,
+      safetyColor: '',
+      safetyName: '',
+      confirmLoading: false,
+      form: this.$form.createForm(this, {
+        name: 'rainMonitor'
+      }),
+      collectVisible: false
     }
   },
   watch: {
-    hiddenId: {
+    pnList: {
       handler: function (n, o) {
-        this.getMonitorConditionRain()
+        let that = this
+        if (!n || n.length === 0) {
+          this.currentPoint = ''
+          this.monitorPnData = []
+        } else {
+          that.currentPoint = n[0].pnId.toString()
+          that.monitorPnDataRain(n[0].pnId)
+        }
       },
       immediate: true
     }
   },
   mounted () {
-    this.getMonitorConditionRain()
   },
   methods: {
-    handlePnPoint(value){
+    handlePnPoint (value) {
       this.pnId = value.toString()
       this.monitorPnDataRain(value)
       console.log('选中监测点', value)
-    },
-    getMonitorConditionRain () {
-      let _this = this
-      this.$get('web/monitorScene/monitorConditionRain', {
-        hiddenId: _this.hiddenId
-      }).then((res) => {
-        if (res.data.code === 1) {
-          if (res.data.data.pnList.length !== 0) {
-            _this.current = res.data.data.pnList[0].pnName
-            _this.monitorPnDataRain(res.data.data.pnList[0].pnId)
-          }
-          _this.overViewData = res.data.data
-        } else {
-          this.$message.error(res.data.msg)
-        }
-      })
     },
     // 获取当前监测点列表信息
     monitorPnDataRain (pnId) {
@@ -128,17 +162,34 @@ export default {
         }
       })
     },
-    // 召测
-    reqrtd(pnId){
-      let _this = this
-      this.$get('web/monitorScene/reqrtd', {
-        pnId: pnId
-      }).then((res) => {
-        if (res.data.code === 1) {
-          _this.$message.success(res.data.msg)
-        } else {
-          _this.$message.error(res.data.msg)
+    // 加密采集
+    handleOk () {
+      this.confirmLoading = true
+      const form = this.form
+      form.validateFields((err, values) => {
+        if (err) {
+          this.confirmLoading = false
+          return
         }
+        console.log('form 表单内容: ', values)
+        form.resetFields()
+        this.collectVisible = false
+        this.confirmLoading = false
+      })
+    },
+    // 召测（立即采集）
+    putReqrtd () {
+      if (!this.currentPoint) {
+        this.$message.error('未选择监测点')
+        return
+      }
+      this.$get('/web/monitorScene/reqrtd?pnId=' + this.currentPoint).then(res => {
+        let rr = res.data
+        if (rr.code != 1) {
+          this.$message.error(rr.msg)
+          return
+        }
+        this.$message.success('采集成功')
       })
     }
   }

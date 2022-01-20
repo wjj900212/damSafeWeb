@@ -2,7 +2,10 @@
   <!-- 渗流监测概况 -->
   <div class="overview">
     <a-card title="渗流监测概况" style="width: 100%">
-      <a slot="extra" href="#">安全管理预案</a>
+     <!-- <a slot="extra" href="#">安全管理预案</a>-->
+      <a-button slot="extra" @click="safeVisible=true"> 安全管理预案
+        <a-icon type="read" style="fontSize:1.6rem" />
+      </a-button>
       <a-card-grid style="width: 100%; padding: 5px">
         <div class="basicMsg">
           <div class="basicTxt">
@@ -22,50 +25,96 @@
           <div class="s_left">
             <div>
               <span>当前</span>
-              <a-select v-model="current" :style="{width:'20rem'}" @change="handlePnPoint">
-                <a-select-option v-for="pn in overViewData.pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
+              <a-select v-model="currentPoint" :style="{width:'20rem'}" @change="handlePnPoint">
+                <a-select-option v-for="pn in pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
               </a-select>
+            </div>
+            <div class="dataVBox">
+              <div v-if="pnRainData.length === 0">
+                无数据
+              </div>
+              <div class="dataV" v-else v-for="(pnRain,index) in pnRainData" :key="index">
+                <div>
+                  <span>{{pnRain.target}}</span>
+                  <span class="cricle"></span>
+                </div>
+                <div>
+                  <span style="color:#1a94ff;">{{pnRain.value}}</span>
+                  <span>{{pnRain.time}}</span>
+                </div>
+              </div>
             </div>
           </div>
           <div class="s_right">
             <div>安全状态</div>
-            <div style="font-size:1.8rem;color:#24C174;" v-if="overViewData.reservoirStatus === '0'">正常</div>
+            <div :style="{ color: safetyColor }">{{ safetyName }}</div>
           </div>
         </div>
       </a-card-grid>
     </a-card>
+    <!-- 安全管理预案 -->
+    <safePlanArticle :safeVisible="safeVisible" :reserveType="11" @onClose="()=>{safeVisible=false}" />
   </div>
 </template>
 
 <script>
+import safePlanArticle from '@/components/safePlanArticle/safePlanArticle.vue'
+import { getText } from '@/utils/utils'
 export default {
   props: {
     hiddenId: {
       type: Number,
       default: -1
+    },
+    overViewData: {
+      type: Object,
+      default: () => {}
+    },
+    pnList: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
+  components: {safePlanArticle},
   data () {
     return {
-      current: '',
-      overViewData: {},
+      currentPoint: '',
       pnRainData: [],
-      pnId: ''
+      pnId: '',
+      safeVisible: false,
+      safetyColor: '',
+      safetyName: ''
     }
   },
   watch: {
-    hiddenId: {
+    overViewData: {
       handler: function (n, o) {
-        this.getMonitorConditionRain()
+        this.safetyColor = getText(n.reservoirStatus).color
+        this.safetyName = getText(n.reservoirStatus).name
+      },
+      immediate: true
+    },
+    pnList: {
+      handler: function (n, o) {
+        let that = this
+        if (!n || n.length === 0) {
+          this.currentPoint = ''
+          this.monitorPnData = []
+        } else {
+          that.currentPoint = n[0].pnId.toString()
+          that.monitorPnDataRain(n[0].pnId)
+        }
       },
       immediate: true
     }
   },
   mounted () {
-    this.getMonitorConditionRain()
+  //  this.getMonitorConditionRain()
   },
   methods: {
-    handlePnPoint(value){
+    handlePnPoint (value) {
       this.pnId = value.toString()
       this.monitorPnDataRain(value)
       console.log('选中监测点', value)
@@ -81,6 +130,8 @@ export default {
             _this.monitorPnDataRain(res.data.data.pnList[0].pnId)
           }
           _this.overViewData = res.data.data
+          _this.safetyColor = getText(res.data.data.reservoirStatus).color
+          _this.safetyName = getText(res.data.data.reservoirStatus).name
         } else {
           this.$message.error(res.data.msg)
         }
@@ -146,54 +197,20 @@ export default {
     border-bottom: 1px solid #f2f2f2;
     font-size: 1.6rem;
   }
-
-  .s_left,
   .s_right {
-    flex: 1;
-    text-align: center;
+    width:30%;
+    display: flex;
+    font-size: 1.8rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   .s_left {
+    flex: 1;
+    padding:1rem;
     border-right: 1px solid #f2f2f2;
   }
-
-  .bili {
-    width: 4.5rem;
-    height: 4.5rem;
-    background-color: skyblue;
-    border-radius: 50%;
-    margin-left: 5px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-  }
-
-  .bilivimg {
-    width: 3.8rem;
-    height: 3.8rem;
-    border-radius: 50%;
-    background-color: pink;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 50%;
-  }
-
-  .bliliv {
-    color: #8b8d90;
-    text-align: center;
-    text-shadow: #000;
-    position: relative;
-    z-index: 1;
-  }
-
-  .dataBox {
-    padding: 1rem 0;
-  }
-
   .data_tit {
     display: flex;
     align-items: center;
@@ -201,13 +218,11 @@ export default {
   }
 .dataVBox{
     display: flex;
-    align-items: center;
-    justify-content: space-evenly;
     flex-wrap: wrap;
     margin-top: 1rem;
 }
   .dataV{
-    width: 30%;
+    width: 45%;
     padding: 8px;
     box-shadow: 2px 2px 15px rgba(76,89,248,16%);
     margin-bottom: 1rem;

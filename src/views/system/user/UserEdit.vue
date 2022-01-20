@@ -25,11 +25,13 @@
           v-decorator="[
             'roleId',
             {rules: [{ required: true, message: '请选择角色' }]}
-          ]">
+          ]"
+          @change="handleRoleChange"
+        >
           <a-select-option v-for="r in roleData" :key="r.roleId.toString()">{{r.roleName}}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label='水库权限' v-bind="formItemLayout">
+      <a-form-item v-if="rolesId !== '601'" label='水库权限' v-bind="formItemLayout">
         <a-select
           mode="multiple"
           :allowClear="true"
@@ -64,6 +66,7 @@ export default {
       formItemLayout,
       form: this.$form.createForm(this),
       userId: '',
+      rolesId: '',
       loading: false,
       validateStatus: '',
       roleData: [],
@@ -86,6 +89,8 @@ export default {
     },
     setFormValues ({...user}) {
       this.userId = user.userId
+      this.rolesId = user.roleId
+      console.log('角色id', this.rolesId)
       let fields = ['userName', 'mobile', 'roleId', 'reservoirIds']
       Object.keys(user).forEach((key) => {
         if (fields.indexOf(key) !== -1) {
@@ -106,6 +111,13 @@ export default {
       this.$get('web/user/getRoleList').then((r) => {
         this.roleData = r.data.data
       })
+    },
+    handleRoleChange (value) {
+      console.log('修改用户，修改角色', value)
+      this.rolesId = value
+      /*if (value !== 601) {
+        this.getReservoirList()
+      }*/
     },
     // 水库列表
     getReservoirList () {

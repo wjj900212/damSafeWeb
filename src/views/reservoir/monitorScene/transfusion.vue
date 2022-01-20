@@ -8,7 +8,7 @@
     <div class="com">
       <a-row :gutter="24" :style="{ marginBottom: '24px' }">
         <a-col :span="12">
-          <overview :hiddenId="hiddenId"></overview>
+          <overview :hiddenId="hiddenId" :overViewData="overViewData" :pnList="overViewData.pnList"></overview>
         </a-col>
         <a-col :span="12">
           <visual :hiddenId="hiddenId"></visual>
@@ -16,7 +16,7 @@
       </a-row>
       <a-row :gutter="24" :style="{ marginBottom: '24px' }">
         <a-col :span="24">
-          <trendStatistic :hiddenId="hiddenId"></trendStatistic>
+          <trendStatistic :hiddenId="hiddenId" :pnList="overViewData.pnList"></trendStatistic>
         </a-col>
       </a-row>
       <a-row :gutter="24" :style="{ marginBottom: '24px' }">
@@ -34,7 +34,7 @@
 <script>
 import { mapState } from 'vuex'
 import overview from './transfusion/overview.vue'
-import Visual from './transfusion/visual'
+import Visual from './rainMonitor/visual'
 import TrendStatistic from './transfusion/trendStatistic'
 import WarnMsg from '@/components/warnMsg/warnMsg'
 import Record from '@/components/devopsRecord/record'
@@ -49,6 +49,7 @@ export default {
   },
   data () {
     return {
+      overViewData: {},
       rainScene: [], // 渗流监测场景列表
       hiddenId: -1 // 监测场景id
     }
@@ -61,6 +62,7 @@ export default {
   watch: {
     hiddenId (newVal) {
       this.hiddenId = newVal
+      this.getMonitorConditionRain(newVal)
     },
     reservoirId (newVal) {
       if (newVal) {
@@ -83,6 +85,18 @@ export default {
         if (res.data.code === 1) {
           this.hiddenId = res.data.data[0].id
           this.rainScene = res.data.data
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
+    },
+    getMonitorConditionRain (hiddenId) {
+      let _this = this
+      this.$get('web/monitorScene/monitorConditionRain', {
+        hiddenId: hiddenId
+      }).then((res) => {
+        if (res.data.code === 1) {
+          _this.overViewData = res.data.data
         } else {
           this.$message.error(res.data.msg)
         }

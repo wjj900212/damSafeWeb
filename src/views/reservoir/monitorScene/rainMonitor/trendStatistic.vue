@@ -3,7 +3,7 @@
   <div class="trendStatistic">
     <a-card title="降水量趋势统计">
       <template slot="extra">
-        <a-select v-model="current" :style="{width:'20rem'}">
+        <a-select v-model="queryParams.pnId" :style="{width:'20rem'}">
           <a-select-option v-for="pn in overViewData.pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
         </a-select>
         <a-range-picker @change="onChange" style="width:250px;"/>
@@ -24,17 +24,44 @@
 <script>
 import moment from 'moment'
 export default {
-  props: ['hiddenId'],
+  props: ['hiddenId', 'pnList'],
   data () {
     return {
+      queryParams: {},
       current: '',
       overViewData: {}
     }
   },
   watch: {
-    hiddenId: {
+    pnList: {
       handler: function (n, o) {
-        this.getMonitorConditionRain()
+        if (!n || n.length === 0) {
+          this.queryParams.pnId = ''
+          this.pnName = ''
+          this.tableData = []
+          this.devCode = ''
+          this.warnValue = []
+          this.columns = [{
+            title: '库水位',
+            dataIndex: 'value',
+            key: 'value'
+          },
+          {
+            title: '时间',
+            dataIndex: 'time',
+            key: 'time'
+          }
+          ]
+          setTimeout(() => {
+            this.drawChart()
+          }, 300)
+          return
+        }
+        if (n.length > 0) {
+          this.queryParams.pnId = n[0].pnId
+          this.pnName = n[0].pnName
+          this.getWarnValue()
+        }
       },
       immediate: true
     }
