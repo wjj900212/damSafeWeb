@@ -184,11 +184,7 @@ export default {
     thresholdEditData (newVal) {
       console.log('编辑信息', newVal)
       this.dataSource = newVal
-    }/*,
-    warnRule (newVal) {
-      this.warnMsgInfo = JSON.parse(newVal.config).temp
-      console.log('编辑预警规则预警警示信息', this.warnMsgInfo)
-    } */
+    }
   },
   methods: {
     handleCancel () {
@@ -216,12 +212,13 @@ export default {
     addWarnMsg (warnInfo, key, col) {
       this.msgKey = key
       this.msgCol = col
+      this.msgInfo = {}
       console.log('添加警示信息', warnInfo)
-      if (warnInfo !== '') {
-        let warnInfoObj = JSON.parse(warnInfo)
+      if (warnInfo !== null) {
+        let warnInfoObj = warnInfo
         for (let item in warnInfoObj) {
           if (item === col) {
-            this.msgInfo = JSON.parse(warnInfo)[col]
+            this.msgInfo = warnInfo[col]
           } else {
             this.msgInfo = {}
           }
@@ -240,7 +237,7 @@ export default {
         warnInfo[this.msgCol] = warnMsg
         target.warnInfo = warnInfo */
         this.warnMsgInfo[this.msgCol] = warnMsg
-        target.warnInfo = JSON.stringify(this.warnMsgInfo)
+        target.warnInfo = this.warnMsgInfo
         this.dataSource = dataSource
         console.log('修改警示消息之后的内容', dataSource)
         /* this.flag = 1

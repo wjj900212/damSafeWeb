@@ -30,15 +30,6 @@
             </template>
           </div>
         </template>
-        <!--<template
-          v-for="col in ['blue', 'yellow', 'orange', 'red']"
-          :slot="col"
-          slot-scope="text, record, index"
-        >
-          <div :key="col">
-            <a-icon type="form" style="font-size:1.6rem;" @click="e => addWarnMsg(record.sort, col)"/>
-          </div>
-        </template>-->
         <template slot="operation" slot-scope="text, record, index">
           <div class="editable-row-operations">
         <span v-if="record.editable">
@@ -58,6 +49,7 @@
       <config-warn-msg
         :visible="isShowConfigMsg"
         @getWarnMsg="getWarnMsg"
+        :msgInfo="msgInfo"
         @onClose="()=>{isShowConfigMsg=false}"
       ></config-warn-msg>
     </div>
@@ -78,7 +70,8 @@ export default {
       isShowConfigMsg: false,
       msgKey: -1,
       msgCol: '',
-      warnMsgInfo: {}
+      warnMsgInfo: {},
+      msgInfo: {}
     }
   },
   props: {
@@ -212,6 +205,7 @@ export default {
     addWarnMsg (key, col) {
       this.msgKey = key
       this.msgCol = col
+      this.msgInfo = {}
       console.log('警示信息', key, col)
       this.isShowConfigMsg = true
     },
@@ -220,26 +214,12 @@ export default {
       const dataSource = [...this.dataSource]
       const target = dataSource.find(item => item.sort === this.msgKey)
       if (target) {
-        /* let warnInfo = {}
-        warnInfo[this.msgCol] = warnMsg */
         this.warnMsgInfo[this.msgCol] = warnMsg
         target.warnInfo = this.warnMsgInfo
         this.dataSource = dataSource
         console.log('修改警示消息之后的内容', dataSource)
-        /* this.flag = 1
-        this.$emit('getFlag', this.flag) */
       }
     },
-    /* onDisplayChange (key, e) {
-      const dataSource = [...this.dataSource]
-      const target = dataSource.find(item => item.sort === key)
-      if (target) {
-        target.display = e.target.checked ? '1' : '0'
-        this.dataSource = dataSource
-        this.flag = 1
-        this.$emit('getFlag', this.flag)
-      }
-    }, */
     editThreshold (key) {
       const newData = [...this.dataSource]
       const target = newData.filter(item => key === item.sort)[0]

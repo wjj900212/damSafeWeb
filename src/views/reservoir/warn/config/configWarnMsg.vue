@@ -12,7 +12,7 @@
     <div>
       <div style="margin-bottom: 0.5rem;">编辑警示信息内容:</div>
       <a-textarea
-        v-model="queryParams.alia"
+        v-model="queryParams.alias"
         placeholder="请输入警示信息内容"
         :auto-size="{ minRows: 3, maxRows: 5 }"
       />
@@ -57,7 +57,10 @@ export default {
   },
   data () {
     return {
-      queryParams: {}
+      queryParams: {
+        warninfo: '',
+        alias: ''
+      }
     }
   },
   watch: {
@@ -71,7 +74,7 @@ export default {
   },
   methods: {
     handleOK () {
-      let warnInfo = {'warninfo': this.queryParams.warninfo, 'alia': this.queryParams.alia}
+      let warnInfo = {'warninfo': this.queryParams.warninfo, 'alias': this.queryParams.alias}
       this.$emit('getWarnMsg', warnInfo)
       this.$emit('onClose')
     },
