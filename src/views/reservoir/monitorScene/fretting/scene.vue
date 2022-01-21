@@ -43,7 +43,7 @@ export default {
       designData: {},
       tabs: [
         {name: '场景可视化', key: 'cjksh'},
-        {name: '微动模型安全说明', key: 'wdmxaqsm'}
+        // {name: '微动模型安全说明', key: 'wdmxaqsm'}
       ]
     }
   },
