@@ -1,24 +1,27 @@
 <template>
   <!-- 运维记录 -->
   <div class="warnMsg">
-    <div class="tit">
-      <span>运维记录</span>
-      <div style="display: flex;white-space: nowrap;align-items: center;">
-        <a-input placeholder="请输入关键字" v-model="search" />
-        <a slot="extra" href="javascript:;" style="margin-left:5px">查看更多
-          <a-icon type="double-right" /></a>
-      </div>
-    </div>
-    <div class="total">
-      <div></div>
-      <div>
-        <span class="btnt" :class="seeAct==1?'act':''" @click="seeAct=1">今日</span>
-        <span class="btnt" :class="seeAct==2?'act':''" @click="seeAct=2">近一周</span>
-        <span class="btnt" :class="seeAct==3?'act':''" @click="seeAct=3">近一月</span>
-      </div>
-    </div>
-    <a-table :columns="columns" :data-source="data" :pagination="pagination">
-    </a-table>
+    <a-card title="运维记录">
+      <template slot="extra">
+        <div style="display: flex;white-space: nowrap;align-items: center;">
+          <a-input placeholder="请输入关键字" v-model="search" />
+          <a slot="extra" href="javascript:;" style="margin-left:5px">查看更多
+            <a-icon type="double-right" /></a>
+        </div>
+      </template>
+      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+        <div class="total">
+          <div></div>
+          <div>
+            <span class="btnt" :class="seeAct==1?'act':''" @click="seeAct=1">今日</span>
+            <span class="btnt" :class="seeAct==2?'act':''" @click="seeAct=2">近一周</span>
+            <span class="btnt" :class="seeAct==3?'act':''" @click="seeAct=3">近一月</span>
+          </div>
+        </div>
+        <a-table :columns="columns" :data-source="data" :pagination="pagination">
+        </a-table>
+      </a-card-grid>
+    </a-card>
   </div>
 </template>
 
@@ -106,7 +109,7 @@
         pagination: {
           current: 1,
           pageSize: 5,
-          onChange: (cur, size) => this.pagination.current=cur
+          onChange: (cur, size) => this.pagination.current = cur
         }
       };
     },
@@ -115,18 +118,6 @@
 
 </script>
 <style scoped>
-  .tit {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #f2f2f2;
-    padding-bottom: 1rem;
-    margin-top: 1rem;
-  }
-
-  .tit>span {
-    font-size: 1.6rem;
-  }
 
   .total {
     display: flex;

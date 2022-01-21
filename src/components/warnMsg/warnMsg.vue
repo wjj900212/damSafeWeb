@@ -1,37 +1,38 @@
 <template>
   <!-- 预警信息 -->
   <div class="warnMsg">
-    <div class="tit">
-      <span>预警信息</span>
-      <div>
+    <a-card title="降水量趋势统计">
+      <template slot="extra">
         <a-select v-model="queryParams.type" @change="getWarnMsg()">
           <a-select-option value="">全部预警</a-select-option>
           <a-select-option value="1">设备预警</a-select-option>
           <a-select-option value="2">安全预警</a-select-option>
           <a-select-option value="5">模型预警</a-select-option>
         </a-select>
-        <a slot="extra" href="javascript:;" style="margin-left:5px">查看更多
+        <a href="javascript:;" style="margin-left:5px">查看更多
           <a-icon type="double-right" /></a>
-      </div>
-    </div>
-    <div class="total">
-      <div>
-        <span style="color:#FF2626">红色预警 {{warnData.red}}</span>
-        <span style="color:#FF9F00">橙色预警 {{warnData.orange}}</span>
-        <span style="color:#F9D044">黄色预警 {{warnData.yellow}}</span>
-        <span style="color:#3399FF">蓝色预警 {{warnData.blue}}</span>
-      </div>
-      <div>
-        <span class="btnt" :class="queryParams.dateType==1?'act':''" @click="dateChange(1)">今日</span>
-        <span class="btnt" :class="queryParams.dateType==2?'act':''" @click="dateChange(2)">近一周</span>
-        <span class="btnt" :class="queryParams.dateType==3?'act':''" @click="dateChange(3)">近一月</span>
-      </div>
-    </div>
-    <a-table :columns="columns" :data-source="warnData.list" :pagination="pagination"
-      :rowKey="(record,index)=>{return index}">
-      <a slot="level" slot-scope="text"
-        :style="{color:text==4?'#FF2626':text==3?'#FF9F00':text==2?'#F9D044':'#3399FF'}">{{ text==4?'红色预警':text==3?'橙色预警':text==2?'黄色预警':text==1?'蓝色预警':'' }}</a>
-    </a-table>
+      </template>
+      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+        <div class="total">
+          <div>
+            <span style="color:#FF2626">红色预警 {{warnData.red}}</span>
+            <span style="color:#FF9F00">橙色预警 {{warnData.orange}}</span>
+            <span style="color:#F9D044">黄色预警 {{warnData.yellow}}</span>
+            <span style="color:#3399FF">蓝色预警 {{warnData.blue}}</span>
+          </div>
+          <div>
+            <span class="btnt" :class="queryParams.dateType==1?'act':''" @click="dateChange(1)">今日</span>
+            <span class="btnt" :class="queryParams.dateType==2?'act':''" @click="dateChange(2)">近一周</span>
+            <span class="btnt" :class="queryParams.dateType==3?'act':''" @click="dateChange(3)">近一月</span>
+          </div>
+        </div>
+        <a-table :columns="columns" :data-source="warnData.list" :pagination="pagination"
+          :rowKey="(record,index)=>{return index}">
+          <a slot="level" slot-scope="text"
+            :style="{color:text==4?'#FF2626':text==3?'#FF9F00':text==2?'#F9D044':'#3399FF'}">{{ text==4?'红色预警':text==3?'橙色预警':text==2?'黄色预警':text==1?'蓝色预警':'' }}</a>
+        </a-table>
+      </a-card-grid>
+    </a-card>
   </div>
 </template>
 
@@ -137,18 +138,6 @@
 
 </script>
 <style scoped>
-  .tit {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #f2f2f2;
-    padding-bottom: 1rem;
-    margin-top: 1rem;
-  }
-
-  .tit>span {
-    font-size: 1.6rem;
-  }
 
   .total {
     display: flex;

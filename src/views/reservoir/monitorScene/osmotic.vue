@@ -1,6 +1,6 @@
 <template>
-  <!-- 水情监测 -->
-  <div class="tabs">
+  <!-- 渗压监测 -->
+  <div class="tabs Osmotic">
     <a-tabs default-active-key="1" @change="callback" class="tabs">
       <a-tab-pane v-for="v in hiddenArr" :key="v.id" :tab="v.name">
       </a-tab-pane>
@@ -9,23 +9,16 @@
       <a-row :gutter="24" :style="{ marginBottom: '24px' }">
         <a-col :span="12">
           <!-- 基本信息 -->
-          <overview :hiddenId="hiddenId" :hiddenMsg="hiddenMsg" :pnList="hiddenMsg.pnList" />
+          <overview :hiddenId="hiddenId" :overViewData="overViewData" :pnList="overViewData.pnList"></overview>
         </a-col>
         <a-col :span="12">
-          <!-- 场景可视化 -->
-          <visual :hiddenId="hiddenId" />
+          <visual :hiddenId="hiddenId" :sceneList="overViewData.pnList"></visual>
         </a-col>
       </a-row>
       <a-row :gutter="24" :style="{ marginBottom: '24px' }">
         <a-col :span="24">
-          <!-- 库水位趋势统计 -->
-          <trend-statistic :hiddenId="hiddenId" :pnList="hiddenMsg.pnList" style="width:100%" />
-        </a-col>
-      </a-row>
-      <a-row :gutter="24" :style="{ marginBottom: '24px' }">
-        <a-col :span="24">
-          <!-- 水位库容曲线 -->
-          <storageCapacity :waterValue="hiddenMsg" style="width:100%;" />
+            <!-- 渗压监测趋势统计 -->
+            <trendStatistic :hiddenId="hiddenId" :pnList="overViewData.pnList" />
         </a-col>
       </a-row>
       <a-row :gutter="24" :style="{ marginBottom: '24px' }">
@@ -35,7 +28,7 @@
         </a-col>
         <a-col :span="12">
           <!-- 运维记录 -->
-          <record :hiddenId="hiddenId" />
+          <record :hiddenId="hiddenId" />->
         </a-col>
       </a-row>
     </div>
@@ -46,10 +39,9 @@
   import {
     mapState
   } from 'vuex'
-  import overview from "./waterMonitor/overview.vue" //基本信息
-  import visual from "./waterMonitor/visual.vue" //场景可视化
-  import trendStatistic from "./waterMonitor/trendStatistic.vue" // 库水位趋势统计
-  import storageCapacity from "./waterMonitor/storageCapacity.vue" // 水位库容曲线
+  import overview from "./osmotic/overview.vue" // 基本信息
+  import visual from "./osmotic/visual.vue" // 浸润线
+  import trendStatistic from "./osmotic/trendStatistic.vue" // 渗压监测趋势统计 
   import warnMsg from "@/components/warnMsg/warnMsg.vue" // 预警信息
   import record from "@/components/devopsRecord/record.vue" // 运维记录
   export default {
@@ -57,7 +49,6 @@
       overview,
       visual,
       trendStatistic,
-      storageCapacity,
       warnMsg,
       record
     },
@@ -66,7 +57,7 @@
         text: '',
         hiddenId: '',
         hiddenArr: [],
-        hiddenMsg: {}
+        overViewData:{pnList:[]}
       };
     },
     computed: {
@@ -83,12 +74,12 @@
       callback(key) {
         // console.log(key);
         this.hiddenId = key
-        this.getHiddenMsg()
+        this.getMonitorCondition()
       },
       getHiddenArr() {
         let param = {
           reservoirId: this.reservoirId, //水库id
-          type: 16 //16 水情
+          type: 12 //12 渗压
         }
         this.hiddenArr = []
         this.hiddenId = ''
@@ -100,30 +91,28 @@
             return
           }
           if (rr.data.length == 0) {
-            this.$message.warning('暂无水情监测点')
+            this.$message.warning('暂无渗压监测点')
             return false
           }
-          this.hiddenArr = rr.data.map(v => {
-            return {
-              id: v.id,
-              name: v.name
-            }
-          })
+          this.hiddenArr = rr.data
           this.hiddenId = rr.data[0].id
-          this.getHiddenMsg()
+          this.getMonitorCondition()
         })
       },
-      // 获取隐患点信息
-      getHiddenMsg() {
-        this.$get("/web/monitorScene/monitorConditionWater?hiddenId=" + this.hiddenId).then(res => {
-          let rr = res.data
-          if (rr.code != 1) {
-            this.$message.error(rr.msg)
-            return
+      
+      //   查询基本信息
+      getMonitorCondition() {
+        let _this = this
+        this.$get('/web/monitorScene/monitorConditionOsmotic', {
+          hiddenId: _this.hiddenId
+        }).then((res) => {
+          if (res.data.code === 1) {
+            _this.overViewData = res.data.data
+          } else {
+            this.$message.error(res.data.msg)
           }
-          this.hiddenMsg = rr.data
         })
-      }
+      },
     },
     mounted() {
       this.getHiddenArr()

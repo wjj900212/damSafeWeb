@@ -1,18 +1,20 @@
 <template>
   <!-- 场景可视化 -->
-  <a-card title="场景可视化" :bodyStyle="{ padding: '5px' }">
-    <a-select slot="extra" v-model="currentScene" @change="sceneChange">
-      <a-select-option v-for="v,i in sceneDataArr" :key="i" :value="v.sceneId">{{v.sceneName}}</a-select-option>
-    </a-select>
-    <div style="width: 100%; text-align: center; padding: 5px;overflow: auto;">
-      <!-- :activeKey="currentScene" -->
-      <design :data="sceneData"></design>
-    </div>
-  </a-card>
+  <div class="visual">
+    <a-card title="场景可视化">
+      <a-select slot="extra" v-model="currentScene" @change="sceneChange">
+        <a-select-option v-for="v,i in sceneDataArr" :key="i" :value="v.sceneId">{{v.sceneName}}</a-select-option>
+      </a-select>
+      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+        <!-- :activeKey="currentScene" -->
+        <design :data="sceneData"></design>
+      </a-card-grid>
+    </a-card>
+  </div>
 </template>
 
 <script>
-  import design from "../design/design.vue"
+  import design from "@/components/design/design.vue"
   export default {
     props: ["hiddenId"],
     components: {

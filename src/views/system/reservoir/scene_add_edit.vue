@@ -388,7 +388,8 @@
             latitude: data.latitude,
             stationCode: data.stationCode,
             remarks: data.remarks,
-            township:data.township
+            township:data.township,
+            hiddenCharge:data.hiddenCharge
           }
           this.form.setFieldsValue(obj) //表单赋值
           this.setData({

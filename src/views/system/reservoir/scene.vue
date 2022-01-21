@@ -56,18 +56,18 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
-            <a href="javascript:;"
-              @click="$router.push('/system/reservoir/scene/scene_edit?reservoirId=' + reservoirId+'&hiddenId='+record.hiddenId)">编辑</a><a
-              href="javascript:;" @click="visualConfig(record)">2D</a><a
-              href="javascript:;" @click="hiddenDelete(record)">删除</a>
-            <!-- <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" title="2D" @click="visualConfig(record)"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="hiddenDelete(record)" title="删除">
-            </a-icon> -->
+            <a href="javascript:;" @click="goEdit(record)">编辑</a>
+            <a href="javascript:;" v-if="record.hiddenType==12" @click="hiddenId=record.hiddenId;lineVisible=true">浸润线配置</a>
+            <a href="javascript:;" v-else @click="visualConfig(record)">可视化配置</a>
+            <a href="javascript:;" @click="hiddenDelete(record)">删除</a>
           </div>
         </template>
       </a-table>
+      <!-- 可视化配置 -->
       <sceneVisual :visible="visualVisible" :id="hiddenId" :name="hiddenName" :hiddenType="hiddenType"
         :sceneType="sceneType" @close="()=>{ visualVisible=false }" />
+        <!-- 浸润线配置 -->
+        <phreaticLine :visible="lineVisible" :hiddenId="hiddenId"  @close="()=>{ lineVisible=false }"/>
     </div>
   </a-card>
   <router-view v-else />

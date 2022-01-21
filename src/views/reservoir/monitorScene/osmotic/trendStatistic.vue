@@ -1,0 +1,274 @@
+<template>
+  <!-- 渗压监测趋势统计 -->
+  <div class="trendStatistic">
+    <a-card title="渗压监测趋势统计">
+      <template slot="extra">
+        <a-select v-model="queryParams.sceneId" :style="{width:'20rem'}" @change="sceneChange">
+          <a-select-option v-for="pn in pnList" :key="pn.sceneId" :value="pn.sceneId">{{pn.sceneName}}</a-select-option>
+        </a-select>
+        <a-range-picker @change="onDateChange" style="width:250px;" />
+        <a-select v-model="dateCurrent" @change="dateChange" style="width:100px;">
+          <a-select-option value="1">今日</a-select-option>
+          <a-select-option value="2">近三天</a-select-option>
+          <a-select-option value="3">近一周</a-select-option>
+          <a-select-option value="4">近一月</a-select-option>
+        </a-select>
+        <a-button type="primary" @click="portData">数据导出</a-button>
+      </template>
+      <a-card-grid style="width: 100%; padding: 5px">
+        <div class="stateMsg">
+          <div class="s_left">
+            <div>
+              <div>当前 {{sceneName}}</div>
+              <div style="margin: 1rem 0;" v-for="v,i in devCode" :key="i">
+                <span class="cricle"></span>
+                <span>{{v}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="echartTU" ref="transChart"></div>
+          <div class="s_right">
+            <!-- 表格区域 -->
+            <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="tableData"
+              :pagination="pagination">
+            </a-table>
+          </div>
+        </div>
+
+      </a-card-grid>
+    </a-card>
+  </div>
+</template>
+
+<script>
+  import moment from 'moment'
+
+  export default {
+    props: ['hiddenId', 'pnList'],
+    components: {
+      // chartTU
+    },
+    data() {
+      return {
+        sceneName: '',
+        dateCurrent: '1',
+        columns: [{
+          title: '监测点',
+          dataIndex: 'pnName'
+        }, {
+          title: '水位高程',
+          dataIndex: 'value1'
+        }, {
+          title: '水头',
+          dataIndex: 'value2'
+        }, {
+          title: '时间',
+          dataIndex: 'time'
+        }],
+        searchTime: [],
+        pagination: {
+          current: 1,
+          pageSize: 5,
+          total: 0,
+          onChange: (cur, size) => {
+            this.pagination.current = cur
+            // this.getData()
+          }
+        },
+        warnValue: [], // 水位警戒值
+        queryParams: {
+          sceneId: '',
+          starttime: moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          endtime: moment().format('YYYY-MM-DD HH:mm:ss'),
+          pageNum: '',
+          pageSize: ''
+        },
+        tableData: [],
+        devCode: [],
+        myChart: ''
+      }
+    },
+    watch: {
+      // hiddenId: {
+      //   handler: function (n, o) {},
+      //   immediate: true
+      // },
+      pnList: {
+        handler: function (n, o) {
+          if (!n || n.length == 0) {
+            this.queryParams.sceneId = ''
+            this.sceneName = ''
+            this.tableData = []
+            this.devCode = []
+            return
+          }
+          if (n.length > 0) {
+            this.queryParams.sceneId = n[0].sceneId
+            this.sceneName = n[0].sceneName
+            this.getData()
+          }
+        },
+        immediate: true
+      }
+    },
+    methods: {
+      moment,
+      sceneChange() {
+        this.sceneName = this.pnList.find(v => {
+          return v.sceneId == this.queryParams.sceneId
+        }).sceneName
+        this.getData()
+      },
+      getData() {
+        // this.queryParams.pageNum = this.pagination.current
+        if (!this.queryParams.sceneId) {
+          this.$message.error('请选择断面')
+          return
+        }
+        this.$get('/web/monitorScene/monitorPnDataOsmotic', this.queryParams).then(res => {
+          let rr = res.data
+          if (rr.code != 1) {
+            this.$message.error(rr.msg)
+            return
+          }
+          this.devCode = rr.data.pns.map(v => {
+            return v.devCode
+          })
+          this.tableData = rr.data.dataList
+          this.drawChart(rr.data.data)
+        })
+      },
+      onDateChange(date, dateString) {
+        // console.log(date, dateString);
+        this.queryParams.starttime = dateString[0] ? dateString[0] + ' 00:00:00' : ''
+        this.queryParams.endtime = dateString[1] ? dateString[1] + ' 59:59:59' : ''
+        this.getData()
+      },
+      // 快捷选择时间
+      dateChange() {
+        if (this.dateCurrent == 1) {
+          this.searchTime = [
+            this.moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+            this.moment().format('YYYY-MM-DD HH:mm:ss')
+          ]
+        } else if (this.dateCurrent == 2) {
+          this.searchTime = [
+            this.moment().subtract(3, 'day').format('YYYY-MM-DD HH:mm:ss'),
+            this.moment().format('YYYY-MM-DD HH:mm:ss')
+          ]
+        } else if (this.dateCurrent == 3) {
+          this.searchTime = [
+            this.moment().subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss'),
+            this.moment().format('YYYY-MM-DD HH:mm:ss')
+          ]
+        } else if (this.dateCurrent == 4) {
+          this.searchTime = [
+            this.moment().subtract(1, 'months').format('YYYY-MM-DD HH:mm:ss'),
+            this.moment().format('YYYY-MM-DD HH:mm:ss')
+          ]
+        }
+
+        this.queryParams.starttime = this.searchTime[0]
+        this.queryParams.endtime = this.searchTime[1]
+        this.getData()
+      },
+      portData() {
+        if (!this.queryParams.sceneId) {
+          this.$message.error('请选择断面')
+          return
+        }
+        // console.log(this.queryParams)
+        this.$export('/web/monitorScene/exportMonitorDataOsmotic', this.queryParams)
+      },
+      drawChart(data) {
+        if (!this.myChart) {
+          this.myChart = this.$echarts.init(this.$refs.transChart)
+          window.addEventListener('resize', () => {
+            this.myChart.resize()
+          })
+        }
+
+        var option = {
+          color: '#c5595a',
+          grid: {
+            right: 10,
+            left: 80
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          dataZoom: [{
+            type: 'slider'
+            // height: 15,
+            // bottom: 10,
+          }, {
+            type: 'inside'
+          }],
+          xAxis: {
+            type: 'category',
+            data:data.times
+          },
+          yAxis: {
+            type: 'value',
+            name: '水位高程(m)',
+            axisLine: {
+              show: true
+            }
+          },
+          series: 
+          data.value.map(v=>{
+            return {
+              name: v.pnName,
+              type: 'bar',
+              barWidth: 20,
+              barGap: 0,
+              emphasis: {
+                focus: 'series'
+              },
+              data: v.value
+            }
+          })
+        }
+        this.myChart.setOption(option, true)
+      }
+    }
+  }
+
+</script>
+<style lang="less" scoped>
+  .stateMsg {
+    display: flex;
+    justify-content: space-between;
+    // align-items: left;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f2f2f2;
+    font-size: 1.4rem;
+  }
+
+  // .s_left,
+  // .s_right {
+  //   flex: 1;
+  // }
+  .s_left {
+    width: 15%;
+  }
+
+  .s_right {
+    width: 30%;
+  }
+
+  .cricle {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+
+
+  .echartTU {
+    // width: calc(50% - 2rem);
+    width: 50%;
+    height: 380px;
+    margin: 0 1rem;
+  }
+
+</style>
