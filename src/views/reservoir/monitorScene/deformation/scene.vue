@@ -1,7 +1,7 @@
 <template>
   <!-- 场景可视化 -->
   <div class="visual">
-    <a-card title="水库可视化">
+    <a-card title="场景可视化">
       <a-select
         slot="extra"
         v-model="scene"
