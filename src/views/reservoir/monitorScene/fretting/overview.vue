@@ -1,7 +1,7 @@
 <template>
   <!-- 水情概况 -->
   <div class="overview">
-    <a-card title="变形监测概况" style="width: 100%">
+    <a-card title="微动监测概况" style="width: 100%">
       <a-button slot="extra" @click="safeVisible=true"> 安全管理预案
         <a-icon type="read" style="fontSize:1.6rem" />
       </a-button>
