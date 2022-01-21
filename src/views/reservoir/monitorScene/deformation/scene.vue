@@ -1,7 +1,7 @@
 <template>
   <!-- 场景可视化 -->
   <div class="visual">
-    <a-card title="场景可视化">
+    <a-card title="场景可视化" :bodyStyle="{ padding: '5px' }">
       <a-select
         slot="extra"
         v-model="scene"
@@ -17,9 +17,9 @@
           {{ item.sceneName }}
         </a-select-option>
       </a-select>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+      <div style="width: 100%; text-align: center; padding: 5px;overflow: auto;">
         <design :data="designData"></design>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>

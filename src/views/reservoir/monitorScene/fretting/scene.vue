@@ -1,7 +1,7 @@
 <template>
   <!-- 场景可视化 -->
   <div class="visual">
-    <a-card>
+    <a-card :bodyStyle="{ padding: '5px' }">
       <a-tabs :activeKey="activeKey" slot="title" @change="callback" class="tabs">
         <a-tab-pane v-for="tab in tabs" :key="tab.key" :tab="tab.name">
         </a-tab-pane>
@@ -22,9 +22,9 @@
           {{ item.sceneName }}
         </a-select-option>
       </a-select>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+      <div style="width: 100%; text-align: center; padding: 5px;overflow: auto;">
         <design v-if="activeKey==='cjksh'" :data="designData"></design>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>
