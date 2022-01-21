@@ -36,6 +36,7 @@
       />
 
       <a-button @click="getChartInfo" type="primary"> 查询 </a-button>
+      <a-button @click="exportEXcel" type="primary"> 导出 </a-button>
     </div>
     <a-card-grid style="width: 100%; text-align: left; height: 500px">
       <a-row>
@@ -44,7 +45,7 @@
           <div>{{ monitorCode }}</div>
         </a-col>
         <a-col :span="20">
-          <main-content :list="targetList" :dateTimeValue="dateTimeValue"></main-content>
+          <main-content ref="jogging" :list="targetList" :dateTimeValue="dateTimeValue"></main-content>
         </a-col>
       </a-row>
     </a-card-grid>
@@ -146,6 +147,19 @@ export default {
   },
   methods: {
     moment,
+    exportEXcel () {
+      const { monitor } = this;
+      const start = moment(this.dateTimeValue[0]).format("YYYY-MM-DD");
+      const end = moment(this.dateTimeValue[1]).format("YYYY-MM-DD");
+      let pnStrId = this.$refs.jogging.devItem.devValueId
+      this.$export("web/monitorScene/exportMonitorData", {
+        pnId: monitor,
+        starttime: start,
+        endtime: end,
+        type: '14',
+        pnStrId: pnStrId
+      });
+    },
     getMonitorList (pnId) {
       const params = {
         pnId: pnId

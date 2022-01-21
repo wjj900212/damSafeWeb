@@ -36,6 +36,7 @@
       />
 
       <a-button @click="getChartInfo" type="primary"> 查询 </a-button>
+      <a-button @click="exportEXcel" type="primary"> 导出 </a-button>
     </div>
     <a-card-grid style="width: 100%; text-align: left; height: 500px">
       <a-row>
@@ -179,6 +180,16 @@ export default {
   },
   methods: {
     moment,
+    exportEXcel () {
+      const { monitor } = this;
+      const start = moment(this.dateTimeValue[0]).format("YYYY-MM-DD");
+      const end = moment(this.dateTimeValue[1]).format("YYYY-MM-DD");
+      this.$export("web/monitorScene/exportMonitorDataVariant", {
+        pnId: monitor,
+        starttime: start,
+        endtime: end,
+      });
+    },
     getChartInfo() {
       const { monitor } = this;
       const start = moment(this.dateTimeValue[0]).format("YYYY-MM-DD");
