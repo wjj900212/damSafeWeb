@@ -58,7 +58,7 @@ export default {
     return {
       rainScene: [], // 雨情监测场景列表
       hiddenId: -1, // 监测场景id
-      overViewData: {}
+      overViewData: {},
     }
   },
   computed: {

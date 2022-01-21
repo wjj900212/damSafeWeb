@@ -103,6 +103,12 @@
                      :pagination="pagination"
                      :loading="loading"
                      @change="handleTableChange">
+              <template slot="operation" slot-scope="text, record">
+                <div>
+                   <a v-if="tabPane === '3'" disabled="true">详情</a>
+                    <a v-else disabled="false" @Click="warnInfo(record)">详情</a>
+                </div>
+              </template>
             </a-table>
           </a-tab-pane>
         </a-tabs>
@@ -114,7 +120,6 @@
       :warnDetailData="warnDetailData"
       :cur="tabPane"
       :warnId="warnId"
-      :ifdisposal="ifdisposal"
       @onClose="()=>{isShowDevWarning=false}"
     ></equipment-warning-info>
   </div>
@@ -151,8 +156,7 @@ export default {
       isShowDevWarning: false,
       warnDetailData: {},
       statisData: {},
-      warnId: 0,
-      ifdisposal: '0' // 预警是否已处置
+      warnId: 0
     }
   },
   computed: {
@@ -222,11 +226,14 @@ export default {
       }, {
         title: '操作',
         dataIndex: 'operation',
-        customRender: (text, record) => (
+        scopedSlots: {
+          customRender: 'operation'
+        }
+        /*customRender: (text, record) => (
           <div>
             <a onClick={() => this.warnInfo(record)}>详情</a>
           </div>
-        )
+        )*/
       }]
     }
   },
@@ -316,9 +323,15 @@ export default {
       this.viewWarnDetail(record.id)
       this.isShowDevWarning = true
     },
-    // 预警详情
+    // 设备预警详情 和 安全预警
     viewWarnDetail(id){
-      this.$get('web/earlyWarningBasic/viewWarnDetail', {
+      let url = ''
+      if(this.tabPane === '1'){
+        url = 'web/earlyWarningBasic/viewWarnDetail'
+      }else if(this.tabPane === '2'){
+        url = 'web/earlyWarningBasic/viewSafeWarnDetail'
+      }
+      this.$get(url, {
         id:id
       }).then((r) => {
         if (r.data.code === 1) {

@@ -12,45 +12,17 @@
         <img src="static/imgs/多边形1.png"/>
         <span class="modelTitle">预警详情</span>
       </div>
-     <div style="margin-left:1rem;padding-top:0.1rem;display: flex;justify-content: center;align-items: center;" v-if="issueSafetyWarningBtn">
-       <span style="color:#3BD996">>></span>
-       <a href="#" style="color:#46FFAC;font-size: 1.8rem;font-style: italic;">发布安全预警</a>
-     </div>
     </div>
     <!--预警详情-->
-    <div v-if="warningInfoVisible" style="height: 67rem;overflow-y: auto;">
+    <div style="height: 67rem;overflow-y: auto;">
       <div style="display: flex;flex-direction: row;justify-content: space-between;align-content: space-between;margin-top:2rem;">
         <div class="titleIcon">
           <img class="s-img" src="static/imgs/圆角矩形1220.png"/>
           <span class="s-title">基本信息</span>
         </div>
-        <div style="display: flex;flex-direction: row;margin-right:1rem;" v-if="isShowIfdisposal === '0'">
-          <div style="border:1px solid #3CDB95;background: rgba(70,255,172,0.2);padding:.5rem;cursor: pointer;" @click="handleIgnore()">
-            <img src="static/imgs/形状1257.png"/>
-            <span style="color:#46FFAC;font-size:1.6rem;font-family:'Microsoft YaHei UI';font-weight: 400;">忽略</span>
-          </div>
-          <div style="border:1px solid #3CDB95;background: rgba(70,255,172,0.2);margin-left:1rem;padding:.5rem;cursor: pointer;" @click="telephoneNotification()">
-            <img src="static/imgs/圆角矩形1221.png"/>
-            <span style="color:#46FFAC;font-size:1.6rem;font-family:'Microsoft YaHei UI';font-weight: 400;">电话通知</span>
-          </div>
-          <div v-if="cur !== 1&&[1, 8, 200].find((v) => {return v == userMsg.roleId;})" style="border:1px solid #FF380B;background: rgba(255, 56, 11, 0.2);margin-left:1rem;padding:.5rem;cursor: pointer;" @click="handleIssueSafetyWarning">
-            <img src="static/imgs/形状1259.png"/>
-            <span style="color:#FF500B;font-size:1.6rem;font-family:'Microsoft YaHei UI';font-weight: 400;">发布安全预警</span>
-          </div>
-        </div>
-        <!--<div v-if="handleResultVisible">-->
-        <div style="margin-right:1rem;" v-else>
-          <div class="handleResult" style="color:#3BD996;text-align: right;">已处置</div>
-          <div class="handleResult" style="color:#FFFFFF;font-size: 1.4rem;font-weight: 400;">
-            处置结果为:
-            <span v-if="isShowIfdisposal === '1'">电话通知</span>
-            <span v-else-if="isShowIfdisposal === '2'">忽略</span>
-            <span v-else-if="isShowIfdisposal === '3'">发布安全预警</span>
-          </div>
-        </div>
       </div>
       <!--设备预警基本信息-->
-      <div style="margin-top:1rem;" v-if="cur===0">
+      <div style="margin-top:1rem;" v-if="cur==='1'">
         <a-row type="flex" class="info">
           <a-col :span="3" :order="1" class="info-label">
             预警类型
@@ -130,7 +102,7 @@
         </a-row>
       </div>
       <!--安全预警基本信息-->
-      <div style="margin-top:1rem;" v-if="cur===1">
+      <div style="margin-top:1rem;" v-if="cur==='2'">
         <a-row type="flex" class="info">
           <a-col :span="3" :order="1" class="info-label">
             类别
@@ -251,7 +223,7 @@
         </a-row>
       </div>
       <!--模型预警基本信息-->
-      <div style="margin-top:1rem;" v-if="cur===2">
+      <div style="margin-top:1rem;" v-if="cur==='3'">
         <a-row type="flex" class="info">
           <a-col :span="3" :order="1" class="info-label">
             类别
@@ -318,23 +290,13 @@
             <img class="s-img" src="static/imgs/CHART拷贝3.png"/>
             <span class="s-title">监测数据详情</span>
           </div>
-          <!--<div style="margin-right:1rem;">
-            <a-radio-group :value="radioValue" button-style="solid" @change="onRadioChange">
-              <a-radio-button value="a">
-                指标数据
-              </a-radio-button>
-              <a-radio-button value="b">
-                模型指标
-              </a-radio-button>
-            </a-radio-group>
-          </div>-->
         </div>
         <div style="display: flex;flex-direction: row;margin-top:1rem;">
           <div style="margin-right:2rem;">
             <span>时间</span>
             <a-range-picker  :defaultValue="[moment(startDate, dateFormat), moment(endDate, dateFormat)]" @change="changeDate"></a-range-picker>
           </div>
-          <div v-if="radioValue !== 'b'">
+          <div>
             <span>类型</span>
             <a-select
               v-model="devValueName"
@@ -345,13 +307,8 @@
               </a-select-option>
             </a-select>
           </div>
-          <!--<div class="index-safety" @click="showSafetyIns">
-            <span style="color:#FFFFFF;margin-right:0.5rem;">指标安全说明</span>
-            <img src="static/imgs/使用说明.png" />
-          </div>-->
         </div>
         <component v-if="data.length !== 0" refid="main" :is="componentName" :yname="yname" :data="data" :boundary="boundary" :echart2DHeight="echart2DHeight" :pnDevId="chartsID(devValueId)" class="main-content" style="height: 350px;"></component>
-        <!--<div v-else-if="radioValue === 'b' && EChartsData.length !== 0" ref="EChartModelData" style="width:90rem;height:25rem;"></div>-->
         <div v-if="data.length === 0" style="margin:4rem 0;text-align: center;">
           <img src="static/imgs/暂无数据.png"/>
           <span class="no-data">暂无数据</span>
@@ -368,25 +325,6 @@
             <a slot="name" slot-scope="text">{{ text }}</a>
           </a-table>
         </div>
-        <!--<div v-if="radioValue === 'b'">
-          <a-table ref = "TableInfoModel"
-                   :columns="modelColumns"
-                   :data-source="modelSourceData"
-                   :pagination="false"
-                   :scroll="{y:220}"
-          >
-            <div slot="value"  slot-scope="text,record">
-              <span v-if="record.warnLevel === 0" style="color:#2dda9f;">{{record.value}}</span>
-              <span v-else-if="record.warnLevel === 1" style="color:#0099ff;">{{record.value}}</span>
-              <span v-else-if="record.warnLevel === 2" style="color:#dddd00;">{{record.value}}</span>
-              <span v-else-if="record.warnLevel === 3" style="color:#ffc54f;">{{record.value}}</span>
-              <span v-else-if="record.warnLevel === 4" style="color:#fc425e;">{{record.value}}</span>
-            </div>
-          </a-table>
-          <div style="margin-bottom:10px; float: right;">
-            <a-pagination size="small" :current="pagination.defaultCurrent" :page-size.sync="pagination.defaultPageSize" :total="total" @change="changePageNumber"/>
-          </div>
-        </div>-->
       </div>
       <!--甲方处置结果-->
       <div>
@@ -424,44 +362,21 @@
               {{warnDetailData.disposalRecord}}
             </a-col>
           </a-row>
-
       </div>
     </div>
-    <!--发布安全预警-->
-    <div v-if="issueSafetyWarningVisible">
-      <issue-safety-warnging :warnDetail="warnDetail" :warnType="safetyWarn.type" @addSafetyWarn="addSafetyWarn" @handleIssue="handleIssue"></issue-safety-warnging>
-    </div>
-   <!-- <telephone-notification
-      :visible="telephoneVisible"
-      :projectId="warnDetailData.projBasicId"
-      @handleTelephone="handleTelephone"
-      @onClose="()=>{telephoneVisible=false}"
-    ></telephone-notification>
-    &lt;!&ndash;指标安全说明&ndash;&gt;
-    <index-safety-description
-      v-if="isShowIndexSafety"
-      :visible="isShowIndexSafety"
-      :devValueName="devValueName"
-      :warnDetailData="warnDetailData"
-      @onClose="()=>{isShowIndexSafety=false}"
-    ></index-safety-description>-->
   </a-modal>
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapState} from 'vuex'
 import moment from 'moment'
-/*import TelephoneNotification from './telephoneNotification' // 电话通知
-import IssueSafetyWarnging from './issueSafetyWarning' // 发布安全预警*/
 import Echarts2D from '@/components/echarts/Echarts2D.vue'
-/*import IndexSafetyDescription from './indexSafetyDescription'*/
 import EchartsoLine from '@/components/echarts/EchartsoLine.vue'
 import EchartsLine from '@/components/echarts/EchartsLine.vue'
 import EchartsThinbar from '@/components/echarts/EchartsThinbar.vue'
 import EchartsPolar from '@/components/echarts/EchartsPolar.vue'
 import EchartsWave from '@/components/echarts/EchartsWave.vue'
 import EchartsScatter from '@/components/echarts/EchartsScatter.vue'
-/*import './info.css'*/
 export default {
   name: 'equipment-warning-info',
   data () {
@@ -473,10 +388,6 @@ export default {
       devValueId: '',
       warnTrend: '',
       isShowIfdisposal: '0',
-      telephoneVisible: false,
-      warningInfoVisible: true, // 预警详情页面
-      issueSafetyWarningBtn: false, // 安全预警title
-      issueSafetyWarningVisible: false, // 安全预警发布界面
       warnDetail: {}, // 发布安全预警获取的基本信息
       safetyWarn: {
         /*
@@ -485,7 +396,6 @@ export default {
          */
         type: '1'
       },
-      radioValue: 'a', // 指标数据图表单选按钮值
       devValueName: '',
       safetyIns: '',
       yname: '',
@@ -530,15 +440,11 @@ export default {
         size: 'small',
         showTotal: (total, range) => `共 ${total} 条`
       },
-      loading: false,
-      isShowIndexSafety: false
+      loading: false
     }
   },
   components: {
-    /*TelephoneNotification,
-    IssueSafetyWarnging,*/
     Echarts2D,
-    /*IndexSafetyDescription,*/
     EchartsoLine,
     EchartsLine,
     EchartsThinbar,
@@ -556,23 +462,18 @@ export default {
       default: () => {}
     },
     cur: {
-      type: Number,
-      default: 0
+      type: String,
+      default: '1'
     },
     warnId: {
       type: Number,
       default: 0
-    },
-    ifdisposal: {
-      type: String,
-      default: '0'
     }
   },
   watch: {
     visible (newVal) {
       if (newVal) {
-        this.isShowIfdisposal = this.ifdisposal
-        if (this.cur !== 1) {
+        if (this.cur !== '1') {
           this.getCalculateThreshoid()
           if (this.warnDetailData.target.length !== 0) {
             let indexItem = {}
@@ -581,7 +482,7 @@ export default {
             let valueId = ''
             if (this.warnDetailData.basicIndex !== undefined) {
               valueId = this.warnDetailData.basicIndex
-              this.warnDetailData.devValueList.find((item) => {
+              this.warnDetailData.target.find((item) => {
                 if (item.devValueId === valueId) {
                   this.devValueName = item.devValueName
                   this.safetyIns = item.safetyIns
@@ -600,16 +501,15 @@ export default {
       }
     },
     warnDetailData (newVal) {
-      this.warnDetail = newVal
       console.log('预警详情数据', this.warnDetailData)
-      if (this.warnDetailData.devValueList.length !== 0) {
-        this.devValueId = this.warnDetailData.devValueList[0].devValueId
+      if (this.warnDetailData.target.length !== 0) {
+        this.devValueId = this.warnDetailData.target[0].devValueId
       }
     }
   },
   mounted () {
-    if (this.warnDetailData.devValueList !== undefined) {
-      this.devValueId = this.warnDetailData.devValueList[0].devValueId
+    if (this.warnDetailData.target !== undefined) {
+      this.devValueId = this.warnDetailData.target[0].devValueId
     }
   },
   computed: {
@@ -617,8 +517,8 @@ export default {
       multipage: (state) => state.setting.multipage,
       cityCode: (state) => state.account.cityCode,
       cityType: (state) => state.account.cityType,
-      userMsg: (state) => state.account.user,
-    }),
+      userMsg: (state) => state.account.user
+    })
   },
   methods: {
     moment,
@@ -626,113 +526,8 @@ export default {
       this.data = []
       this.yname = ''
       this.devValueName = ''
-      this.radioValue = 'a'
       this.isShowIfdisposal = '0'
-      this.warningInfoVisible = true
-      this.issueSafetyWarningBtn = false
-      this.issueSafetyWarningVisible = false // 安全预警显隐
       this.$emit('onClose')
-    },
-    handleIgnore () {
-      this.getwarniDisposal('2')
-    },
-    telephoneNotification () {
-      this.telephoneVisible = true
-    },
-    handleTelephone () {
-      this.telephoneVisible = false
-      this.getwarniDisposal('1')
-    },
-    handleIssueSafetyWarning () {
-      this.warningInfoVisible = false
-      this.issueSafetyWarningBtn = true
-      this.issueSafetyWarningVisible = true
-      this.getWarnInformationById()
-    },
-    // 展示项目详情
-    showProjDetail (projId) {
-      this.$parent.getProjectDetail(projId)
-    },
-    // 展示隐患点详情
-    showHiddenDetail (projId, hiddenId) {
-      this.$parent.getProjectDetail(projId)
-      this.$parent.getHiddenDangerNew(hiddenId)
-    },
-    // 展示监测点详情
-    showPnDetail (projId, hiddenId, pnId) {
-      this.$parent.getProjectDetail(projId)
-      this.$parent.getHiddenDangerNew(hiddenId)
-      this.$parent.getProjPnDataOfHome(pnId)
-    },
-    // 预警处置
-    getwarniDisposal (ifdisposal) {
-      let params = {}
-      params.eid = this.warnId
-      params.ifdisposal = ifdisposal
-      this.$get('warnWeb/newHome/warniDisposal', {
-        ...params
-      }).then((r) => {
-        if (r.data.code === 1) {
-          this.isShowIfdisposal = ifdisposal
-          this.$emit('alarmList', this.cur)
-        } else {
-          this.$message.error('预警处置状态失败!')
-        }
-      })
-    },
-    handleIssue () {
-      this.warningInfoVisible = true
-      this.issueSafetyWarningBtn = false
-      this.issueSafetyWarningVisible = false
-    },
-    // 设备预警、模型计算基本信息
-    getWarnInformationById () {
-      let _this = this
-      let params = {}
-      params.id = _this.warnId
-      if (_this.safetyWarn.type === '1') {
-        params.type = 0
-      } else if (_this.safetyWarn.type === '2') {
-        params.type = 1
-      }
-      this.$get('warnWeb/earlyWarningBasicController/getWarnInformationById', {
-        ...params
-      }).then((r) => {
-        if (r.data.code === 1) {
-          let dataList = r.data.data
-          _this.warnDetail = dataList
-        } else if (r.data.code === 40006) {
-          _this.$message.warning(r.data.msg)
-        }
-      })
-    },
-    // 添加安全预警
-    addSafetyWarn (warnInformation, warnTitle, suggest, warnLevel) {
-      let _this = this
-      let params = {}
-      params.fromWarnLevel = _this.warnDetail.warnLevel
-      params.fromWarnParam = _this.warnDetail.warnValue
-      params.hiddenId = _this.warnDetail.hiddenId
-      params.id = _this.warnDetail.id
-      params.level = warnLevel
-      params.pnId = _this.warnDetail.pnId
-      params.projBasicId = _this.warnDetail.projBasicId
-      params.suggest = suggest
-      params.type = _this.warnDetail.warnFromType
-      params.warnInformation = warnInformation
-      params.warnTitle = warnTitle
-      this.$post('warnWeb/earlyWarningBasicController/addSafetyWarn', {
-        ...params
-      }).then((r) => {
-        if (r.data.code === 1) {
-          _this.$message.success('安全预警发布成功!')
-          _this.getwarniDisposal('3')
-          _this.handleIssue()
-          _this.$emit('getAllWarnMessageCount') // 发布安全预警 安全预警列表修改未读角标
-        } else {
-          _this.$message.error('安全预警发布失败!')
-        }
-      })
     },
     handleDevValueNameChange (item) {
       // console.log('预警item', item)
@@ -926,7 +721,7 @@ export default {
       })
     },
     reset () {
-      if(this.$refs.TableInfo)this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
+      if (this.$refs.TableInfo) this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
       if (this.paginationInfo) {
         this.paginationInfo.current = this.pagination.defaultCurrent
         this.paginationInfo.pageSize = this.pagination.defaultPageSize
@@ -936,45 +731,19 @@ export default {
       this.startDate = dateStrings[0]
       this.endDate = dateStrings[1]
       this.reset()
-      if (this.radioValue === 'b') {
-        this.getPnModelChart(this.startDate, this.endDate)
-        this.getWarnByPnId(undefined, this.startDate, this.endDate)
-      } else if (this.radioValue === 'a') {
-        this.updateChart({
-          pnId: this.warnDetailData.pnId,
-          devValueId: this.warnInfo.devValueId,
-          devValueName: this.warnInfo.devValueName,
-          startDate: this.startDate,
-          endDate: this.endDate
-        })
-        this.fetch({
-          devValueId: this.warnInfo.devValueId,
-          devValueName: this.warnInfo.devValueName,
-          startDate: this.startDate,
-          endDate: this.endDate
-        })
-      }
-    },
-    onRadioChange (e) {
-      this.radioValue = e.target.value
-      if (e.target.value === 'b') {
-        this.getPnModelChart(this.startDate, this.endDate)
-        this.getWarnByPnId(undefined, this.startDate, this.endDate)
-      } else if (this.radioValue === 'a') {
-        this.updateChart({
-          pnId: this.warnDetailData.pnId,
-          devValueId: this.warnInfo.devValueId,
-          devValueName: this.warnInfo.devValueName,
-          startDate: this.startDate,
-          endDate: this.endDate
-        })
-        this.fetch({
-          devValueId: this.warnInfo.devValueId,
-          devValueName: this.warnInfo.devValueName,
-          startDate: this.startDate,
-          endDate: this.endDate
-        })
-      }
+      this.updateChart({
+        pnId: this.warnDetailData.pnId,
+        devValueId: this.warnInfo.devValueId,
+        devValueName: this.warnInfo.devValueName,
+        startDate: this.startDate,
+        endDate: this.endDate
+      })
+      this.fetch({
+        devValueId: this.warnInfo.devValueId,
+        devValueName: this.warnInfo.devValueName,
+        startDate: this.startDate,
+        endDate: this.endDate
+      })
     },
     fetch (params = {}) {
       this.loading = true
@@ -1055,10 +824,6 @@ export default {
           _this.pagination.defaultCurrent = 1
         }
       })
-    },
-    // 指标安全说明弹出框
-    showSafetyIns () {
-      this.isShowIndexSafety = true
     }
   },
   filters: {

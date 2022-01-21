@@ -14,13 +14,12 @@
           </div>
         </div>
       </div>
-        
     </div>
     <div class="pointer_info" :style="{ left: (select.xaxis + 70) + 'px', top: (select.yaxis + 66) + 'px', display: select.display }">
       <div class="headtitle">
         <a-row>
           <a-col :span="20" :style="{ textAlign: 'left'}">{{ select.pnName }}</a-col>
-          <a-col :span="4"><a-icon type="snippets" :style="{ cursor: 'pointer' }" /></a-col>
+          <a-col :span="4"><a-icon type="snippets" :style="{ cursor: 'pointer' }" @click="showMDetail"/></a-col>
         </a-row>
       </div>
       <div class="bodybox">
@@ -30,15 +29,27 @@
         </a-row>
       </div>
     </div>
+    <component
+      v-if="isShowProjPn"
+      :is="componentName"
+      :visible="isShowProjPn"
+      :indexValueId="devValueId"
+      :HPDevValueNameList="HPDevValueNameList"
+      :HPDevBasic="HPDevBasic"
+      :HPPnDetail="HPPnDetail"
+      @getProjPnDataOfHome="getProjPnDataOfHome"
+      @onClose="()=>{isShowProjPn=false}"
+      class="main-content"
+    ></component>
   </div>
 </template>
 
 <script>
-
+import MainContent from '@/components/survey/MainContent.vue'
 export default {
   name: 'design',
   components: {
-
+    MainContent
   },
   props: {
     data: {
@@ -55,7 +66,14 @@ export default {
         yaxis: 0,
         display: 'none'
       },
-      activeKey: ''
+      activeKey: '',
+      componentName: 'MainContent',
+      HPPnDetail: null, // 监测点信息
+      HPDevBasic: null, // 设备信息
+      HPDevValueNameList: [], // 指标名称列表
+      mapProjPnId: 0, // 记录点击地图监测点id
+      devValueId: 0, // 指标id
+      isShowProjPn: false
     }
   },
   mounted () {
@@ -87,7 +105,9 @@ export default {
     },
     showMDetail () {
       // console.log('选中监测点信息', this.select)
-      this.$emit('show', this.select.projectId, this.select.hiddenId, this.select.projPnId)
+      // this.$emit('show', this.select.projectId, this.select.hiddenId, this.select.projPnId)
+      this.getProjPnDataOfHome(this.select.projPnId)
+      this.isShowProjPn = true
     },
     cancelModel () {
       this.$emit('onClose')
@@ -98,7 +118,7 @@ export default {
         projPnId: projPnId
       }
       this.$get('web/hiddenScene/getConfiguredSomePnInfo', {
-        ...params,
+        ...params
       }).then((r) => {
         if (r.data.data !== null) {
           let data = r.data.data
@@ -117,6 +137,24 @@ export default {
         yaxis: 0,
         display: 'none'
       }
+    },
+    // 监测点详情
+    /*
+    * pnId:监测设备id
+    * indexId:指标id
+    * */
+    getProjPnDataOfHome (pnId) {
+      let params = {}
+      params.projPnId = pnId
+      this.$get('web/projPn/projPnDetail', {...params}).then((r) => {
+        let projPnData = r.data.data
+        this.HPPnDetail = projPnData.pnDetail
+        if (projPnData.devValueList.length !== 0) {
+          this.devValueId = projPnData.devValueList[0].devValueId
+        }
+        this.HPDevValueNameList = projPnData.devValueList
+        this.HPDevBasic = projPnData.devBasic
+      })
     }
   }
 }
