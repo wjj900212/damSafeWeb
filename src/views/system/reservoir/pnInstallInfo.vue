@@ -90,9 +90,9 @@
     <div style="margin-top:20px;">
       <div style="margin-bottom:10px;font-size: 14px;color:#666666;font-weight: 400;">实景照片:</div>
       <div class="height" v-if="realImgList.length !== 0" style="margin-bottom:10px;">
-        <viewer :images="realImgList">
+        <pic-viewer :images="realImgList">
           <img v-for="src in realImgList" :src="src" :key="src" style="width:100px;height:100px;border-radius: 4px;margin-right:5px;">
-        </viewer>
+        </pic-viewer>
       </div>
       <div v-else style="text-align: center;">
         <img src="static/img/暂无数据 .png"/>

@@ -9,10 +9,16 @@ import VueApexCharts from 'vue-apexcharts'
 import 'ant-design-vue/dist/antd.css'
 import * as echarts from 'echarts'
 import cesiumJS from 'utils/cesiumJS'
+import PicViewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
 
 import 'utils/install'
 var Cesium = require('cesium/Cesium')
 var widgets = require('cesium/Widgets/widgets.css')
+Vue.use(PicViewer)
+PicViewer.setDefaults({
+  Options: {'inline': true, 'button': true, 'navbar': true, 'title': true, 'toolbar': true, 'movable': true, 'zoomable': true, 'rotatable': true, 'scalable': true, 'transition': true, 'fullscreen': true, 'keyboard': true, 'url': 'data-source'}
+})
 Vue.config.productionTip = false
 Vue.use(Antd)
 Vue.use(db)
