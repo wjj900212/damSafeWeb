@@ -75,7 +75,6 @@
                   flex-direction: row;
                   position: absolute;
                   margin-left: 4rem;
-                  background-color: #000c17;
                 "
                 :style="{ height: hiddenHeight, zIndex: tagZIndex }"
               >
@@ -995,15 +994,15 @@ export default {
       params.devValueId = this.devValueId;
       params.startDate = this.startDate;
       params.endDate = this.endDate;
-      this.$get("warnWeb/homePage/devValueDataList", { ...params }).then(
+      this.$get("web/projPn/devValueDataList", { ...params }).then(
         (r) => {
           let data = r.data.data;
           // if (data.result.length === 0) {
           //   return
           // }
           const pagination = { ...this.pagination };
-          pagination.total = data.count;
-          this.sourceData = data.result;
+          pagination.total = data.total;
+          this.sourceData = data.records;
           this.pagination = pagination;
           // 数据加载完毕，关闭loading
           this.loading = false;
@@ -1022,40 +1021,10 @@ export default {
           }
         }
       );
-      /* if (!params.projPnParentId || !params.devBasicId || !params.devValueStrId) {
-        return
-      }
-      // 显示loading
-      this.loading = true
-      if (typeof (params.pageSize) === 'undefined') {
-        params.pageSize = this.pagination.defaultPageSize
-        params.pageNum = this.pagination.defaultCurrent
-      }
-      params.sortField = 'time'
-      params.sortOrder = 'desc'
-      let url = '/api/data/query/' + params.projPnParentId + '/' + params.devBasicId + '/' + params.devValueStrId
-      this.$get(url, {
-        ...params
-      }).then((r) => {
-        let data = r.data.result
-        const pagination = { ...this.pagination }
-        pagination.total = data.count
-        this.sourceData = data.result
-        this.pagination = pagination
-        // 数据加载完毕，关闭loading
-        this.loading = false
-        this.chartParams.devValueId = params.devValueId
-        this.chartParams.id = data.result[0].id
-        if (type !== '2D') {
-          this.selectRowId = data.result[0].id
-          this.updateChart2(this.chartParams)
-        }
-      }) */
     },
     updateChart(params = {}) {
       this.loading = true;
-      // let url = '/api/data/query/' + params.projPnParentId + '/' + params.devBasicId + '/' + params.devValueStrId + '/' + params.id
-      let url = "warnWeb/processLine/timeValue";
+      let url = "web/projPn/processLine/timeValue";
       this.$get(url, {
         ...params,
       }).then((r) => {

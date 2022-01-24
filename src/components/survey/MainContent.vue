@@ -134,19 +134,20 @@
         </div>
       </div>
     </div>
-    <div id="modelIndexInfo" style="width:100%;" v-if="activeTab === '2'">
+    <!--<div id="modelIndexInfo" style="width:100%;" v-if="activeTab === '2'">
       <ModelIndex
         ref="modalIndex"
         :pnId="pnId"
         :CalculateValue="CalculateValue"
       ></ModelIndex>
-    </div>
+    </div>-->
   </a-modal>
 </template>
 
 <script>
 import SurveyDetail from '@/components/survey/SurveyDetail.vue'
 import ModelIndex from './ModelIndex'
+import '../../../static/less/info.css'
 export default {
   name: 'MainContent',
   components: {
@@ -158,7 +159,8 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       startDate: new Date((new Date()).getFullYear(), (new Date()).getMonth() - 1, (new Date()).getDate()).format('yyyy-MM-dd'),
       endDate: new Date((new Date()).getFullYear(), (new Date()).getMonth(), (new Date()).getDate()).format('yyyy-MM-dd'),
-      list: [{id: '0', name: '监测数据详情'}, {id: '1', name: '监测点详情'}, {id: '2', name: '模型指数'}],
+      // list: [{id: '0', name: '监测数据详情'}, {id: '1', name: '监测点详情'}, {id: '2', name: '模型指数'}],
+      list: [{id: '0', name: '监测数据详情'}, {id: '1', name: '监测点详情'}],
       activeTab: '0', // tab选中
 	    componentName: 'SurveyDetail',
       devValueName: '',
@@ -198,7 +200,7 @@ export default {
   },
   mounted () {
     this.getCalculateThreshoid()
-    console.log('指标列表',this.HPDevValueNameList)
+    console.log('指标列表', this.HPDevValueNameList)
     if (this.HPDevValueNameList.length !== 0) {
       this.devValueName = this.HPDevValueNameList[0].devValueName
     }
@@ -302,6 +304,7 @@ export default {
     line-height: 5rem;
     position: absolute;
     top:4rem;
+    right:0.5rem;
   }
   .potential-label ul{
     list-style: none;
@@ -332,6 +335,9 @@ export default {
       color: #3CDB95;
       opacity: 1;
     }
+  }
+  #pnDataInfo,#baseInfo,#modelIndexInfo{
+    margin-top:4rem;
   }
   /*.index-mark{
     text-align: center;
