@@ -183,8 +183,8 @@
 					},
 					{
 						"icon": "audit",
-						"path": "/reservoir/monitor/osmoticPressure",
-						"component": "reservoir/monitorScene/osmoticPressure",
+						"path": "/reservoir/monitor/osmotic",
+						"component": "reservoir/monitorScene/osmotic",
 						"name": "渗压监测",
 						"hidden": false,
 						"isItem": "0",

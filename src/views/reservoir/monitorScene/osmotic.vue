@@ -57,7 +57,7 @@
         text: '',
         hiddenId: '',
         hiddenArr: [],
-        overViewData:{pnList:[]}
+        overViewData:{pnList:[],reservoirStatus:''}
       };
     },
     computed: {
@@ -102,6 +102,7 @@
       
       //   查询基本信息
       getMonitorCondition() {
+        console.log('-----------------')
         let _this = this
         this.$get('/web/monitorScene/monitorConditionOsmotic', {
           hiddenId: _this.hiddenId
