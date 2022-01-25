@@ -7,6 +7,7 @@ import LoginView from '@/views/login/Common'
 import EmptyPageView from '@/views/common/EmptyPageView'
 import HomePageView from '@/views/HomePage'
 import db from 'utils/localstorage'
+import websocket from 'utils/webSocket'
 // import request from 'utils/request'
 
 Vue.use(Router)
@@ -35,7 +36,17 @@ let asyncRouter
 // 导航守卫，渲染动态路由
 router.beforeEach((to, from, next) => {
   if (whiteList.indexOf(to.path) !== -1) {
+    asyncRouter = null
+    db.clear()
+    console.log('路由开始')
+    websocket.websocketclose()
     next()
+  } else {
+    if (asyncRouter) {
+      console.log('路由创建：', to.path)
+      console.count()
+      websocket.created()
+    }
   }
   let token = db.get('USER_TOKEN')
   let user = db.get('USER')

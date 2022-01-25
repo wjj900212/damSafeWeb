@@ -3,19 +3,18 @@
       'home-page'
     ]">
     <cesium-page :isSpin="isSpin">
-      <!-- <ul id="hom-layers-ul" v-show="isShowLayers">
-        <li @click="init3">
-          <img src="static/images/rain.png" />
-          <div>电子地图</div>
-        </li>
-        <li @click="initRain">
-          <img
-            style="border: 1px solid rgb(87, 240, 198)"
-            src="static/images/sanwei.png"
-          />
-          <div style="color: rgb(87, 240, 198)">影像</div>
-        </li>
-      </ul> -->
+      <div v-show="ishiddenHomePointPopup" :style="hiddenPosition" id="hiddenHomePointPopup" class="homePopup">
+        <div id="hhpp-proj" style="display: flex;justify-content: space-between;align-content: space-between;">
+          <div id="hhpp-proj-name" style="font-size: 1.6rem;color: #FEFFFF;"></div>
+          <div id="hhpp-proj-type" style="font-size: 1.6rem;"></div>
+          <div class="info">详情</div>
+        </div>
+        <div class="line"></div>
+        <div style="display: flex;font-size: 1.4rem;margin-bottom:1.3rem;align-items: center;"><div class="circle"></div><div id="hhpp-location"></div><img src="static/img/定位-2.png"></div>
+        <div id="hhpp-img"></div>
+        <div id="hhpp-data"></div>
+        <div id="hhpp-scene"></div>
+      </div>
     </cesium-page>
     <!-- 左侧内容 -->
     <div class="leftView">
@@ -50,81 +49,93 @@
   </div>
 </template>
 <script>
-  import {
-    mapState
-  } from "vuex";
-  import moment from "moment";
-  import cesiumPage from '@/components/cesium/cesium.vue'
-  import safeStatus from './homePage/safeStatus.vue' //左侧水库安全状态
-  import reservoirList from './homePage/list.vue' //左侧水库概览列表
-  import centerTotal from './homePage/centertotal.vue' //中间内容 数量统计
-  import rainWaterMonitor from "./homePage/rainWaterMonitor.vue" //右侧 雨水情监测
-  import safeAmonitor from './homePage/safeAmonitor.vue' // 大坝安全监测 重点区域监控 
-  import dynamic from './homePage/dynamic.vue' // 实时动态 
-  moment.locale("zh-cn");
+import {
+  mapState
+} from 'vuex'
+import moment from 'moment'
+import cesiumPage from '@/components/cesium/cesium.vue'
+import safeStatus from './homePage/safeStatus.vue' // 左侧水库安全状态
+import reservoirList from './homePage/list.vue' // 左侧水库概览列表
+import centerTotal from './homePage/centertotal.vue' // 中间内容 数量统计
+import rainWaterMonitor from './homePage/rainWaterMonitor.vue' // 右侧 雨水情监测
+import safeAmonitor from './homePage/safeAmonitor.vue' // 大坝安全监测 重点区域监控
+import dynamic from './homePage/dynamic.vue' // 实时动态
+moment.locale('zh-cn')
 
-  export default {
-    name: "HomePage",
-    components: {
-      cesiumPage,
-      safeStatus,
-      reservoirList,
-      centerTotal,
-      rainWaterMonitor,
-      safeAmonitor,
-      dynamic
-    },
-    data() {
-      return {
-        isSpin: false,
-        isShowLayers: true,
-      };
-    },
-    computed: {
-      ...mapState({
-        multipage: (state) => state.setting.multipage,
-      websocketData: (state) => state.account.websocketData,
-        user: (state) => state.account.user,
-      }),
-      avatar() {
-        return `static/avatar/${this.user.avatar}`;
+export default {
+  name: 'HomePage',
+  components: {
+    cesiumPage,
+    safeStatus,
+    reservoirList,
+    centerTotal,
+    rainWaterMonitor,
+    safeAmonitor,
+    dynamic
+  },
+  data () {
+    return {
+      isSpin: false,
+      isShowLayers: true,
+      isShowLegend: {
+        warnLevel: true,
+        devPoint: false
       },
-    },
-    watch:{
-      websocketData(n,o){
-        console.log(n,o)
+      ishiddenHomePointPopup: false,
+      hiddenPosition: {
+        left: '0px',
+        top: '0px'
       }
+    }
+  },
+  computed: {
+    ...mapState({
+      multipage: (state) => state.setting.multipage,
+      websocketData: (state) => state.account.websocketData,
+      user: (state) => state.account.user
+    }),
+    avatar () {
+      return `static/avatar/${this.user.avatar}`
+    }
+  },
+  watch: {
+    websocketData (n, o) {
+      console.log(n, o)
+    }
+  },
+  methods: {
+    toggleLayers () {
+      this.isShowLayers = !this.isShowLayers
     },
-    methods: {
-      toggleLayers() {
-        this.isShowLayers = !this.isShowLayers
-      },
-      init3() {
-        let viewer = mapviewer.viewer
-        viewer.imageryLayers._layers[0].show = false
-        viewer.imageryLayers._layers[1].show = true
-        document.getElementById('hom-layers-ul').getElementsByTagName('img')[0].style.border =
+    init3 () {
+      let viewer = mapviewer.viewer
+      viewer.imageryLayers._layers[0].show = false
+      viewer.imageryLayers._layers[1].show = true
+      document.getElementById('hom-layers-ul').getElementsByTagName('img')[0].style.border =
           '1px solid rgb(87, 240, 198)'
-        document.getElementById('hom-layers-ul').getElementsByTagName('img')[1].style.border =
+      document.getElementById('hom-layers-ul').getElementsByTagName('img')[1].style.border =
           '1px solid rgb(255, 255, 255)'
-        document.getElementById('hom-layers-ul').getElementsByTagName('div')[0].style.color = 'rgb(87, 240, 198)'
-        document.getElementById('hom-layers-ul').getElementsByTagName('div')[1].style.color = 'rgb(110, 164, 153)'
-      },
-      initRain() {
-        let viewer = mapviewer.viewer
-        viewer.imageryLayers._layers[0].show = true
-        viewer.imageryLayers._layers[1].show = false
-        document.getElementById('hom-layers-ul').getElementsByTagName('img')[0].style.border =
-          '1px solid rgb(255, 255, 255)'
-        document.getElementById('hom-layers-ul').getElementsByTagName('img')[1].style.border =
-          '1px solid rgb(87, 240, 198)'
-        document.getElementById('hom-layers-ul').getElementsByTagName('div')[0].style.color = 'rgb(110, 164, 153)'
-        document.getElementById('hom-layers-ul').getElementsByTagName('div')[1].style.color = 'rgb(87, 240, 198)'
-      },
+      document.getElementById('hom-layers-ul').getElementsByTagName('div')[0].style.color = 'rgb(87, 240, 198)'
+      document.getElementById('hom-layers-ul').getElementsByTagName('div')[1].style.color = 'rgb(110, 164, 153)'
     },
-    mounted() {},
-  };
-
+    initRain () {
+      let viewer = mapviewer.viewer
+      viewer.imageryLayers._layers[0].show = true
+      viewer.imageryLayers._layers[1].show = false
+      document.getElementById('hom-layers-ul').getElementsByTagName('img')[0].style.border =
+          '1px solid rgb(255, 255, 255)'
+      document.getElementById('hom-layers-ul').getElementsByTagName('img')[1].style.border =
+          '1px solid rgb(87, 240, 198)'
+      document.getElementById('hom-layers-ul').getElementsByTagName('div')[0].style.color = 'rgb(110, 164, 153)'
+      document.getElementById('hom-layers-ul').getElementsByTagName('div')[1].style.color = 'rgb(87, 240, 198)'
+    }
+  },
+  mounted () {
+    this.$cesiumJS.clearMap(this)
+    this.$cesiumJS.initMap(this, 'homePage', this.isShowLegend)
+    this.$websocket.sendThis(this)
+  }
+}
 </script>
 <style lang="less">
   #hom-layers-ul {
@@ -159,133 +170,6 @@
   #hom-layers-ul div {
     color: rgb(110, 164, 153);
   }
-
-  .home-page {
-
-    .head-info {
-      margin-bottom: 0.5rem;
-
-      .head-info-card {
-        padding: 0.5rem;
-        border-color: #f1f1f1;
-
-        .head-info-avatar {
-          display: inline-block;
-          float: left;
-          margin-right: 1rem;
-
-          img {
-            width: 5rem;
-            border-radius: 2px;
-          }
-        }
-
-        .head-info-count {
-          display: inline-block;
-          float: left;
-
-          .head-info-welcome {
-            font-size: 1.05rem;
-            margin-bottom: 0.1rem;
-          }
-
-          .head-info-desc {
-            color: rgba(0, 0, 0, 0.45);
-            font-size: 0.8rem;
-            padding: 0.2rem 0;
-
-            p {
-              margin-bottom: 0;
-            }
-          }
-
-          .head-info-time {
-            color: rgba(0, 0, 0, 0.45);
-            font-size: 0.8rem;
-            padding: 0.2rem 0;
-          }
-        }
-      }
-    }
-
-    .count-info {
-      .visit-count-wrapper {
-        padding-left: 0 !important;
-
-        .visit-count {
-          padding: 0.5rem;
-          border-color: #f1f1f1;
-
-          .ant-card-body {
-            padding: 0.5rem 1rem !important;
-          }
-        }
-      }
-
-      .project-wrapper {
-        padding-right: 0 !important;
-
-        .project-card {
-          border: none !important;
-
-          .ant-card-head {
-            border-left: 1px solid #f1f1f1 !important;
-            border-top: 1px solid #f1f1f1 !important;
-            border-right: 1px solid #f1f1f1 !important;
-          }
-
-          .ant-card-body {
-            padding: 0 !important;
-
-            table {
-              width: 100%;
-
-              td {
-                width: 50%;
-                border: 1px solid #f1f1f1;
-                padding: 0.6rem;
-
-                .project-avatar-wrapper {
-                  display: inline-block;
-                  float: left;
-                  margin-right: 0.7rem;
-
-                  .project-avatar {
-                    color: #42b983;
-                    background-color: #d6f8b8;
-                  }
-                }
-              }
-            }
-          }
-
-          .project-detail {
-            display: inline-block;
-            float: left;
-            text-align: left;
-            width: 78%;
-
-            .project-name {
-              font-size: 0.9rem;
-              margin-top: -2px;
-              font-weight: 600;
-            }
-
-            .project-desc {
-              color: rgba(0, 0, 0, 0.45);
-
-              p {
-                margin-bottom: 0;
-                font-size: 0.6rem;
-                white-space: normal;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
   .home-page {
 
     .leftView {
@@ -350,5 +234,63 @@
       }
     }
   }
-
+  .homePopup {
+    position: absolute;
+    z-index: 9999;
+    height: 500px;
+    width: 376px;
+    background: url("../../static/img/弹框-bg.png");
+    padding: 20px 30px;
+    color:#ffffff;
+    .info{
+      width:5.5rem;
+      height: 2.3rem;
+      line-height: 2.3rem;
+      font-size: 1.4rem;
+      border: 1px solid;
+      border-image: linear-gradient(0deg, #18BFE2, #FFFFFF) 1 1;
+      border-radius: 0.8rem;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(10,16,40,0.3);
+    }
+    .line{
+      width: 31rem;
+      height: 1px;
+      background: #0084FF;
+      margin-top:0.8rem;
+      margin-bottom:1.8rem;
+    }
+    .circle{
+      width: 6px;
+      height: 6px;
+      background: #27FFE8;
+      box-shadow: 0px 0px 6px 0px #2DBCFF;
+      border-radius: 50%;
+    }
+    #hhpp-location{
+      margin-left:0.5rem;
+      margin-right:0.5rem;
+    }
+    #hhpp-img{
+      width: 30.6rem;
+      height: 15.7rem;
+    }
+    #hhpp-data{
+      width: 31.7rem;
+      height: 3.5rem;
+      line-height: 3.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-content: space-between;
+      padding:0px 0.5rem;
+      border: 1px solid #02BDED;
+      margin-top:0.9rem;
+      margin-bottom:2rem;
+    }
+    #hhpp-scene{
+      font-size: 1.4rem;
+      color: #C3CDE5;
+    }
+  }
 </style>

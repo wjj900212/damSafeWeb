@@ -193,6 +193,8 @@ export default {
       setColor: 'setting/setColor',
       setReservoirList: 'account/setReservoirList',
       setReservoirId: 'account/setReservoirId',
+      setCityCode: 'account/setCityCode',
+      setCityName: 'account/setCityName'
     }),
     saveLoginData (data) {
       this.setToken(data.token)
@@ -200,6 +202,8 @@ export default {
       this.setUser(data.user)
       this.setPermissions(data.permissions)
       this.setRoles(data.roles)
+      this.setCityCode(data.user.cityCode)
+      this.setCityName(data.user.cityName)
       this.setTheme(data.config.theme)
       this.setLayout(data.config.layout)
       this.setMultipage(data.config.multiPage === '1')

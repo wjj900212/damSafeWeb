@@ -9,7 +9,7 @@
     </drawer> -->
     <a-layout>
       <global-header :menuData="menuData" :collapsed="collapsed" @toggleCollapse="toggleCollapse"/>
-      <a-layout-content :style="{height:'calc(100vh - 59px)'}" :class="fixHeader ? 'fixed-header-content' : null">
+      <a-layout-content :style="{height:'calc(100vh - 81px)'}" :class="fixHeader ? 'fixed-header-content' : null">
         <slot></slot>
       </a-layout-content>
       <!--<a-layout-footer style="padding: .29rem 0" class="copyright">
@@ -139,6 +139,6 @@ export default {
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
   }
   .fixed-header-content {
-    margin: 59px 0px 0 !important;
+    margin: 81px 0px 0 !important;
   }
 </style>

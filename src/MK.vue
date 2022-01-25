@@ -167,8 +167,9 @@ Date.prototype.format = function (fmt) {
     background: #fafafa;
   }
   .ant-layout-header, .system-top-menu {
-    height: 59px !important;
-    line-height: 59px !important;
+    height: 81px !important;
+    line-height: 81px !important;
+    background: linear-gradient(-1deg, #000F3F, #072B9F) !important;
   }
   .ant-form-item {
     margin-bottom: 1rem !important;

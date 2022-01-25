@@ -1,5 +1,7 @@
 import globalFunction from 'utils/globalFunction'
 import mapviewer from 'utils/viewer'
+import {getText} from './utils'
+
 let monitorBillboardUrl = {
   0: 'static/images/monitor_point_0.png',
   1: 'static/images/monitor_point_1.png',
@@ -11,12 +13,10 @@ let monitorBillboardUrl = {
   'devBasicId1': 'static/images/monitor_point_devBasicId1.png'
 }
 let hiddenBillboardUrl = {
-  0: 'static/images/hidden_point_0.png',
-  1: 'static/images/hidden_point_1.png',
-  2: 'static/images/hidden_point_2.png',
-  3: 'static/images/hidden_point_3.png',
-  4: 'static/images/hidden_point_4.png',
-  'other': 'static/images/hidden_point_gray.png'
+  0: 'static/img/绿.png',
+  1: 'static/img/黄.png',
+  2: 'static/img/红.png',
+  'other': 'static/img/绿.png'
 }
 let pickedDynamicPictureEvent
 let pickedEntity
@@ -64,7 +64,7 @@ let cesiumJS = {
     if (page === 'homePage') {
       // document.getElementById('globle-mask').style.display = 'block'
       setTimeout(() => {
-        vue.$get('warnWeb/newHome/hiddenInfoInMap', {
+        vue.$get('web/onePicture/getUserReservoir', {
           ...{}
         }).then((r) => {
           let data = r.data.data
@@ -74,7 +74,7 @@ let cesiumJS = {
       // 隐患风险等级
       setTimeout(() => {
         that.getHiddenInfo(vue, {})
-        that.getMonInfo(vue, {})
+        // that.getMonInfo(vue, {})
       }, 2500)
       that.eventInited = false
       that.initHomeEvent(vue)
@@ -101,13 +101,13 @@ let cesiumJS = {
           isShowLegend.warnLevel = false
         }
       })
-    } else if (page === 'RealTime') {
+    }/* else if (page === 'RealTime') {
       that.removeHomeWheelEvent(vue)
       that.initRouteEvent(vue)
     } else if (page === 'SeoQuery') {
       document.getElementById('globle-mask').style.display = 'none'
       that.initRouteEvent(vue)
-    }
+    } */
     // 禁用双击事件
     viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
   },
@@ -124,12 +124,11 @@ let cesiumJS = {
     // 隐患点和监测点和隐患范围
     let that = this
     // let polygon = this.getPolygon(extent)
-    vue.$get('warnWeb/homePage/getAdminInfo', {
-      // ...{ cityCode: vue.cityCode, polygon: polygon }
-      ...{ cityCode: vue.cityCode }
+    vue.$get('web/onePicture/getUserReservoir', {
+      ...{}
     }).then((r) => {
       let data = r.data.data
-      that.showHiddenHomePoints(data.hiddenList, vue)
+      that.showHiddenHomePoints(data, vue)
       // document.getElementById('globle-mask').style.display = 'none'
     })
   },
@@ -274,6 +273,7 @@ let cesiumJS = {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
   },
   getDataList (pickData) {
+    console.log('getDataList***pickData=', pickData)
     let data = []
     for (let index = 0; index < pickData.length; index++) {
       if (pickData[index].hasOwnProperty('collection')) {
@@ -287,10 +287,10 @@ let cesiumJS = {
           obj.hiddenName = JSON.parse(JSON.stringify(pickData[index].id.attribute.hiddenName))
         } else if (obj.name === 'hiddenPoint') {
           obj.label = JSON.parse(JSON.stringify(pickData[index].id.label.text._value))
-          obj.warnType = JSON.parse(JSON.stringify(pickData[index].id.attribute.warnType))
+          /* obj.warnType = JSON.parse(JSON.stringify(pickData[index].id.attribute.warnType))
           obj.projBasicName = JSON.parse(JSON.stringify(pickData[index].id.attribute.projBasicName))
           obj.warnInformation = JSON.parse(JSON.stringify(pickData[index].id.attribute.warnInformation))
-          obj.warnTime = JSON.parse(JSON.stringify(pickData[index].id.attribute.warnTime))
+          obj.warnTime = JSON.parse(JSON.stringify(pickData[index].id.attribute.warnTime)) */
         } else if (obj.name === 'monitorPoint') {
           obj.label = JSON.parse(JSON.stringify(pickData[index].id.label.text._value))
           obj.warnType = JSON.parse(JSON.stringify(pickData[index].id.attribute.warnType))
@@ -298,22 +298,24 @@ let cesiumJS = {
           obj.warnInformation = JSON.parse(JSON.stringify(pickData[index].id.attribute.warnInformation))
           obj.warnTime = JSON.parse(JSON.stringify(pickData[index].id.attribute.warnTime))
         }
-        obj.level = JSON.parse(JSON.stringify(pickData[index].id.attribute.level))
+        /* obj.level = JSON.parse(JSON.stringify(pickData[index].id.attribute.level)) */
         obj.longitude = JSON.parse(JSON.stringify(pickData[index].id.attribute.longitude))
         obj.latitude = JSON.parse(JSON.stringify(pickData[index].id.attribute.latitude))
         data.push(obj)
       }
     }
+    console.log('getDataList***data=', data)
     return data
   },
   doPick (pick, vue) {
     let that = this
     let Cesium = vue.Cesium
     let viewer = mapviewer.viewer
-    console.log(that.selectObj)
+    console.log('doPick===that.selectObj', that.selectObj)
     if (Object.keys(that.selectObj).length !== 0) {
       that.locateToHomePagePoint(that.selectObj, vue, false)
     }
+    console.log('doPick===pick', pick)
     let obj = {}
     if (Cesium.defined(pick) && (pick.name === 'highestWarnPoint')) {
       if (pick !== undefined) {
@@ -396,40 +398,18 @@ let cesiumJS = {
     let coord = globalFunction.gcj02towgs84(lng, lat)
     record.longitude = coord[0]
     record.latitude = coord[1]
-    let level = record.level
-    let _color = '#ffffff'
+    let level = record.reservoirStatus
     let name = 'highestWarnPoint'
-    if (level === 1) {
-      _color = 'rgb(79, 129, 233)'
-    } else if (level === 2) {
-      _color = 'rgb(235, 196, 61)'
-    } else if (level === 3) {
-      _color = 'rgb(247, 146, 65)'
-    } else if (level === 4) {
-      _color = 'rgb(255, 89, 90)'
-    } else if (level === 0) {
-      _color = '#00DAB5'
-    } else {
-      _color = 'gray'
-    }
-    let count = 0
-    let clu = 0
-    if (level !== 0) {
-      count = record.alarmCount
-      clu = Math.log(count) * 5 + 15
-    } else {
-      clu = 15
-    }
     let options = {
       show: true,
       name: name,
-      id: record.id,
+      id: record.reservoirId,
       position: Cesium.Cartesian3.fromDegrees(coord[0], coord[1]),
       attribute: record,
       point: {
         show: true, // default
-        color: Cesium.Color.fromCssColorString(_color).withAlpha(1), // default: WHITE
-        pixelSize: clu, // default: 1
+        color: Cesium.Color.fromCssColorString(getText(level).color).withAlpha(1), // default: WHITE
+        pixelSize: 15, // default: 1  聚合图形半径
         outlineColor: Cesium.Color.fromCssColorString('#000000').withAlpha(0.5), // default: BLACK
         outlineWidth: 0, // default: 0
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
@@ -451,7 +431,7 @@ let cesiumJS = {
     let entityCollection, entity
     if (record.warnType === 1) {
       entityCollection = viewer.dataSources.getByName('jcdLayers')[0]
-     
+
       entity = entityCollection && entityCollection.entities.getById(record.pnId)
       if (entity) {
         this.updateMonHomePoint(record, vue, entity)
@@ -546,25 +526,19 @@ let cesiumJS = {
     for (let i = 0; i < datalist.length; i++) {
       let record = datalist[i]
       let prop = {
-        id: record.id,
+        id: record.reservoirId,
         longitude: record.longitude,
         latitude: record.latitude,
-        name: record.name,
-        projBasicName: record.projBasicName,
-        level: record.level,
-        warnTime: record.warnTime,
-        warnInformation: record.warnInformation,
-        warnType: record.type
+        name: record.reservoirName,
+        level: record.reservoirStatus
       }
       this.addHiddenHomePoint(prop, vue)
-      this.addHiddenHomePointScope(record.scope, vue)
+      // this.addHiddenHomePointScope(record.scope, vue)
     }
   },
   updateHiddenHomePoint (record, vue, entity) {
     let viewer = mapviewer.viewer
     let formerRecord = entity.attribute
-    formerRecord.warnInformation = record.warningInformation
-    formerRecord.warnTime = record.warningTime
     if (formerRecord.level !== record.level) {
       // 根据等级选择适应的图标，如果没有则默认灰色
       let _hiddlenBillboardUrl = hiddenBillboardUrl.other
@@ -581,25 +555,25 @@ let cesiumJS = {
     }, 30000)
   },
   addHiddenHomePoint (record, vue, isAlarm = false) {
+    console.log('添加隐患点', record)
     let Cesium = vue.Cesium
     let viewer = mapviewer.viewer
     let myEntityCollection = viewer.dataSources.getByName('yhdLayers')[0]
-    let lng = parseFloat(record.longitude)
-    let lat = parseFloat(record.latitude)
+    /* let lng = parseFloat(record.longitude)
+    let lat = parseFloat(record.latitude) */
+    let lng = record.longitude
+    let lat = record.latitude
     // let coord = [lng, lat]
     let coord = globalFunction.gcj02towgs84(lng, lat)
     let prop = {
       longitude: coord[0],
       latitude: coord[1],
-      id: record.hiddenId,
+      id: record.id,
       type: 1,
       name: record.name,
-      level: record.level,
-      projBasicName: record.projBasicName,
-      warnTime: record.warnTime,
-      warnInformation: record.warnInformation,
-      warnType: record.warnType
+      level: record.level
     }
+    console.log('添加隐患点prop', prop)
     // 根据等级选择适应的图标，如果没有则默认灰色
     let _hiddlenBillboardUrl = hiddenBillboardUrl.other
     if (hiddenBillboardUrl[record.level]) {
@@ -850,59 +824,68 @@ let cesiumJS = {
     let that = this
     let viewer = mapviewer.viewer
     let Cesium = vue.Cesium
-    if (that.prListener !== '') {
-      viewer.scene.postRender.removeEventListener(that.prListener)
-      vue.ismonHomePointPopup = false,
-      vue.ishiddenHomePointPopup = false,
-      vue.ishighestWarnPointPopup = false,
-      vue.ispointsPanel = false
-    }
-    vue.ishiddenHomePointPopup = true
-    let _color = '#ffffff'
-    if (record.level === 1) {
-      _color = 'rgb(79, 129, 233)'
-    } else if (record.level === 2) {
-      _color = 'rgb(235, 196, 61)'
-    } else if (record.level === 3) {
-      _color = 'rgb(247, 146, 65)'
-    } else if (record.level === 4) {
-      _color = 'rgb(255, 89, 90)'
-    } else if (record.level === 0) {
-      _color = '#00DAB5'
-    }
-    let type = record.warnType
-    let typeText = ''
-    if (type === 1) {
-      typeText = '设备预警'
-    } else if (type === 2) {
-      typeText = '模型预警'
-    } else if (type === 3) {
-      typeText = '宏观群查'
-    } else if (type === 4) {
-      typeText = '定量群测'
-    }
-    document.getElementById('hhpp-proj').innerHTML = record.projBasicName
-    document.getElementById('hhpp-hidden').innerHTML = record.label
-    document.getElementById('hidden-point-value').innerHTML = record.warnInformation
-    document.getElementById('hidden-point-time').innerHTML = record.warnTime
-    document.getElementById('hidden-point-value').style.color = _color
-    document.getElementById('hidden-point-warn-type').innerHTML = typeText
-    if (record.level === 0) {
-      document.getElementById('hidden-point-time').innerHTML = '无告警'
-    }
-    that.prListener = function () {
-      let lng = record.longitude
-      let lat = record.latitude
-      let pp = new Cesium.Cartesian3.fromDegrees(lng, lat, 0)
-      let changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, pp)
-      let x = changedC.x // - ($('#trackPopUpContent').width()) / 2;
-      let y = changedC.y // - ($('#trackPopUpContent').height());
-      vue.hiddenPosition.left = x + 20 + 'px'
-      vue.hiddenPosition.top = y - 60 + 'px'
-    }
-    that.handler = viewer.scene.postRender.addEventListener(that.prListener)
+    let pobj = null
+    let sceneList = []
+    vue.$get('web/onePicture/reservoirInfo', {
+      reservoirId: record.id
+    }).then((r) => {
+      if (r.data.code === 1) {
+        pobj = r.data.data
+        if (r.data.data.waterStatus !== '') {
+          sceneList.push({label: '水情监测', value: r.data.data.waterStatus})
+        }
+        if (r.data.data.rainStatus !== '') {
+          sceneList.push({label: '雨情监测', value: r.data.data.rainStatus})
+        }
+        if (r.data.data.osmoticStatus !== '') {
+          sceneList.push({label: '渗压监测', value: r.data.data.osmoticStatus})
+        }
+        if (r.data.data.vadoStatus !== '') {
+          sceneList.push({label: '渗流监测', value: r.data.data.vadoStatus})
+        }
+        if (r.data.data.moveStatus !== '') {
+          sceneList.push({label: '微动监测', value: r.data.data.moveStatus})
+        }
+        console.log(pobj)
+      }
+    })
+    setTimeout(function () {
+      if (that.prListener !== '') {
+        viewer.scene.postRender.removeEventListener(that.prListener)
+        vue.ishiddenHomePointPopup = false
+        vue.ispointsPanel = false
+      }
+      vue.ishiddenHomePointPopup = true
+      document.getElementById('hhpp-proj-name').innerHTML = pobj.reservoirName
+      document.getElementById('hhpp-proj-type').innerHTML = getText(pobj.reservoirStatus).name
+      document.getElementById('hhpp-proj-type').style.color = getText(pobj.reservoirStatus).color
+      document.getElementById('hhpp-location').innerHTML = pobj.cityName
+      document.getElementById('hhpp-img').innerHTML = '<img style="width:100%;height: 100%;" src=' + pobj.images + '>'
+      document.getElementById('hhpp-data').innerHTML = '<span style="margin-right:10px;">水位<span>' + pobj.waterLevel + 'm</span></span>' +
+      '<span style="margin-right:10px;">降水量<span>' + pobj.rainfall + 'mm</span></span>' +
+      '<span>气温<span>' + pobj.temp + '℃</span></span>'
+      for (let i = 0; i < sceneList.length; i++) {
+        document.getElementById('hhpp-scene').innerHTML = '<div style="display: flex;justify-content: space-between;align-content: space-between;">\n' +
+          '<div>' + sceneList[i].label + '</div>\n' +
+          '<div>' + sceneList[i].value + '</div>\n' +
+          '</div>'
+      }
+
+      that.prListener = function () {
+        let lng = pobj.longitude
+        let lat = pobj.latitude
+        let pp = new Cesium.Cartesian3.fromDegrees(lng, lat, 0)
+        let changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, pp)
+        let x = changedC.x // - ($('#trackPopUpContent').width()) / 2;
+        let y = changedC.y // - ($('#trackPopUpContent').height());
+        vue.hiddenPosition.left = x - 135 + 'px'
+        vue.hiddenPosition.top = y + 29 + 'px'
+      }
+      that.handler = viewer.scene.postRender.addEventListener(that.prListener)
+    }, 800)
   },
   showPointList (record, data, vue) {
+    console.log('showPointList', record)
     let points = data
     let that = this
     let viewer = mapviewer.viewer
@@ -1146,12 +1129,7 @@ let cesiumJS = {
       latitude: coord[1],
       id: record.id,
       type: 1,
-      name: record.name,
-      projBasicName: '',
-      level: '',
-      warnTime: '',
-      warnInformation: '',
-      warnType: ''
+      name: record.name
     }
     let height = 0
     let positions = Cesium.Cartographic.fromDegrees(coord[0], coord[1])
@@ -1167,7 +1145,7 @@ let cesiumJS = {
         position: Cesium.Cartesian3.fromDegrees(coord[0], coord[1], height),
         attribute: prop,
         billboard: { // 图标
-          image: 'static/images/hidden_point_0.png',
+          image: 'static/img/绿.png',
           scale: 0.9
         },
         label: { // 文字标签
@@ -1449,7 +1427,7 @@ let cesiumJS = {
     if (!dynamicPictureDom) {
       dynamicPictureDom = document.createElement('div')
       dynamicPictureDom.id = 'earth_dynamic_picture'
-      dynamicPictureDom.style = 'position:absolute;height:74px;width:39px;z-index:2000;left:0;top:0'
+      dynamicPictureDom.style = 'position:absolute;height:65px;width:46px;z-index:2000;left:0;top:0'
       document.body.appendChild(dynamicPictureDom)
     }
     dynamicPictureDom.style.display = 'block'
@@ -1475,6 +1453,7 @@ let cesiumJS = {
           cartographic.latitude,
           height
         )
+        console.log('bindDynamicPictureEvent', position)
       }
       let canvasPosition = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
         viewer.scene,
@@ -1482,11 +1461,11 @@ let cesiumJS = {
       )
       if (Cesium.defined(canvasPosition)) {
         if (obj.type === 'hiddenPoint') {
-          obj.pickedDiv.style.top = canvasPosition.y + 25 + 'px'
-          obj.pickedDiv.style.left = canvasPosition.x - 15 + 'px'
+          obj.pickedDiv.style.top = canvasPosition.y + 26 + 'px'
+          obj.pickedDiv.style.left = canvasPosition.x - 20 + 'px'
         } else {
           obj.pickedDiv.style.top = canvasPosition.y + 12 + 'px'
-          obj.pickedDiv.style.left = canvasPosition.x - 15 + 'px'
+          obj.pickedDiv.style.left = canvasPosition.x - 20 + 'px'
         }
       }
     }
@@ -1498,7 +1477,6 @@ let cesiumJS = {
    * @param {*} vue
    */
   locateToHomePagePoint (obj, vue, flag = true) {
-    console.log(obj)
     let that = this
     let viewer = mapviewer.viewer
     let Cesium = vue.Cesium
@@ -1580,7 +1558,7 @@ let cesiumJS = {
             return
           }
           let hiddlenEntity = hiddlenCollection.entities.getById(obj.id)
-          console.log(hiddlenEntity)
+          console.log('hiddlenEntity', hiddlenEntity)
           if (hiddlenCollection && hiddlenEntity) {
             if (flag) {
               this.hiddenId = JSON.parse(JSON.stringify(hiddlenEntity.id))
@@ -1588,11 +1566,6 @@ let cesiumJS = {
               pobj.id = JSON.parse(JSON.stringify(hiddlenEntity.id))
               pobj.name = JSON.parse(JSON.stringify(hiddlenEntity.name))
               pobj.label = JSON.parse(JSON.stringify(hiddlenEntity.label.text._value))
-              pobj.warnType = JSON.parse(JSON.stringify(hiddlenEntity.attribute.warnType))
-              pobj.projBasicName = JSON.parse(JSON.stringify(hiddlenEntity.attribute.projBasicName))
-              pobj.warnInformation = JSON.parse(JSON.stringify(hiddlenEntity.attribute.warnInformation))
-              pobj.warnTime = JSON.parse(JSON.stringify(hiddlenEntity.attribute.warnTime))
-              pobj.level = JSON.parse(JSON.stringify(hiddlenEntity.attribute.level))
               pobj.longitude = JSON.parse(JSON.stringify(hiddlenEntity.attribute.longitude))
               pobj.latitude = JSON.parse(JSON.stringify(hiddlenEntity.attribute.latitude))
               hiddlenEntity.billboard.show = false
@@ -1600,8 +1573,8 @@ let cesiumJS = {
                 pickedEntity.billboard.show = true
               }
               pickedEntity = hiddlenEntity
-              pickedDiv.style.backgroundImage = 'url("static/images/hidden_point_dynamic.png")'
-              pickedDiv.style.height = '58px'
+              pickedDiv.style.backgroundImage = 'url("static/img/绿.png")'
+              pickedDiv.style.height = '65px'
               this.bindDynamicPictureEvent(viewer, Cesium, {
                 'pickedDiv': pickedDiv,
                 'position': Cesium.Cartesian3.fromDegrees(pobj.longitude, pobj.latitude, 0),
@@ -1639,7 +1612,7 @@ let cesiumJS = {
    * @param {*} obj
    * @param {*} vue
    */
-  locateToPoint (obj, vue, flag = true) {
+  /* locateToPoint (obj, vue, flag = true) {
     console.log(obj)
     let that = this
     let viewer = mapviewer.viewer
@@ -1706,7 +1679,7 @@ let cesiumJS = {
           break
         case 'hiddenPoint': // 隐患点
           let hiddlenEntity = viewer.entities.getById(obj.id)
-          console.log(hiddlenEntity)
+          console.log('hiddlenEntity', hiddlenEntity)
           if (hiddlenEntity) {
             if (flag) {
               this.hiddenId = JSON.parse(JSON.stringify(hiddlenEntity.id))
@@ -1714,11 +1687,11 @@ let cesiumJS = {
               pobj.id = JSON.parse(JSON.stringify(hiddlenEntity.id))
               pobj.name = JSON.parse(JSON.stringify(hiddlenEntity.name))
               pobj.label = JSON.parse(JSON.stringify(hiddlenEntity.label.text._value))
-              pobj.warnType = JSON.parse(JSON.stringify(hiddlenEntity.attribute.warnType))
+              /!* pobj.warnType = JSON.parse(JSON.stringify(hiddlenEntity.attribute.warnType))
               pobj.projBasicName = JSON.parse(JSON.stringify(hiddlenEntity.attribute.projBasicName))
               pobj.warnInformation = JSON.parse(JSON.stringify(hiddlenEntity.attribute.warnInformation))
               pobj.warnTime = JSON.parse(JSON.stringify(hiddlenEntity.attribute.warnTime))
-              pobj.level = JSON.parse(JSON.stringify(hiddlenEntity.attribute.level))
+              pobj.level = JSON.parse(JSON.stringify(hiddlenEntity.attribute.level)) *!/
               pobj.longitude = JSON.parse(JSON.stringify(hiddlenEntity.attribute.longitude))
               pobj.latitude = JSON.parse(JSON.stringify(hiddlenEntity.attribute.latitude))
               hiddlenEntity.billboard.show = false
@@ -1757,7 +1730,7 @@ let cesiumJS = {
           }
       }
     }
-  },
+  }, */
   selectPoint (detailInfo, vue) {
     let Cesium = vue.Cesium
     let viewer = mapviewer.viewer
@@ -1792,7 +1765,7 @@ let cesiumJS = {
         item._billboard._image._value = 'static/images/monitor_point_0.png'
       }
       if (item._name === 'hiddenPoint') {
-        item._billboard._image._value = 'static/images/hidden_point_0.png'
+        item._billboard._image._value = 'static/img/logo.png'
       }
     }
   },

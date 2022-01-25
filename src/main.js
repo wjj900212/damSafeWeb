@@ -9,6 +9,7 @@ import VueApexCharts from 'vue-apexcharts'
 import 'ant-design-vue/dist/antd.css'
 import * as echarts from 'echarts'
 import cesiumJS from 'utils/cesiumJS'
+import websocket from 'utils/webSocket'
 import PicViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
 
@@ -42,6 +43,8 @@ Vue.prototype.$delete = request.delete
 Vue.prototype.$export = request.export
 Vue.prototype.$download = request.download
 Vue.prototype.$upload = request.upload
+Vue.prototype.$cesiumJS = cesiumJS
+Vue.prototype.$websocket = websocket
 
 /* eslint-disable no-new */
 new Vue({
