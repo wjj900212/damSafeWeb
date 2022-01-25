@@ -44,11 +44,11 @@
           </a-row>
           <a-row>
             <a-col :span="4"> 安全状态 </a-col>
-            <a-col :span="3"> 正常 </a-col>
+            <a-col :span="3" :style="{color: getText(ranData.safeStatus).color}"> {{getText(ranData.safeStatus).name}} </a-col>
             <a-col :span="4"> 当前降水量 </a-col>
-            <a-col :span="3"> 29.2mm </a-col>
+            <a-col :span="3"> {{ranData.current}}</a-col>
             <a-col :span="4"> 日降水量 </a-col>
-            <a-col :span="6"> 52.2mm </a-col>
+            <a-col :span="6"> {{ranData.dayRain}}</a-col>
           </a-row>
         </a-col>
       </a-row>
@@ -58,7 +58,7 @@
         <component
           :is="'EchartsBarLine'"
           refid="BarLine"
-          :data="data"
+          :data="ranData"
           class="main-content"
         ></component>
       </div>
@@ -66,71 +66,77 @@
   </a-card>
 </template>
 <script>
-import EchartsBarLine from "@/components/echarts/EchartsBarLine.vue";
+import EchartsBarLine from '@/components/echarts/EchartsBarLine.vue'
+import {getText} from '@/utils/utils'
+
 export default {
-  name: "rain",
+  name: 'rain',
   components: {
-    EchartsBarLine,
+    EchartsBarLine
   },
   props: {
     List: {
       type: Array,
-      default: () => [],
+      default: () => []
     }
   },
-  data() {
+  data () {
     return {
       select: {},
-      data: [],
+      ranData: {},
       monitor: undefined,
-      monitorData: [],
-    };
+      monitorData: []
+    }
   },
   computed: {},
-  mounted() {
-    this.select = this.List.length > 0 ? this.List[0] : {};
-    this.monitorData = this.select.pnList || [];
+  mounted () {
+    this.select = this.List.length > 0 ? this.List[0] : {}
+    this.monitorData = this.select.pnList || []
     this.monitor =
-      this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+      this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined
     if (this.monitor) {
       this.getStatistics(this.monitor)
     }
   },
-  updated() {},
+  updated () {},
   watch: {
-    List(val) {
-      this.select = val.length > 0 ? val[0] : {};
-      this.monitorData = this.select.pnList || [];
+    List (val) {
+      this.select = val.length > 0 ? val[0] : {}
+      this.monitorData = this.select.pnList || []
       this.monitor =
-        this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+        this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined
       if (this.monitor) {
         this.getStatistics(this.monitor)
       }
-    },
+    }
   },
   methods: {
-    changeHidden(item) {
-      this.select = item;
+    getText (str) {
+      return getText(str)
     },
-    handleMonitorChange(value) {
+    changeHidden (item) {
+      this.select = item
+    },
+    handleMonitorChange (value) {
       this.getStatistics(value)
     },
     getStatistics (projPnId) {
       const params = {
         projPnId: projPnId
       }
-      // this.$get('web/reservoirOverview/sqStatistics', {
-      //   ...params,
-      // }).then((r) => {
-      //   if (r.data.data !== null) {
-      //     let data = r.data.data
-      //     // this.piezometricList = data
-      //     // this.treeData = data.treeData
-      //   }
-      // })
+      this.$get('web/reservoirOverview/yqStatistics', {
+        ...params
+      }).then((r) => {
+        if (r.data.data !== null) {
+          let data = r.data.data
+          this.ranData = data
+          // this.piezometricList = data
+          // this.treeData = data.treeData
+        }
+      })
     }
-  },
-};
+  }
+}
 </script>
 
 <style lang="less" scoped>

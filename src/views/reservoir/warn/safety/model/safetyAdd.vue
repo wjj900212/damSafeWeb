@@ -122,7 +122,7 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           this.safetyParams.details = this.$refs.addSafetyBox.content
-          this.$postDate('web/reservoirPlan/addPlan', {
+          this.$post('web/reservoirPlan/addPlan', {
             ...this.safetyParams
           }).then((r) => {
             this.$emit('fetch')

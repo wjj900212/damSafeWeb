@@ -42,6 +42,7 @@
       <safety-edit
         ref="safetyEdit"
         :visible="isShowSafetyEdit"
+        @fetch="fetch"
         @onClose="()=>{isShowSafetyEdit=false}"
       ></safety-edit>
     </div>

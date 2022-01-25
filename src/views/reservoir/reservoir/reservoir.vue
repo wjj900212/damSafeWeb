@@ -36,7 +36,7 @@
                     {{ info.managerUnit }}
                   </a-descriptions-item>
                   <a-descriptions-item label="水库规模">
-                    {{ scale[info.scale] }} 
+                    {{ scale[info.scale] }}
                   </a-descriptions-item>
                   <a-descriptions-item label="设计库容">
                     {{ info.capacity }} 亿立方米
@@ -75,9 +75,9 @@
 <script>
 import { mapState } from 'vuex'
 export default {
-  name: "EmptyPageView",
+  name: 'EmptyPageView',
   components: {},
-  data() {
+  data () {
     return {
       info: {},
       scale: {
@@ -87,17 +87,17 @@ export default {
         '3': '小（1）型',
         '4': '小（2）型'
       }
-    };
+    }
   },
   computed: {
     ...mapState({
       reservoirId: state => state.account.reservoirId
     })
   },
-  mounted() {
+  mounted () {
     this.getReservoirInfo()
   },
-  updated() {},
+  updated () {},
   watch: {
     reservoirId (val) { // 监听数据发生改变 刷新图表数据
       this.getReservoirInfo()
@@ -110,7 +110,7 @@ export default {
         reservoirId: reservoirId
       }
       this.$get('web/reservoirAdmin/getReservoirDetail', {
-        ...params,
+        ...params
       }).then((r) => {
         if (r.data.data !== null) {
           let data = r.data.data
@@ -126,14 +126,15 @@ export default {
         }
       })
     }
-  },
-};
+  }
+}
 </script>
 
 <style lang="less" scoped>
 p {
   white-space: normal;
   word-break: normal;
+  word-wrap:break-word;
   text-indent: 2em;
 }
 </style>

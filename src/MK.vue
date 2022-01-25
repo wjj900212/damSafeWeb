@@ -203,10 +203,11 @@ Date.prototype.format = function (fmt) {
     font-size: .97rem;
   }
   p {
-    overflow: hidden;
+    /*overflow: hidden;
     text-overflow: ellipsis;
     word-break: break-all;
-    white-space: nowrap;
+    white-space: nowrap;*/
+   word-wrap: break-word;
   }
   @media screen and (min-width: 1400px) {
   }
