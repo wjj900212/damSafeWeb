@@ -9,7 +9,10 @@ export default {
     permissions: db.get('PERMISSIONS'),
     roles: db.get('ROLES'),
     reservoirList: db.get('RESERVOIRLIST'),
-    reservoirId: db.get('RESERVOIRID')
+    reservoirId: db.get('RESERVOIRID'),
+    cityCode: db.get('CITY_CODE'),
+    cityName: db.get('CITY_NAME'),
+    websocketData: db.get('WEBSOCKET_DATA')
   },
   mutations: {
     setReservoirId (state, val) {
@@ -40,6 +43,18 @@ export default {
     setRoles (state, val) {
       db.save('ROLES', val)
       state.roles = val
+    },
+    setCityCode (state, val) {
+      db.save('CITY_CODE', val)
+      state.cityCode = val
+    },
+    setCityName (state, val) {
+      db.save('CITY_NAME', val)
+      state.cityName = val
+    },
+    setWebsocketData (state, val) {
+      db.save('WEBSOCKET_DATA', val)
+      state.websocketData = val
     }
   }
 }
