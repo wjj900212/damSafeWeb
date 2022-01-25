@@ -43,9 +43,9 @@
         <a-textarea
           placeholder="请输入"
           :auto-size="{ minRows: 2, maxRows: 6 }"
-          v-model="safetyParams.desc"
+          v-model="safetyParams.description"
           v-decorator="[
-            'desc'
+            'description'
           ]"
         />
       </a-form-item>

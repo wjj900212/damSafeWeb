@@ -175,7 +175,7 @@ export default {
     .leftView {
       position: absolute;
       width: 17%;
-      height: calc(100% - 59px);
+      height: calc(100% - 81px);
       z-index: 10;
       left: 1.8rem;
       bottom: 0;
@@ -206,7 +206,7 @@ export default {
     .rightView {
       position: absolute;
       width: 20%;
-      height: calc(100% - 59px);
+      height: calc(100% - 81px);
       z-index: 10;
       right: 1.8rem;
       bottom: 0;

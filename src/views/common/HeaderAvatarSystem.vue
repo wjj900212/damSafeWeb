@@ -2,7 +2,7 @@
   <div style="display: flex;justify-content: center;align-items: center;">
     <a-dropdown>
       <span style="cursor: pointer">
-        <img src="static/img/组178.png">
+        <img src="static/img/组 121.png">
         <span class="curr-user">{{user.realName}}</span>
       </span>
       <a-menu style="width: 150px" slot="overlay">
@@ -37,7 +37,7 @@ import UpdatePassword from '../personal/UpdatePassword'
 import UserInfo from '../system/user/UserInfo'
 
 export default {
-  name: 'HeaderAvatar',
+  name: 'HeaderAvatarSystem',
   components: {UpdatePassword, UserInfo},
   data () {
     return {
@@ -111,9 +111,9 @@ export default {
   .curr-user {
     font-weight: 600;
     margin-left: 6px;
-    color: #4CFFF8;
-    background: linear-gradient(0deg, #59C8FF 0%, #FAFEFF 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #000000;
+    font-size: 14px;
+    font-family: Source Han Sans CN;
+    font-weight: 400;
   }
 </style>

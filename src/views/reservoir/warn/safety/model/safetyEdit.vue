@@ -42,7 +42,7 @@
           placeholder="请输入"
           :auto-size="{ minRows: 2, maxRows: 6 }"
           v-decorator="[
-            'desc'
+            'description'
           ]"
         />
       </a-form-item>
@@ -111,7 +111,7 @@ export default {
       this.$emit('onClose')
     },
     setFormValues ({...safetyInfo}) {
-      let fields = ['reserveName', 'reserveType', 'desc', 'details']
+      let fields = ['reserveName', 'reserveType', 'description', 'details']
       this.planId = safetyInfo.planId
       Object.keys(safetyInfo).forEach((key) => {
         if (fields.indexOf(key) !== -1) {

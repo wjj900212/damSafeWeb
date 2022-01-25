@@ -90,7 +90,7 @@ export default {
         dataIndex: 'username'
       }, {
         title: '描述',
-        dataIndex: 'desc',
+        dataIndex: 'description',
         width: '25%',
         ellipsis: true
       }, {
