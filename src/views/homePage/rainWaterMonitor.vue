@@ -2,19 +2,27 @@
   <!-- 雨水情监测 -->
   <div class="rainWaterMonitor">
     <borderCom titTxt="雨水情监测" />
-    <div class="arrBox" v-if="!reservoirId">
-      <template v-for="v,i in allData">
-        <div class="item" :key="i">
-          <div class="imgIcon">
-            <img src="/static/img/u454.png" alt="">
+    <div class="arrWarp" v-if="!reservoirId">
+      <div class="arrBox">
+        <template v-for="v,i in allData">
+          <div class="item" :key="i">
+            <div class="imgIcon">
+              <img src="/static/img/组 981.png" alt="">
+              <span class="waterLevelRate">{{v.waterLevelRate}}</span>
+            </div>
+            <div class="msg">
+              <p class="rName">{{v.reservoirName | ellipsis(6)}}</p>
+              <p>库水位：<span class="val">{{v.waterLevel}}</span></p>
+              <p>降水量：<span class="val">{{v.rainfall}}</span></p>
+            </div>
           </div>
-          <div class="msg">
-            <p>{{v.reservoirName | ellipsis(6)}}</p>
-            <p>库水位：<span class="val">{{v.waterLevel}}</span></p>
-            <p>降水量：<span class="val">{{v.rainfall}}</span></p>
-          </div>
-        </div>
-      </template>
+        </template>
+      </div>
+    </div>
+    <div class="timeBox" v-show="reservoirId">
+      <div class="timeItem" :class="timeAct==1?'act':''" @click="timeChange(1)">今日</div>
+      <div class="timeItem timeItem2" :class="timeAct==2?'act':''" @click="timeChange(2)">近3天</div>
+      <div class="timeItem" :class="timeAct==3?'act':''" @click="timeChange(3)">近7天</div>
     </div>
     <div id="chartRainWater" v-show="reservoirId"></div>
   </div>
@@ -31,7 +39,8 @@
       return {
         allData: [],
         reservoirId: '',
-        chartTU: ''
+        chartTU: '',
+        timeAct: ''
       };
     },
     methods: {
@@ -44,6 +53,18 @@
           }
           this.allData = rr.data
         })
+      },
+      // 单个水库雨水情监测
+      getReservoirData() {
+        this.drawChart()
+        // this.$get('').then(res => {
+        //   let rr = res.data
+        //   if (rr.code != 1) {
+        //     this.$message.error(rr.msg)
+        //     return false
+        //   }
+        //   this.drawChart()
+        // })
       },
       drawChart() {
         if (!this.chartTU) {
@@ -59,45 +80,78 @@
             bottom: 30,
           }],
           tooltip: {
+            confine: true, //避免溢出显示不全
             trigger: 'axis',
-            axisPointer: {
-              type: 'cross'
-            }
           },
           legend: {
-            data: ['库水位', '降水量']
+            textStyle: {
+              color: '#fff'
+            },
+            data: ['库水位', '降水量'],
+
           },
           xAxis: [{
             type: 'category',
             axisTick: {
               alignWithLabel: true
             },
+            axisLabel: {
+              show: true,
+              textStyle: {
+                color: '#fff'
+              }
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#fff',
+              }
+            },
             data: ['06:00', '09:00', '12:00', '15:00', '18:00', '21:00']
           }],
           yAxis: [{
               type: 'value',
               name: '库水位/m',
-              // nameLocation: 'start',
-              // inverse: true,
-              position: 'left',
-              axisLine: {
-                show: true,
+              nameTextStyle: {
+                color: "#fff",
               },
+              position: 'left',
+              axisLabel: {
+                show: true,
+                textStyle: {
+                  color: '#fff'
+                }
+              },
+              axisLine: {
+                show: false,
+              },
+              splitLine: { //网格线
+                show: false
+              }
             },
             {
               type: 'value',
               name: '降水量/mm',
+              nameTextStyle: {
+                color: "#fff",
+              },
               position: 'right',
               nameLocation: 'start',
               inverse: true,
-              min: 0,
-              max: 30,
-              axisLine: {
+              axisLabel: {
                 show: true,
+                textStyle: {
+                  color: '#fff'
+                }
+              },
+              axisLine: {
+                show: false,
                 // lineStyle: {
                 //     color: '#5470C6',
                 // }
               },
+              splitLine: { //网格线
+                show: false
+              }
             },
           ],
           series: [{
@@ -105,6 +159,24 @@
               type: 'line',
               yAxisIndex: 0,
               data: [2, 4, 3, 1, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0, 0, 0.5, 0, 1, 0, 0, 0],
+              lineStyle: {
+                color: '#1DD682' //改变折线颜色
+              },
+              smooth: true,
+              itemStyle: {
+                normal: {
+                  areaStyle: {
+                    type: 'default'
+                  },
+                  color: new this.$echarts.graphic.LinearGradient(
+                    0, 0, 0, 1,
+                    [{
+                      offset: 0,
+                      color: 'rgba(0, 255, 222, 0.34)'
+                    }, ]
+                  ),
+                }
+              },
             },
             {
               name: '降水量',
@@ -113,15 +185,27 @@
               data: [2, 6, 9, 10, 10, 10, 10, 10, 10, 10.5, 10.5, 11, 11, 11, 11.5, 11.5, 11.5, 12, 12, 13, 13, 13,
                 13
               ],
+              barWidth: 20,
               itemStyle: {
                 normal: {
-                  color: "#c5595a"
+                  color: new this.$echarts.graphic.LinearGradient(0, 1, 0, 0, [{
+                    offset: 0,
+                    color: "#06E1FC" // 0% 处的颜色
+                  }, {
+                    offset: 1,
+                    color: "#02A3FD" // 100% 处的颜色
+                  }], false)
                 }
               },
             },
           ]
         };
-          this.chartTU.setOption(option, true)
+        this.chartTU.setOption(option, true)
+      },
+      timeChange(i) {
+        if (i == this.timeAct) return false
+        this.timeAct = i
+        this.getReservoirData()
       }
     },
     mounted() {
@@ -130,11 +214,11 @@
       Bus.$on('reservoirId', (reservoirId) => {
         // console.log("组件收到bus消息：", reservoirId);
         this.reservoirId = reservoirId
-        if (reservoirId){
+        if (reservoirId) {
           setTimeout(() => {
-             this.drawChart()
+            this.timeChange(1)
           }, 300);
-        }
+        } else this.timeAct = ''
       });
     },
     filters: {
@@ -154,32 +238,63 @@
 </script>
 <style scoped>
   .rainWaterMonitor {
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100%;
     position: absolute;
+    margin: 0 5px;
+  }
+
+  .arrWarp {
+    padding: 1rem;
+    height: calc(100% - 5rem);
+    background: url('/static/img/model-bg.png') no-repeat;
+    background-size: 100% 100%;
+    overflow: hidden;
   }
 
   .arrBox {
-    padding: 1rem;
-    margin-top: 2.8rem;
     color: #fff;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    max-height: calc(100% - 4rem);
+    height: 100%;
     overflow: auto;
-    position: relative;
-    z-index: 2;
   }
 
   #chartRainWater {
-    /* padding: 1rem; */
-    margin-top: 2.8rem;
     width: 100%;
     height: calc(100% - 4rem);
     position: relative;
     z-index: 2;
     float: left;
+    background: url('/static/img/model-bg.png') no-repeat;
+    background-size: 100% 100%;
+  }
+
+  .timeBox {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    line-height: 3rem;
+    border: 1px solid rgba(0, 126, 253, .4);
+    display: flex;
+    align-items: center;
+    color: #fff;
+  }
+
+  .timeItem {
+    padding: 0 18px;
+    cursor: pointer;
+  }
+
+  .timeItem2 {
+    border-left: 1px solid rgba(0, 126, 253, .4);
+    border-right: 1px solid rgba(0, 126, 253, .4);
+  }
+
+  .timeItem.act {
+    background: url('/static/img/矩形.png') no-repeat;
+    background-size: 100% 100%;
   }
 
   .item {
@@ -192,7 +307,9 @@
   }
 
   .imgIcon {
-    width: 7rem;
+    width: 9rem;
+    position: relative;
+    color: #fff;
   }
 
   .imgIcon img {
@@ -201,13 +318,30 @@
     float: left;
   }
 
+  .waterLevelRate {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -80%);
+    font-size: 1.6rem;
+    font-weight: 500;
+  }
+
   .msg p {
     margin-bottom: 0;
+    color: rgba(119, 204, 255, 1);
+    font-size: 1.2rem;
+  }
+
+  .msg .rName {
+    margin-bottom: .6rem;
+    color: #fff;
+    font-size: 1.4rem;
   }
 
   .val {
     display: inline-block;
-    min-width: 5rem;
+    min-width: 6rem;
   }
 
 </style>

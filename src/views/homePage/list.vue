@@ -3,15 +3,16 @@
   <div class="left_list">
     <borderCom titTxt="水库概览" />
     <div class="con">
-      <a-input-search placeholder="水库名称搜索" enter-button @search="onSearch" />
-      <Cascader style="width:100%;margin-top:.8rem" @getDistData="getDistData" :updateOptions="optionCityInfo"
-        :defaultValue="casdata" />
+      <a-input-search placeholder="水库名称搜索" enter-button @search="onSearch">
+      </a-input-search>
+      <Cascader style="width:100%;margin-top:.8rem;background: transparent;color: #fff;" @getDistData="getDistData"
+        :updateOptions="optionCityInfo" :defaultValue="casdata" />
       <div class="reservoirArr">
         <template v-for="v,i in reservoirArr">
           <div class="item" :key="i" @click="tapReservoir(v)">
             <div class="item_tit_box">
               <div class="titName">
-                <a-icon type="caret-right" style="color:rgb(7,171,183)" />
+                <img src="static/img/椭圆 502.png" alt="">
                 <span>{{v.reservoirName | ellipsis(10)}}</span>
               </div>
               <span class="status">{{v.reservoirStatus==1?'异常':v.reservoirStatus==2?'险情':'正常'}}</span>
@@ -68,14 +69,14 @@
           total: 0
         },
         reservoirArr: [],
-        actReservoir:''
+        actReservoir: ''
       };
     },
     methods: {
       // 获取子组件返回的cityCode和cityType
       getDistData(distData) {
-        this.queryParams.cityCode = distData.cityCode
-        this.getData()
+        this.queryParams.cityCode = distData.cityCode ? distData.cityCode : ''
+        // this.getData()
       },
       pageChange(page, pageSize) {
         //   console.log(page, pageSize)
@@ -103,8 +104,8 @@
       // 点击水库
       tapReservoir(val) {
         // console.log('tapReservoir', val)
-        if(val.reservoirId==this.actReservoir)this.actReservoir=''
-        else this.actReservoir=val.reservoirId
+        if (val.reservoirId == this.actReservoir) this.actReservoir = ''
+        else this.actReservoir = val.reservoirId
         Bus.$emit('reservoirId', this.actReservoir);
       }
     },
@@ -129,24 +130,45 @@
 </script>
 <style scoped>
   .left_list {
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100%;
     position: absolute;
+    margin: 0 5px;
   }
 
   .con {
-    width: 100%;
-    margin-top: 28px;
+    /* width: calc(100% - 2rem); */
     padding: 1rem;
+    float: left;
+    background: url('/static/img/model-bg.png') no-repeat;
+    background-size: 100% 100%;
+    height: calc(100% - 50px);
+  }
+
+  .con>>>.ant-input {
+    background: transparent;
+    border-color: #1890ff;
+    color: #fff;
+  }
+
+  .con>>>.ant-input-group-addon {
+    background: transparent;
+  }
+
+  .con>>>.ant-btn-primary {
+    background: transparent;
+  }
+
+  .con>>>.ant-cascader-picker-arrow {
+    color: #fff;
   }
 
   .reservoirArr {
-    position: absolute;
-    height: calc(100% - 160px);
+    /* position: absolute; */
+    height: calc(100% - 11rem);
     /* height: calc(100% - 120px); */
     overflow-y: auto;
     margin-top: 1rem;
-    width: calc(100% - 2rem);
   }
 
   .reservoirArr::-webkit-scrollbar {
@@ -154,9 +176,9 @@
   }
 
   .item {
+    background: url('/static/img/矩形 1718 拷贝.png') no-repeat;
+    background-size: 100% 100%;
     padding: .8rem;
-    border: 1px solid rgb(14, 157, 171);
-    background-color: rgb(16, 77, 101);
     margin-bottom: 1rem;
     cursor: pointer;
     font-size: 1.4rem;
@@ -166,48 +188,67 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgb(14, 157, 171);
+    border-bottom: 1px solid rgba(0, 204, 255, .49);
     line-height: 1;
     padding: .8rem 0;
   }
 
   .titName {
     color: #fff;
+    font-size: 1.6rem;
+    font-weight: 500;
   }
 
   .status {
-    color: greenyellow;
+    color: #41FF5C;
+    font-size: 1.4rem;
   }
 
   .item_con {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     color: #fff;
     padding-top: 1rem;
+    text-align: right;
   }
 
   .item_con p {
-    margin-bottom: 0;
-    line-height: 1;
-  }
-
-  .item_con p:nth-child(1) {
     margin-bottom: 1rem;
+    line-height: 1;
+    font-size: 1.4rem;
   }
 
   .numA {
-    color: #00FFFF;
+    color: rgba(0, 204, 255, .8);
+    ;
   }
 
   .numB {
-    color: red;
+    color: #FF9500;
   }
 
   .pagination {
     position: absolute;
     width: calc(100% - 2rem);
     bottom: .8rem;
+  }
+
+  .pagination>>>.ant-pagination-item a {
+    color: #fff;
+  }
+
+  .pagination>>>.ant-pagination-item-link .anticon {
+    color: #fff;
+  }
+
+  .pagination>>>.ant-pagination-item-active {
+    background-color: transparent;
+  }
+
+  .pagination>>>.ant-pagination-item-active a {
+    color: rgba(0, 204, 255, .8);
+    ;
   }
 
 </style>

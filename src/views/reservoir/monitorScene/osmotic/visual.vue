@@ -146,7 +146,7 @@
       },
       // 加载背景图片
       loadImg() {
-        console.log('basicData', basicData)
+        // console.log('basicData', basicData)
         let that = this
         var img = new Image();
         img.onload = function () {
@@ -209,7 +209,7 @@
         basicData.config.forEach(cv => {
           let s = cv.xaxis * ratio.w_ratio //某条浸润线的起点值
           let b = cv.yaxis * ratio.h_ratio
-          console.log('cv.value', cv.value)
+          // console.log('cv.value', cv.value)
           if (cv.value) {
             let val = (cv.value - basicData.mark.begin) / basicData.mark.gap * gap - (bK -
               b) //图中实际显示的高度

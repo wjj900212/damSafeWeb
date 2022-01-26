@@ -1,19 +1,31 @@
 <template>
   <!-- 首页显示组件的边框 -->
   <div class="borderCom">
-    <div class="titBox" v-if="typeof(titTxt)=='string'">
+    <!-- <div class="titBox" v-if="typeof(titTxt)=='string'">
       <div class="tit">
         <img src="/static/img/u22.svg" alt="" class="bg">
         <span>{{titTxt}}</span>
       </div>
-    </div>
-    <div class="titBox" v-else>
+    </div> -->
+    <!-- <div class="titBox" v-else>
       <div v-for="v,i in titTxt" :key='i' :class="i==0?'tit':'tit2'" @click="$emit('toggle',i)">
         <img v-if="i==0" src="/static/img/u22.svg" alt="" class="bg">
         <img v-else src="/static/img/u214.svg" alt="" class="bg">
         <span>{{v}}</span>
       </div>
+    </div> -->
+    <div class="titBox act" v-if="typeof(titTxt)=='string'">
+      <span class="line"></span>
+      <span class="tit">{{titTxt}}</span>
     </div>
+    <template v-else>
+      <div class="titWrap">
+        <div class="titBox" v-for="v,i in titTxt" :key='i' @click="act=i;$emit('toggle',i)" :class="act==i?'act':''">
+          <span class="line"></span>
+          <span class="tit">{{v}}</span>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -22,7 +34,7 @@
     props: ["titTxt"],
     data() {
       return {
-
+        act: 0
       };
     },
     methods: {},
@@ -32,41 +44,48 @@
 <style scoped>
   /* @import url(); 引入公共css类 */
   .borderCom {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: url('/static/img/u673.svg') no-repeat 100% 100%;
-    background-size: 100% 100%;
+    width: calc(100% - 10px);
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    /* height: 100%;
+    position: absolute; */
+  }
+
+  .titWrap {
+    display: flex;
   }
 
   .titBox {
     width: 100%;
-    position: absolute;
-    top: -14px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: bold;
   }
 
-  .tit,
-  .tit2 {
-    float: left;
-    text-align: center;
-    color: #00FFFF;
-    font-size: 1.6rem;
-    position: relative;
-    width: 172px;
-    white-space: nowrap;
+  .titWrap .titBox {
+    width: 40%;
     cursor: pointer;
   }
 
-  .tit2 {
-    margin-left: -25px;
+  .line {
+    width: 4px;
+    height: 16px;
+    display: inline-block;
+    margin-right: 10px;
+    background-color: #fff;
   }
 
-  .tit span,
-  .tit2 span {
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
+  .titBox.act .line {
+    background-color: #00CCFF;
+  }
+
+  .titBox.act .tit {
+    background-image: -webkit-linear-gradient(top, #fff, #59C8FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
 </style>

@@ -100,7 +100,7 @@ export default {
   },
   watch: {
     websocketData (n, o) {
-      console.log(n, o)
+      console.log('websocketData',n, o)
     }
   },
   methods: {
@@ -171,48 +171,59 @@ export default {
     color: rgb(110, 164, 153);
   }
   .home-page {
+    background-color: #fff;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
 
     .leftView {
       position: absolute;
-      width: 17%;
-      height: calc(100% - 81px);
+      width: 18%;
+      height: calc(100% - 81px - 2rem);
       z-index: 10;
       left: 1.8rem;
-      bottom: 0;
+      bottom: 1rem;
+      background: url('/static/img/left-bg.png') no-repeat;
+      background-size: 100% 100%;
+
 
       .left_modelA {
         position: absolute;
         width: 100%;
         height: 270px;
-        top: 2.4rem;
+        // top: 2.4rem;
       }
 
       .left_modelB {
         position: absolute;
         width: 100%;
         bottom: 1rem;
-        height: calc(100% - 2.4rem - 270px - 3.5rem);
+        height: calc(100% - 270px - 2rem);
       }
     }
 
     .centerView {
       width: 40%;
+      // padding: 0 2%;
       left: 50%;
       transform: translateX(-50%);
-      top: 8rem;
+      top: 9rem;
       position: absolute;
     }
 
     .rightView {
       position: absolute;
-      width: 20%;
-      height: calc(100% - 81px);
+      width: 23%;
+      height: calc(100% - 81px - 2rem);
       z-index: 10;
       right: 1.8rem;
-      bottom: 0;
+      bottom: 1rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      background: url('/static/img/left-bg.png') no-repeat;
+      background-size: 100% 100%;
 
       .right_modelA,
       .right_modelB,
@@ -221,12 +232,10 @@ export default {
         height: 33%;
       }
 
-      .right_modelA {
-        margin-top: 2.4rem;
-      }
+      // .right_modelA {}
 
       .right_modelB {
-        margin: 2.4rem 0;
+        margin: 1rem 0;
       }
 
       .right_modelC {
