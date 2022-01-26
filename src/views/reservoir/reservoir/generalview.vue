@@ -76,7 +76,7 @@
         </a-card>
       </a-col>
     </a-row>
-    
+
   </div>
 </template>
 <script>
@@ -135,11 +135,11 @@ export default {
       treeData: [],
       aqglyadataSource: [],
       sceneData: [],
-      monitorData: [
+      /*monitorData: [
         { id: 1, name: "监测点1" },
         { id: 2, name: "监测点2" },
         { id: 3, name: "监测点3" },
-      ],
+      ],*/
       sceneType: [
         { id: 11, name: "渗流监测" },
         { id: 12, name: "渗压监测" },

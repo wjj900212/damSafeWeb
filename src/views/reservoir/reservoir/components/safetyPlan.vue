@@ -96,7 +96,7 @@ export default {
           width: "100px",
           align: "center",
           customRender: (record) => (
-            record.details ? 
+            record.details ?
             (
               <div>
                 <a
@@ -106,8 +106,8 @@ export default {
                 >
                   查看
                 </a>
-              </div> 
-            ) : 
+              </div>
+            ) :
             (
               ''
             )

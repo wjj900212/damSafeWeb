@@ -97,18 +97,20 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      let topath = to.path
-      let frompath = from.path
-      if (topath === '/home') {
+      if (to.path === '/home') {
         this.homeVisible = true
       } else {
         this.homeVisible = false
       }
-      console.log('to=' + topath)
-      console.log('from=' + frompath)
     }
   },
   mounted () {
+    let path = this.$route.path
+    if (path === '/home') {
+      this.homeVisible = true
+    } else {
+      this.homeVisible = false
+    }
     this.getTime()
     this.getRealTimeWeather()
   },

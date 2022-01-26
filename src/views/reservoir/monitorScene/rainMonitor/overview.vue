@@ -113,7 +113,6 @@ export default {
   data () {
     return {
       currentPoint: '',
-      overViewData: {},
       pnRainData: [],
       pnId: '',
       safeVisible: false,
@@ -135,7 +134,7 @@ export default {
           this.monitorPnData = []
         } else {
           that.currentPoint = n[0].pnId.toString()
-          that.monitorPnDataRain(n[0].pnId)
+         // that.monitorPnDataRain(n[0].pnId)
         }
       },
       immediate: true

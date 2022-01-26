@@ -44,11 +44,11 @@
           </a-row>
           <a-row>
             <a-col :span="4"> 安全状态 </a-col>
-            <a-col :span="3" :style="{color: getText(ranData.safeStatus).color}"> {{getText(ranData.safeStatus).name}} </a-col>
+            <a-col :span="3" :style="{color: getText(rainData.safeStatus).color}"> {{getText(rainData.safeStatus).name}} </a-col>
             <a-col :span="4"> 当前降水量 </a-col>
-            <a-col :span="3"> {{ranData.current}}</a-col>
+            <a-col :span="3"> {{rainData.current}}</a-col>
             <a-col :span="4"> 日降水量 </a-col>
-            <a-col :span="6"> {{ranData.dayRain}}</a-col>
+            <a-col :span="6"> {{rainData.dayRain}}</a-col>
           </a-row>
         </a-col>
       </a-row>
@@ -58,7 +58,9 @@
         <component
           :is="'EchartsBarLine'"
           refid="BarLine"
-          :data="ranData"
+          :cordon="cordon"
+          :rainfall="rainfall"
+          :totalRainfall="totalRainfall"
           class="main-content"
         ></component>
       </div>
@@ -83,7 +85,10 @@ export default {
   data () {
     return {
       select: {},
-      ranData: {},
+      rainData: {},
+      cordon: [],
+      rainfall: [],
+      totalRainfall: [],
       monitor: undefined,
       monitorData: []
     }
@@ -129,9 +134,10 @@ export default {
       }).then((r) => {
         if (r.data.data !== null) {
           let data = r.data.data
-          this.ranData = data
-          // this.piezometricList = data
-          // this.treeData = data.treeData
+          this.rainData = data
+          this.cordon = data.cordon
+          this.rainfall = data.rainfall
+          this.totalRainfall = data.totalRainfall
         }
       })
     }

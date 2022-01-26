@@ -250,7 +250,7 @@ export default {
             axisLabel: {
               interval: 0,
               formatter: function (value, index) {
-                console.log(data[index].code, value)
+               // console.log(data[index].code, value)
                 return `{b${data[index].code}|${value}}`
               },
               rich: richX
@@ -308,7 +308,7 @@ export default {
           name: '温度',
           type: 'line',
           data: data.map((item) => {
-            console.log(item)
+           // console.log(item)
             return item.temp
           }),
           symbol: 'emptyCircle',

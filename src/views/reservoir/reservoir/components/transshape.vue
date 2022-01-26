@@ -86,7 +86,6 @@ export default {
     return {
       componentName: '',
       markLine: [],
-      select: {},
       info: {},
       name: '',
       select: {},
@@ -136,7 +135,7 @@ export default {
           this.data = data.xlist.map((item, index) => {
             return [item, data.ylist[index], data.zlist[index]]
           })
-          console.log(this.data)
+          console.log('变形监测数据', this.data)
           // this.data = data.xlist
           // this.markLine = data.cordon
           this.componentName = 'EchartsWave'
