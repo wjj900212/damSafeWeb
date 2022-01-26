@@ -27,6 +27,7 @@
     "vue": "^2.6.6",
     "vue-apexcharts": "^1.2.7",
     "vue-drag-resize": "^1.5.4",
+    "vue-infinite-scroll": "^2.0.2",
     "vue-router": "^3.0.1",
     "vuedraggable": "^2.16.0",
     "vuex": "^3.0.1",

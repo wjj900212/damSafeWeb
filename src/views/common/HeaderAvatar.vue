@@ -2,8 +2,10 @@
   <div style="display: flex;justify-content: center;align-items: center;">
     <a-dropdown>
       <span style="cursor: pointer">
-        <img src="static/img/组178.png">
-        <span class="curr-user">{{user.realName}}</span>
+        <img v-if=" homeVisible === true" src="static/img/组178.png">
+        <img v-else src="static/img/组 121.png">
+        <span v-if=" homeVisible === true" class="curr-user-home">{{user.realName}}</span>
+        <span v-else class="curr-user">{{user.realName}}</span>
       </span>
       <a-menu style="width: 150px" slot="overlay">
         <a-menu-item @click="openProfile">
@@ -17,12 +19,6 @@
         </a-menu-item>
       </a-menu>
     </a-dropdown>
-    <!--<update-password
-      @success="handleUpdate"
-      @cancel="handleCancelUpdate"
-      :user="user"
-      :updatePasswordModelVisible="updatePasswordModelVisible">
-    </update-password>-->
     <user-info
       :userInfoVisiable="userInfoVisiable"
       :userInfoData="userInfo"
@@ -38,6 +34,7 @@ import UserInfo from '../system/user/UserInfo'
 
 export default {
   name: 'HeaderAvatar',
+  props: ['homeVisible'],
   components: {UpdatePassword, UserInfo},
   data () {
     return {
@@ -108,12 +105,20 @@ export default {
     background: hsla(0, 0%, 100%, .85);
     vertical-align: middle;
   }
-  .curr-user {
+  .curr-user-home {
     font-weight: 600;
     margin-left: 6px;
     color: #4CFFF8;
     background: linear-gradient(0deg, #59C8FF 0%, #FAFEFF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+  .curr-user {
+    font-weight: 600;
+    margin-left: 6px;
+    color: #000000;
+    font-size: 14px;
+    font-family: Source Han Sans CN;
+    font-weight: 400;
   }
 </style>

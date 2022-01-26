@@ -30,7 +30,7 @@
           </div>
           <div class="s_right">
             <div>安全状态</div>
-            <div :style="{ color: safetyColor }">{{ safetyName }}</div>
+            <div :style="{ color: getText(overViewData.reservoirStatus).color }">{{ getText(overViewData.reservoirStatus).name }}</div>
           </div>
         </div>
       </a-card-grid>
@@ -134,7 +134,7 @@ export default {
           this.monitorPnData = []
         } else {
           that.currentPoint = n[0].pnId.toString()
-         // that.monitorPnDataRain(n[0].pnId)
+          that.monitorPnDataRain(n[0].pnId)
         }
       },
       immediate: true
@@ -143,6 +143,9 @@ export default {
   mounted () {
   },
   methods: {
+    getText (str) {
+      return getText(str)
+    },
     handlePnPoint (value) {
       this.pnId = value.toString()
       this.monitorPnDataRain(value)
@@ -155,7 +158,11 @@ export default {
         pnId: pnId
       }).then((res) => {
         if (res.data.code === 1) {
-          _this.pnRainData = res.data.data
+          let data = res.data.data
+          for (let i = 0; i < data.length; i++) {
+            data[i].time = data[i].time.substring(5, 16)
+          }
+          _this.pnRainData = data
         } else {
           this.$message.error(res.data.msg)
         }
@@ -297,9 +304,10 @@ export default {
     justify-content: space-evenly;
     flex-wrap: wrap;
     margin-top: 1rem;
+    padding:0px 1rem;
 }
   .dataV{
-    width: 30%;
+    width: 25%;
     padding: 8px;
     box-shadow: 2px 2px 15px rgba(76,89,248,16%);
     margin-bottom: 1rem;

@@ -824,65 +824,46 @@ let cesiumJS = {
     let that = this
     let viewer = mapviewer.viewer
     let Cesium = vue.Cesium
-    let pobj = null
-    let sceneList = []
     vue.$get('web/onePicture/reservoirInfo', {
       reservoirId: record.id
     }).then((r) => {
       if (r.data.code === 1) {
-        pobj = r.data.data
-        if (r.data.data.waterStatus !== '') {
-          sceneList.push({label: '水情监测', value: r.data.data.waterStatus})
+        let pobj = r.data.data
+        if (that.prListener !== '') {
+          viewer.scene.postRender.removeEventListener(that.prListener)
+          vue.ishiddenHomePointPopup = false
+          vue.ispointsPanel = false
         }
-        if (r.data.data.rainStatus !== '') {
-          sceneList.push({label: '雨情监测', value: r.data.data.rainStatus})
+        vue.ishiddenHomePointPopup = true
+        document.getElementById('hhpp-proj-name').innerHTML = pobj.reservoirName
+        document.getElementById('hhpp-proj-type').innerHTML = getText(pobj.reservoirStatus).name
+        document.getElementById('hhpp-proj-type').style.color = getText(pobj.reservoirStatus).color
+        document.getElementById('hhpp-location').innerHTML = pobj.cityName
+        document.getElementById('hhpp-img').innerHTML = '<img style="width:100%;height: 100%;" src=' + pobj.images + '>'
+        document.getElementById('hhpp-data').innerHTML = '<span style="margin-right:10px;">水位<span>' + pobj.waterLevel + 'm</span></span>' +
+          '<span style="margin-right:10px;">降水量<span>' + pobj.rainfall + 'mm</span></span>' +
+          '<span>气温<span>' + pobj.temp + '℃</span></span>'
+        let hhppScene = ''
+        for (let i = 0; i < pobj.monitorScene.length; i++) {
+          hhppScene += '<div style="display: flex;justify-content: space-between;align-content: space-between;">' +
+            '<div>' + pobj.monitorScene[i].name + '</div>' +
+            '<div>' + getText(pobj.monitorScene[i].status).name + '</div>' +
+            '</div>'
         }
-        if (r.data.data.osmoticStatus !== '') {
-          sceneList.push({label: '渗压监测', value: r.data.data.osmoticStatus})
+        document.getElementById('hhpp-scene').innerHTML = hhppScene
+        that.prListener = function () {
+          let lng = pobj.longitude
+          let lat = pobj.latitude
+          let pp = new Cesium.Cartesian3.fromDegrees(lng, lat, 0)
+          let changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, pp)
+          let x = changedC.x // - ($('#trackPopUpContent').width()) / 2;
+          let y = changedC.y // - ($('#trackPopUpContent').height());
+          vue.hiddenPosition.left = x - 135 + 'px'
+          vue.hiddenPosition.top = y + 29 + 'px'
         }
-        if (r.data.data.vadoStatus !== '') {
-          sceneList.push({label: '渗流监测', value: r.data.data.vadoStatus})
-        }
-        if (r.data.data.moveStatus !== '') {
-          sceneList.push({label: '微动监测', value: r.data.data.moveStatus})
-        }
-        console.log(pobj)
+        that.handler = viewer.scene.postRender.addEventListener(that.prListener)
       }
     })
-    setTimeout(function () {
-      if (that.prListener !== '') {
-        viewer.scene.postRender.removeEventListener(that.prListener)
-        vue.ishiddenHomePointPopup = false
-        vue.ispointsPanel = false
-      }
-      vue.ishiddenHomePointPopup = true
-      document.getElementById('hhpp-proj-name').innerHTML = pobj.reservoirName
-      document.getElementById('hhpp-proj-type').innerHTML = getText(pobj.reservoirStatus).name
-      document.getElementById('hhpp-proj-type').style.color = getText(pobj.reservoirStatus).color
-      document.getElementById('hhpp-location').innerHTML = pobj.cityName
-      document.getElementById('hhpp-img').innerHTML = '<img style="width:100%;height: 100%;" src=' + pobj.images + '>'
-      document.getElementById('hhpp-data').innerHTML = '<span style="margin-right:10px;">水位<span>' + pobj.waterLevel + 'm</span></span>' +
-      '<span style="margin-right:10px;">降水量<span>' + pobj.rainfall + 'mm</span></span>' +
-      '<span>气温<span>' + pobj.temp + '℃</span></span>'
-      for (let i = 0; i < sceneList.length; i++) {
-        document.getElementById('hhpp-scene').innerHTML = '<div style="display: flex;justify-content: space-between;align-content: space-between;">\n' +
-          '<div>' + sceneList[i].label + '</div>\n' +
-          '<div>' + sceneList[i].value + '</div>\n' +
-          '</div>'
-      }
-
-      that.prListener = function () {
-        let lng = pobj.longitude
-        let lat = pobj.latitude
-        let pp = new Cesium.Cartesian3.fromDegrees(lng, lat, 0)
-        let changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, pp)
-        let x = changedC.x // - ($('#trackPopUpContent').width()) / 2;
-        let y = changedC.y // - ($('#trackPopUpContent').height());
-        vue.hiddenPosition.left = x - 135 + 'px'
-        vue.hiddenPosition.top = y + 29 + 'px'
-      }
-      that.handler = viewer.scene.postRender.addEventListener(that.prListener)
-    }, 800)
   },
   showPointList (record, data, vue) {
     console.log('showPointList', record)

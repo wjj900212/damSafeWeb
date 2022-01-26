@@ -3,7 +3,7 @@
   <div class="trendStatistic">
     <a-card title="降水量趋势统计">
       <template slot="extra">
-        <a-select v-model="queryParams.pnId" :style="{width:'20rem'}">
+        <a-select v-model="queryParams.pnId" :style="{width:'20rem'}" @change="getRainPn">
           <a-select-option v-for="pn in pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
         </a-select>
         <a-select v-model="queryParams.dateType" @change="dateChange">
@@ -103,6 +103,7 @@ export default {
         if (n.length > 0) {
           this.queryParams.pnId = n[0].pnId.toString()
           this.pnName = n[0].pnName
+          this.devCode = n[0].devBasicStrId
           this.getMonitorConditionRain()
         }
       },
@@ -113,7 +114,7 @@ export default {
     moment,
     getMonitorConditionRain () {
       let _this = this
-      this.$get('web/monitorScene/monitorPnDataRain', {
+      this.$get('web/monitorScene/monitorDataListRain', {
         ...this.queryParams
       }).then((res) => {
         if (res.data.code === 1) {
@@ -169,6 +170,15 @@ export default {
       this.queryParams.endtime = dateString[1] ? dateString[1] + ' 59:59:59' : ''
       this.getMonitorConditionRain()
     },
+    getRainPn () {
+      this.pnName = this.pnList.find(v => {
+        return v.pnId === this.queryParams.pnId
+      }).pnName
+      this.devCode = this.pnList.find(v => {
+        return v.pnId === this.queryParams.pnId
+      }).devBasicStrId
+      this.getMonitorConditionRain()
+    },
     // 快捷选择时间
     dateChange () {
       this.getMonitorConditionRain()
@@ -209,5 +219,11 @@ export default {
     background-color: #87a9d7;
     color: #fff;
     cursor: pointer;
+  }
+  .cricle {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color:#1a94ff;
   }
 </style>

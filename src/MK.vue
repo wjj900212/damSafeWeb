@@ -224,4 +224,7 @@ Date.prototype.format = function (fmt) {
       font-size: 13px !important;
     }
   }
+  .ant-popover{
+    width:60rem !important;
+  }
 </style>

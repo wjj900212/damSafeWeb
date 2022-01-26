@@ -27,29 +27,64 @@
         <div style="margin-right:2rem;">
           <img src="static/img/控制台.png" @click="toRouterPath"/>
         </div>
-        <header-avatar class="header-item"/>
+        <header-avatar :homeVisible="homeVisible" class="header-item"/>
       </div>
     </div>
     <div v-else :class="['global-header-control']">
       <div style="display: flex;">
-        <div style="padding:0.5rem 1.4rem;margin-right:1rem;">
+        <div style="padding:0.5rem 1.4rem;margin-right:2rem;">
           <img src="static/img/logo .png"/>
         </div>
         <div>
           <ul>
             <li v-for="(nav,index) in navList" :class="[{'navActive' : selectId === nav.id}]" :key="index" @click="selectNav(nav)">
-              <img style="margin-right:0.5rem;" :src="nav.imgIcon"/>{{nav.name}}
+              <img style="margin-right:0.5rem;" :src="nav.imgIcon">{{nav.name}}
             </li>
           </ul>
         </div>
       </div>
       <div :class="['global-header-right']">
-        <div style="margin-right:2rem;">
-          <a-badge count="5">
-            <img src="static/img/消息 (4).png" @click="toRouterPath"/>
+        <a-popover class="warnPopover" trigger="click" placement="bottomRight">
+          <template slot="title">
+            <div style="display: flex;justify-content: space-between;align-content: space-between;">
+              <div>共{{RealTimeDynamic.length}}条消息</div>
+              <div><a>更多消息</a></div>
+            </div>
+          </template>
+          <template slot="content">
+            <div
+              v-infinite-scroll="handleInfiniteOnLoad"
+              class="demo-infinite-container"
+              :infinite-scroll-disabled="busy"
+              :infinite-scroll-distance="10"
+            >
+              <a-list :data-source="RealTimeDynamic">
+                <a-list-item slot="renderItem" slot-scope="item, index">
+                  <a-list-item-meta :description="item.content">
+                    <template slot="title">
+                      <span :style="{color:getText(parseInt(item.warnLevel)).color}">
+                      <span v-if="item.warnType === '1'">[设备预警]</span>
+                      <span v-if="item.warnType === '2'">[安全预警]</span>
+                      <span v-if="item.warnType === '5'">[模型预警]</span>
+                    </span>
+                      <a href="#">{{ item.title }}</a>
+                    </template>
+
+                  </a-list-item-meta>
+                  <div>{{item.time}}</div>
+                </a-list-item>
+                <div v-if="loading && !busy" class="demo-loading-container">
+                  <a-spin />
+                </div>
+              </a-list>
+            </div>
+          </template>
+          <a-badge :count="countMessage">
+            <img src="static/img/消息 (4).png" @click="getwarnMessage"/>
           </a-badge>
-        </div>
-        <header-avatar-system class="header-item"/>
+        </a-popover>
+        <header-avatar :homeVisible="homeVisible" class="header-item"/>
+        <!--<header-avatar-system class="header-item"/>-->
       </div>
     </div>
   </a-layout-header>
@@ -57,14 +92,16 @@
 
 <script>
 import HeaderAvatar from './HeaderAvatar'
-import HeaderAvatarSystem from './HeaderAvatarSystem'
 import IMenu from '@/components/menu/menu'
 import { mapState } from 'vuex'
+import infiniteScroll from 'vue-infinite-scroll'
+import {getText} from '../../utils/utils'
 
 export default {
   name: 'GlobalHeader',
-  components: {IMenu, HeaderAvatar, HeaderAvatarSystem},
+  components: {IMenu, HeaderAvatar},
   props: ['collapsed', 'menuData'],
+  directives: { infiniteScroll },
   data () {
     return {
       homeVisible: true,
@@ -75,10 +112,15 @@ export default {
       time1: '',
       time2: '',
       navList: [
-        {id: 1, imgIcon: 'static/img/水库安全监测-normal.png', name: '水库安全监测', path: '/reservoir/reservoir/generalview'},
+        {id: 1, imgIcon: 'static/img/水库安全监测-selected.png', name: '水库安全监测', path: '/reservoir/reservoir/generalview'},
         {id: 2, imgIcon: 'static/img/系统管理-normal.png', name: '系统管理', path: '/system/reservoir/reservoir'}
       ],
-      selectId: 1
+      selectId: 1,
+      countMessage: 0,
+      RealTimeDynamic: [],
+      data: [],
+      loading: false,
+      busy: false
 
     }
   },
@@ -104,6 +146,12 @@ export default {
       }
     }
   },
+  beforeMount () {
+    this.getRealTimeDynamic((r) => {
+      let data = r.data.data
+      this.RealTimeDynamic = data
+    })
+  },
   mounted () {
     let path = this.$route.path
     if (path === '/home') {
@@ -113,9 +161,12 @@ export default {
     }
     this.getTime()
     this.getRealTimeWeather()
+    this.getUnreadCount()
   },
   methods: {
-    showList () {},
+    getText (str) {
+      return getText(str)
+    },
     // 当前城市天气接口
     getRealTimeWeather (params = {}) {
       if (this.cityName === '全国') {
@@ -148,23 +199,60 @@ export default {
           ss = '0' + ss
         }
         this.time1 = year + '/' + month + '/' + day + ' ' + '星期' + this.week[zhou]
-        // document.getElementById('title-date').innerHTML = time1
         this.time2 = hour + ':' + min + ':' + ss
-        // document.getElementById('title-day').innerHTML = time2
       }, 1000)
     },
     selectNav (nav) {
       this.selectId = nav.id
+      if (nav.id === 1) {
+        this.navList[0].imgIcon = 'static/img/水库安全监测-selected.png'
+        this.navList[1].imgIcon = 'static/img/系统管理-normal.png'
+      } else {
+        this.navList[0].imgIcon = 'static/img/水库安全监测-normal.png'
+        this.navList[1].imgIcon = 'static/img/系统管理-selected.png'
+      }
       this.$router.push(nav.path)
     },
-    toRouterPath () {
-      this.$router.push('/reservoir/reservoir/generalview')
+    getwarnMessage () {
+      this.getRealTimeDynamic()
     },
     toggleCollapse () {
       this.$emit('toggleCollapse')
     },
     onSelect (obj) {
       this.$emit('menuSelect', obj)
+    },
+    toRouterPath () {
+      this.$router.push('/reservoir/reservoir/generalview')
+    },
+    // 获取预警未读消息数量
+    getUnreadCount () {
+      this.$get('web/earlyWarningBasic/getUnreadCount').then((r) => {
+        let data = r.data.data
+        this.countMessage = data
+      })
+    },
+    // 获取预警列表
+    getRealTimeDynamic (callback) {
+      let params = {}
+      params.flag = 1
+      this.$get('web/onePicture/RealTimeDynamic', {
+        ...params
+      }).then(callback)
+    },
+    handleInfiniteOnLoad () {
+      const data = this.RealTimeDynamic
+      this.loading = true
+      if (data.length > 14) {
+        this.$message.warning('Infinite List loaded all')
+        this.busy = true
+        this.loading = false
+        return
+      }
+      this.getRealTimeDynamic(res => {
+        this.RealTimeDynamic = data.concat(res.data.data)
+        this.loading = false
+      })
     }
   }
 }
@@ -236,6 +324,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-content: space-between;
+      height: 100%;
       ul {
         display:flex;
         justify-content: center;
@@ -251,6 +340,7 @@ export default {
         font-size: 1.6rem;
         font-family: Source Han Sans CN;
         font-weight: 400;
+        cursor: pointer;
       }
       .navActive{
         color: #1890FF;
@@ -274,5 +364,18 @@ export default {
       width: 100%;
       padding-left: 80px;
     }
+  }
+  .demo-infinite-container {
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    overflow: auto;
+    padding: 8px 24px;
+    height: 300px;
+  }
+  .demo-loading-container {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    text-align: center;
   }
 </style>

@@ -24,9 +24,6 @@
                 <span class="cricle"></span>
                 <span>{{devCode}}</span>
               </div>
-             <!-- <a-col v-for="v,i in warnValue" :key="i" style="margin-bottom:1rem;">
-                <div class="wvBox" :class="v.act?'act':''" @click="toggleMarkLine(v,i)">{{v.target}}</div>
-              </a-col>-->
             </div>
             <div class="echartTU" ref="trendStatisticChart"></div>
           </div>
