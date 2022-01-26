@@ -56,17 +56,20 @@
       },
       // 单个水库雨水情监测
       getReservoirData() {
-        this.drawChart()
-        // this.$get('').then(res => {
-        //   let rr = res.data
-        //   if (rr.code != 1) {
-        //     this.$message.error(rr.msg)
-        //     return false
-        //   }
-        //   this.drawChart()
-        // })
+        let o={
+          reservoirId:this.reservoirId,
+          dateType:this.timeAct
+        }
+        this.$get('/web/onePicture/rainWaterMonitorDataList',o).then(res => {
+          let rr = res.data
+          if (rr.code != 1) {
+            this.$message.error(rr.msg)
+            return false
+          }
+          this.drawChart(rr.data)
+        })
       },
-      drawChart() {
+      drawChart(chartData) {
         if (!this.chartTU) {
           var chartDom = document.getElementById('chartRainWater');
           this.chartTU = this.$echarts.init(chartDom);
@@ -91,7 +94,7 @@
 
           },
           xAxis: [{
-            type: 'category',
+            type: 'time',
             axisTick: {
               alignWithLabel: true
             },
@@ -106,7 +109,7 @@
                 color: '#fff',
               }
             },
-            data: ['06:00', '09:00', '12:00', '15:00', '18:00', '21:00']
+            // data: ['06:00', '09:00', '12:00', '15:00', '18:00', '21:00']
           }],
           yAxis: [{
               type: 'value',
@@ -158,7 +161,7 @@
               name: '库水位',
               type: 'line',
               yAxisIndex: 0,
-              data: [2, 4, 3, 1, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0, 0, 0.5, 0, 1, 0, 0, 0],
+              data: chartData.waterData.map(v=>{return[v.time,v.value]}),
               lineStyle: {
                 color: '#1DD682' //改变折线颜色
               },
@@ -182,9 +185,7 @@
               name: '降水量',
               type: 'bar',
               yAxisIndex: 1,
-              data: [2, 6, 9, 10, 10, 10, 10, 10, 10, 10.5, 10.5, 11, 11, 11, 11.5, 11.5, 11.5, 12, 12, 13, 13, 13,
-                13
-              ],
+              data: chartData.rainData.map(v=>{return[v.time,v.value]}),
               barWidth: 20,
               itemStyle: {
                 normal: {
@@ -213,6 +214,7 @@
       // 点击左侧水库概览列表水库时显示该水库雨水情监测
       Bus.$on('reservoirId', (reservoirId) => {
         // console.log("组件收到bus消息：", reservoirId);
+        if(reservoirId!=this.reservoirId)this.timeAct = ''
         this.reservoirId = reservoirId
         if (reservoirId) {
           setTimeout(() => {
