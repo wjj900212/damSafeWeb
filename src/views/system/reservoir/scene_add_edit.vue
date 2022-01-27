@@ -3,6 +3,11 @@
   <a-form :form="form" @submit="handleSubmit" class="scene_add_edit" v-bind="formItemLayout">
     <a-row>
       <a-col :span="24">
+        <div class="tipTit">
+          <span>{{isEdit?'修改场景':'添加场景'}}</span>
+        </div>
+      </a-col>
+      <a-col :span="24">
         <a-col :span="3">
           <span class="title">基本信息</span>
         </a-col>
@@ -38,14 +43,17 @@
       </a-col>
       <a-col :span="12">
         <a-form-item label="位置坐标" v-bind="formItemLayout">
-          <div style="display: flex;align-items: center;white-space: nowrap;">
+          <div style="height:40px;display: flex;align-items: center;white-space: nowrap;">
             <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
               placeholder="请填写经度" />
             <span style="margin-left:5px"></span>
             <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
               placeholder="请填写纬度" />
             <span style="margin-left:5px"></span>
-            <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" />
+            <!-- <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" /> -->
+            <a-button type="primary" @click="MapVisible=true">定位
+              <img src="/static/img/组 211.png" style="margin-left:8px;zoom:.8;">
+            </a-button>
           </div>
         </a-form-item>
       </a-col>
@@ -98,6 +106,7 @@
           <span class="title">自定义信息</span>
         </a-col>
         <a-button class="caddBtn" @click="customFieldModal=true">新增字段
+          <img src="/static/img/添加.png" style="margin-left:8px;">
         </a-button>
       </a-col>
       <a-col :span="12" v-for="(v,i) in customParam" :key="i">
@@ -157,6 +166,7 @@
     },
     data() {
       return {
+        isEdit: false,
         formItemLayout: {
           labelCol: {
             span: 6
@@ -468,7 +478,10 @@
       this.getHiddenDangerTypeList()
       //hiddenId 存在即为修改监测场景
       hiddenId = this.$route.query.hiddenId
-      if (hiddenId) this.getHiddenMsg()
+      if (hiddenId) {
+        this.getHiddenMsg()
+        this.isEdit = true
+      } else this.isEdit = false
     }
   }
   //获取url中的参数
@@ -490,6 +503,17 @@
   /* @import url(); 引入公共css类 */
   .scene_add_edit {
     width: 100%;
+    background-color: #fff;
+  }
+
+  .tipTit {
+    width: 95%;
+    margin: 0px auto;
+    border-bottom: 1px solid #1890ff33;
+    line-height: 40px;
+    padding-bottom: 5px;
+    color: #5D6574;
+    font-size: 1.6rem;
   }
 
   .title {
@@ -497,10 +521,11 @@
     font-size: 1.6rem;
     line-height: 40px;
     float: right;
-    margin-right: 14px;
     color: #1890FF;
+    margin: .8rem 0;
+    margin-right: 14px;
   }
-  
+
   .caddBtn {
     color: #188FFF;
     border-color: #188FFF;

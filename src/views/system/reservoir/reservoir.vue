@@ -5,22 +5,29 @@
       <a-form layout="inline" style="display:flex;align-items: center;justify-content: space-between;">
         <a-form-item label="水库名称">
           <a-input v-model="queryParams.name" placeholder="请输入关键字" style="width:220px;margin-right:18px" />
-          <a-button type="primary" @click="$router.push('/system/reservoir/reservoir_add')">添加</a-button>
+          <a-button style="border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;" type="primary"
+            @click="$router.push('/system/reservoir/reservoir_add')">添加
+            <img src="/static/img/添加.png" style="margin-left:8px;">
+          </a-button>
         </a-form-item>
         <a-form-item label="所在地区">
           <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"
             style="width:300px;margin-right:18px"></cascader>
-          <a-button type="primary" @click="searchTable">查询</a-button>
-          <a-button style="margin-left: 8px" @click="resetFilter">重置</a-button>
+          <a-button type="primary" @click="searchTable">查询
+            <img src="/static/img/查询 拷贝 3.png" style="margin-left:8px;">
+          </a-button>
+          <a-button style="margin-left: 8px;border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;"
+            @click="resetFilter">重置
+            <img src="/static/img/重置.png" style="margin-left:8px;"></a-button>
         </a-form-item>
       </a-form>
     </div>
-    <div>
+    <div class="tableBox">
       <!-- 表格区域 -->
       <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="dataSource"
         :pagination="pagination" :loading="loading" :scroll="{ x: 900 }" @change="handleTableChange">
         <template slot="tags" slot-scope="text">
-          <a-tag color="green" v-if="text==0">正常</a-tag>
+          <a-tag color="#DDF6F1" style="color:#40CAAF;" v-if="text==0">正常</a-tag>
           <a-tag color="blue" v-if="text==1">异常</a-tag>
           <a-tag color="red" v-if="text==2">险情</a-tag>
         </template>
@@ -97,7 +104,7 @@
         return [{
             title: '序号',
             customRender: (text, record, index) => `${index + 1}`,
-            width:80
+            width: 80
           },
           {
             title: '水库名称',
@@ -271,7 +278,7 @@
       this.getReservoirList({
         ...this.queryParams
       })
-    }
+    },
   }
 
 </script>
@@ -287,6 +294,21 @@
   .icons-list /deep/ .anticon {
     margin-right: 0.5rem;
     font-size: 1.6rem;
+  }
+
+</style>
+<style scoped>
+  .tableBox {
+    color: #242932;
+  }
+
+  .tableBox>>>.ant-table-thead>tr>th {
+    background-color: #F7FAFF;
+    border-color: rgba(59, 173, 255, 0.12);
+  }
+
+  .tableBox>>>.ant-table-tbody>tr>td {
+    border-color: rgba(59, 173, 255, 0.12);
   }
 
 </style>

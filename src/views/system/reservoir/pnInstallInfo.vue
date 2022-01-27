@@ -12,18 +12,18 @@
           安装位置
       </a-col>
       <a-col :span="8" :order="2" class="info-value">
-          <a v-if="installInfo.longitude!==0 && installInfo.latitude !== 0">
+          <a v-if="installInfo.longitude!==0 && installInfo.latitude !== 0" style="display: flex;align-items: center;">
             {{installInfo.longitude}},{{installInfo.latitude}}
-            <a-icon type="environment" />
+            <img src="/static/img/定位.png" style="zoom:.8;margin-left: 8px;">
           </a>
       </a-col>
       <a-col :span="4" :order="3" class="info-label">
           设计位置
       </a-col>
       <a-col :span="8" :order="4" class="info-value">
-          <a>
+          <a style="display: flex;align-items: center;">
             {{installInfo.lon}},{{installInfo.lat}}
-            <a-icon type="environment" />
+            <img src="/static/img/定位.png" style="zoom:.8;margin-left: 8px;">
           </a>
       </a-col>
     </a-row>

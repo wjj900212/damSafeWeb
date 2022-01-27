@@ -100,7 +100,7 @@
             this.sceneName = ''
             this.tableData = []
             this.devCode = []
-            this.myChart.clear()
+            if(this.myChart)this.myChart.clear()
             return
           }
           if (n.length > 0) {

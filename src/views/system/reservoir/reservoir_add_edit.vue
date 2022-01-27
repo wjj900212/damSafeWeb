@@ -3,6 +3,11 @@
   <a-form :form="form" @submit="handleSubmit" class="reservoir_add_edit">
     <a-row>
       <a-col :span="24">
+        <div class="tipTit">
+          <span>{{isEditReservoir?'修改水库':'添加水库'}}</span>
+        </div>
+      </a-col>
+      <a-col :span="24">
         <a-col :span="3">
           <span class="title">基本信息</span>
         </a-col>
@@ -39,7 +44,10 @@
             <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
               placeholder="请填写纬度" />
             <span style="margin-left:5px"></span>
-            <a-icon type="pushpin" style="cursor: pointer;font-size:14px;" @click="MapVisible=true" />
+            <!-- <a-icon type="pushpin" style="cursor: pointer;font-size:14px;" /> -->
+            <a-button type="primary" @click="MapVisible=true">定位
+              <img src="/static/img/组 211.png" style="margin-left:8px;zoom:.8;">
+            </a-button>
           </div>
         </a-form-item>
       </a-col>
@@ -64,16 +72,12 @@
       </a-col>
       <a-col :span="12">
         <a-form-item label="设计库容" v-bind="formItemLayout">
-          <div style="display: flex;align-items: center;white-space: nowrap;">
-            <a-input v-decorator="['capacity']" placeholder="请输入" /> <span style="margin-left:5px">亿m³</span>
-          </div>
+            <a-input v-decorator="['capacity']" placeholder="请输入" suffix="亿m³" />
         </a-form-item>
       </a-col>
       <a-col :span="12">
         <a-form-item label="最大水位" v-bind="formItemLayout">
-          <div style="display: flex;align-items: center;white-space: nowrap;">
-            <a-input v-decorator="['depth']" placeholder="请输入" /> <span style="margin-left:5px">m</span>
-          </div>
+            <a-input v-decorator="['depth']" placeholder="请输入" suffix="m"/>
         </a-form-item>
       </a-col>
       <a-col :span="12">
@@ -112,6 +116,7 @@
           <span class="title">自定义信息</span>
         </a-col>
         <a-button class="caddBtn" @click="customFieldModal=true">新增字段
+          <img src="/static/img/添加.png" style="margin-left:8px;">
         </a-button>
       </a-col>
       <a-col :span="12" v-for="v,i in customField" :key="i">
@@ -127,12 +132,12 @@
           </div>
         </a-form-item>
       </a-col>
+      <a-col :span="24">
+        <div class="bottomArea">
+          <a-button type="primary" html-type="submit">保存</a-button>
+        </div>
+      </a-col>
     </a-row>
-    <a-col :span="24">
-      <div class="bottomArea">
-        <a-button type="primary" html-type="submit">保存</a-button>
-      </div>
-    </a-col>
 
     <!-- 自定义字段弹框 -->
     <a-modal v-model="customFieldModal" title="自定义字段" @ok="customFieldOk">
@@ -171,6 +176,7 @@
     },
     data() {
       return {
+        isEditReservoir: false,
         optionCityInfo: [],
         casdata: [], // 级联插件默认值
         projectList: [],
@@ -447,6 +453,7 @@
         isEditReservoir = true
         this.getReservoirDetail(reservoirId)
       } else isEditReservoir = false
+      this.isEditReservoir = isEditReservoir
     }
   }
   //获取url中的参数
@@ -468,6 +475,18 @@
   /* @import url(); 引入公共css类 */
   .reservoir_add_edit {
     width: 100%;
+    background-color: #fff;
+    padding: 1rem 0;
+  }
+
+  .tipTit {
+    width: 95%;
+    margin: 0px auto;
+    border-bottom: 1px solid #1890ff33;
+    line-height: 40px;
+    padding-bottom: 5px;
+    color: #5D6574;
+    font-size: 1.6rem;
   }
 
   .title {
@@ -475,8 +494,9 @@
     font-size: 1.6rem;
     line-height: 40px;
     float: right;
-    margin-right: 14px;
     color: #1890FF;
+    margin: .8rem 0;
+    margin-right: 14px;
   }
 
   .bottomArea {

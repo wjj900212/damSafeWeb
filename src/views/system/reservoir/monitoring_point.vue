@@ -50,7 +50,8 @@
             </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary">查询</a-button>
+            <a-button type="primary">查询
+              <img src="/static/img/查询 拷贝 3.png" style="margin-left:8px;"></a-button>
           </span>
         </a-row>
       </a-form>
@@ -76,7 +77,7 @@
           </a-tree>
         </div>
       </div>
-      <div style="flex: 1;">
+      <div style="flex: 1;" class="tableBox">
       <!-- 表格区域 -->
       <a-table ref="TableInfo"
                :columns="columns"
@@ -87,16 +88,11 @@
                :scroll="{ x: 900 }"
                @change="handleTableChange">
 
-        <template slot="devBonline" slot-scope="text, record">
+        <template slot="devBonline" slot-scope="text">
           <div v-if="text === ''"></div>
-          <div v-if="text === '0'">
-            在线
-            <a-badge status="success" />
-          </div>
-          <div v-if="text === '1'">
-            离线
-            <a-badge status="error" />
-          </div>
+          
+          <a-tag color="#DDF6F1" v-if="text === '0'" style="color:#40CAAF;">在线</a-tag>
+          <a-tag color="#EFF0F3" v-if="text === '1'" style="color:#656D7B;">离线</a-tag>
         </template>
         <template slot="installInfo" slot-scope="text, record">
           <a @click="getInstallInfo(record)">点击查看</a>
@@ -448,4 +444,19 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "../../../../static/less/Common";
+</style>
+<style scoped>
+  .tableBox {
+    color: #242932;
+  }
+
+  .tableBox>>>.ant-table-thead>tr>th {
+    background-color: #F7FAFF;
+    border-color: rgba(59, 173, 255, 0.12);
+  }
+
+  .tableBox>>>.ant-table-tbody>tr>td {
+    border-color: rgba(59, 173, 255, 0.12);
+  }
+
 </style>
