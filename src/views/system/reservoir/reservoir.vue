@@ -10,8 +10,8 @@
         <a-form-item label="所在地区">
           <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"
             style="width:300px;margin-right:18px"></cascader>
-            <a-button type="primary" @click="searchTable">查询</a-button>
-            <a-button style="margin-left: 8px" @click="resetFilter">重置</a-button>
+          <a-button type="primary" @click="searchTable">查询</a-button>
+          <a-button style="margin-left: 8px" @click="resetFilter">重置</a-button>
         </a-form-item>
       </a-form>
     </div>
@@ -94,11 +94,11 @@
           filteredInfo
         } = this
         filteredInfo = filteredInfo || {}
-        return [
-          /* {
-                  title: '序号',
-                  customRender: (text, record, index) => `${index + 1}`
-                }, */
+        return [{
+            title: '序号',
+            customRender: (text, record, index) => `${index + 1}`,
+            width:80
+          },
           {
             title: '水库名称',
             dataIndex: 'reservoirName'

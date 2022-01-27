@@ -32,14 +32,14 @@
       </a-col>
       <a-col :span="12">
         <a-form-item label="位置坐标" v-bind="formItemLayout">
-          <div style="height:50px;display: flex;align-items: center;white-space: nowrap;">
+          <div style="height:40px;display: flex;align-items: center;white-space: nowrap;">
             <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
               placeholder="请填写经度" />
             <span style="margin-left:5px"></span>
             <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
               placeholder="请填写纬度" />
             <span style="margin-left:5px"></span>
-            <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" />
+            <a-icon type="pushpin" style="cursor: pointer;font-size:14px;" @click="MapVisible=true" />
           </div>
         </a-form-item>
       </a-col>
@@ -78,9 +78,8 @@
       </a-col>
       <a-col :span="12">
         <a-form-item label="建设时间" v-bind="formItemLayout">
-          <!-- :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }" -->
-          <a-date-picker format="YYYY-MM-DD HH:mm:ss" valueFormat="YYYY-MM-DD HH:mm:ss" placeholder="请选择"
-            v-decorator="['buildTime']" />
+          <a-date-picker style="width:100%;" format="YYYY-MM-DD HH:mm:ss" valueFormat="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择" v-decorator="['buildTime']" />
         </a-form-item>
       </a-col>
       <a-col :span="24">
@@ -108,15 +107,16 @@
           <editorCom ref="editorBox" putUrl="/file/uploadDetailsImage" delUrl="/file/deleteDetailsImage"></editorCom>
         </a-form-item>
       </a-col>
-      <a-col :span="24" style="margin-bottom:15px;">
+      <a-col :span="24" style="margin-bottom:15px;display:flex;align-items:center;">
         <a-col :span="3">
           <span class="title">自定义信息</span>
         </a-col>
-        <a-button @click="customFieldModal=true">新增字段</a-button>
+        <a-button class="caddBtn" @click="customFieldModal=true">新增字段
+        </a-button>
       </a-col>
       <a-col :span="12" v-for="v,i in customField" :key="i">
         <a-form-item v-bind="formItemLayout" :label="v.key">
-          <div style="display: flex;align-items: center;white-space: nowrap;">
+          <div style="display: flex;align-items:center;white-space: nowrap;">
             <a-input placeholder="请填写" v-model="v.value" />
             <span style="margin-left:5px"></span>
             <a-icon type="form" title="编辑名称" :style="{ fontSize: '16px', color: '#1890FF' }"
@@ -473,7 +473,7 @@
   .title {
     font-weight: 500;
     font-size: 1.6rem;
-    line-height: 30px;
+    line-height: 40px;
     float: right;
     margin-right: 14px;
     color: #1890FF;
@@ -486,6 +486,12 @@
     padding-top: 18px;
     margin-top: 10px;
     border-top: 1px solid #f2f2f2;
+  }
+
+  .caddBtn {
+    color: #188FFF;
+    border-color: #188FFF;
+    background: rgba(24, 143, 255, 0.1);
   }
 
 </style>

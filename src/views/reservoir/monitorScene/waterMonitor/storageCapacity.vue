@@ -1,12 +1,16 @@
 <template>
   <!-- 水位库容曲线 -->
   <div class="storageCapacity">
-    <a-card title="水位库容曲线">
+    <a-card>
+      <template slot="title">
+        <img src="/static/img/水位库容曲线.png">
+        <span>水位库容曲线</span>
+      </template>
       <a-card-grid style="width: 100%; text-align: center; padding: 5px">
         <div class="trendCon">
           <div class="echartTU" ref="storageChart"></div>
           <div style="width:30%">
-            <a-table :columns="columns" :data-source="tableData" :pagination="pagination">
+            <a-table :columns="columns" :data-source="tableData" :pagination="pagination" :customRow="customRow">
             </a-table>
           </div>
         </div>
@@ -90,6 +94,17 @@
     },
     methods: {
       moment,
+      //设置表格隔行变色
+      customRow(record, index) {
+        return {
+          style: {
+            // 字体颜色
+            color: '#8E8E8E',
+            // 行背景色
+            'background-color': index % 2 == 1 ? '#F9FAFE' : '#fff'
+          }
+        }
+      },
       onChange(date, dateString) {
         console.log(date, dateString)
       },
@@ -202,6 +217,11 @@
     width: 60%;
     height: 380px;
     /* margin: 0 1rem; */
+  }
+  
+  .trendCon >>> .ant-table-thead > tr > th{
+    background-color: #188FFF;
+    color: #fff;
   }
 
 </style>

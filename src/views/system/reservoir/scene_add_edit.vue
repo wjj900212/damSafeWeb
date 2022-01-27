@@ -1,84 +1,117 @@
 <template>
   <!-- 添加 / 编辑 水库 -->
   <a-form :form="form" @submit="handleSubmit" class="scene_add_edit" v-bind="formItemLayout">
-    <div class="title"><span class="line"></span>基本信息</div>
-    <a-form-item label="场景名称" v-bind="formItemLayout">
-      <a-input v-decorator="[
-          'name',{ rules: [{ required: true, message: '请填写场景名称' }] }]" placeholder="请填写场景名称" />
-    </a-form-item>
-    <a-form-item label="场景类型" v-bind="formItemLayout">
-      <a-select show-search placeholder="请选择" option-filter-prop="children" :filter-option="filterOption" v-decorator="[
-          'type',{ rules: [{ required: true, message: '请选择场景类型' }] }]">
-        <a-select-option v-for="scene in sceneTypeList" :key="scene.ID">{{scene.NAME}}</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="所在区县" v-bind="formItemLayout">
-      <!--<a-cascader :options="cityArr" placeholder="请选择所在区县" v-decorator="[
-          'city', { rules: [{ required: true, message: '请填写所在区县' }] } ]" />-->
-      <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
-      <a-input style="display: none;" v-decorator="['levelCode',{rules: [{ required: true, message: '所属地区不能为空'}]}]">
-      </a-input>
-    </a-form-item>
-    <a-form-item label="所在乡镇" v-bind="formItemLayout">
-      <a-input v-decorator="['township']" placeholder="请输入"></a-input>
-    </a-form-item>
-    <a-form-item label="位置坐标" v-bind="formItemLayout">
-      <div style="display: flex;align-items: center;white-space: nowrap;">
-        <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]" placeholder="请填写经度" />
-        <span style="margin-left:5px"></span>
-        <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]" placeholder="请填写纬度" />
-        <span style="margin-left:5px"></span>
-        <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" />
-      </div>
-    </a-form-item>
-    <a-form-item label="联系人" v-bind="formItemLayout">
-      <a-input v-decorator="['hiddenCharge']" placeholder="请输入"></a-input>
-    </a-form-item>
-    <a-form-item label="测站编码" v-bind="formItemLayout">
-      <a-input v-decorator="['stationCode']" placeholder="请输入" />
-    </a-form-item>
-    <a-form-item label="实景图" v-bind="formItemLayout">
-      <a-upload list-type="picture-card" :file-list="RealSceneFileList" :multiple="true" :remove="handleRealSceneRemove"
-        :before-upload="beforeRealSceneUpload" @change="handleRealSceneUploadChange" @preview="handleRealScenePreview">
-        <div>
-          <a-icon type="plus" />
-          <div class="ant-upload-text">上传</div>
-        </div>
-      </a-upload>
-      <a-modal :visible="previewRealSceneVisible" :footer="null" @cancel="previewRealSceneVisible=false">
-        <img alt="example" style="width: 100%" :src="previewRealSceneImage" />
-      </a-modal>
-    </a-form-item>
-    <a-form-item label="布设图" v-bind="formItemLayout">
-      <a-upload list-type="picture-card" :file-list="fileList" :multiple="true" :remove="handleRemove"
-        :before-upload="beforeUpload" @change="handleUploadChange" @preview="handlePreview">
-        <div>
-          <a-icon type="plus" />
-          <div class="ant-upload-text">上传</div>
-        </div>
-      </a-upload>
-      <a-modal :visible="previewVisible" :footer="null" @cancel="previewVisible=false">
-        <img alt="example" style="width: 100%" :src="previewImage" />
-      </a-modal>
-    </a-form-item>
-    <a-form-item label="场景介绍" v-bind="formItemLayout">
-      <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['remarks']" />
-    </a-form-item>
-    <div class="title"><span class="line"></span>自定义信息</div>
     <a-row>
-      <a-col :span="6">
-        <a-button style="float:right;" @click="customFieldModal=true">新增字段</a-button>
+      <a-col :span="24">
+        <a-col :span="3">
+          <span class="title">基本信息</span>
+        </a-col>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="场景名称" v-bind="formItemLayout">
+          <a-input v-decorator="[
+          'name',{ rules: [{ required: true, message: '请填写场景名称' }] }]" placeholder="请填写场景名称" />
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="场景类型" v-bind="formItemLayout">
+          <a-select show-search placeholder="请选择" option-filter-prop="children" :filter-option="filterOption"
+            v-decorator="[
+          'type',{ rules: [{ required: true, message: '请选择场景类型' }] }]">
+            <a-select-option v-for="scene in sceneTypeList" :key="scene.ID">{{scene.NAME}}</a-select-option>
+          </a-select>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="所在区县" v-bind="formItemLayout">
+          <!--<a-cascader :options="cityArr" placeholder="请选择所在区县" v-decorator="[
+          'city', { rules: [{ required: true, message: '请填写所在区县' }] } ]" />-->
+          <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"></cascader>
+          <a-input style="display: none;" v-decorator="['levelCode',{rules: [{ required: true, message: '所属地区不能为空'}]}]">
+          </a-input>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="所在乡镇" v-bind="formItemLayout">
+          <a-input v-decorator="['township']" placeholder="请输入"></a-input>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="位置坐标" v-bind="formItemLayout">
+          <div style="display: flex;align-items: center;white-space: nowrap;">
+            <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
+              placeholder="请填写经度" />
+            <span style="margin-left:5px"></span>
+            <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
+              placeholder="请填写纬度" />
+            <span style="margin-left:5px"></span>
+            <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" />
+          </div>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="联系人" v-bind="formItemLayout">
+          <a-input v-decorator="['hiddenCharge']" placeholder="请输入"></a-input>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="测站编码" v-bind="formItemLayout">
+          <a-input v-decorator="['stationCode']" placeholder="请输入" />
+        </a-form-item>
+      </a-col>
+      <a-col :span="24">
+        <a-form-item label="实景图" v-bind="formItemLayoutLong">
+          <a-upload list-type="picture-card" :file-list="RealSceneFileList" :multiple="true"
+            :remove="handleRealSceneRemove" :before-upload="beforeRealSceneUpload" @change="handleRealSceneUploadChange"
+            @preview="handleRealScenePreview">
+            <div>
+              <a-icon type="plus" />
+              <div class="ant-upload-text">上传</div>
+            </div>
+          </a-upload>
+          <a-modal :visible="previewRealSceneVisible" :footer="null" @cancel="previewRealSceneVisible=false">
+            <img alt="example" style="width: 100%" :src="previewRealSceneImage" />
+          </a-modal>
+        </a-form-item>
+      </a-col>
+      <a-col :span="24">
+        <a-form-item label="布设图" v-bind="formItemLayoutLong">
+          <a-upload list-type="picture-card" :file-list="fileList" :multiple="true" :remove="handleRemove"
+            :before-upload="beforeUpload" @change="handleUploadChange" @preview="handlePreview">
+            <div>
+              <a-icon type="plus" />
+              <div class="ant-upload-text">上传</div>
+            </div>
+          </a-upload>
+          <a-modal :visible="previewVisible" :footer="null" @cancel="previewVisible=false">
+            <img alt="example" style="width: 100%" :src="previewImage" />
+          </a-modal>
+        </a-form-item>
+      </a-col>
+      <a-col :span="24">
+        <a-form-item label="场景介绍" v-bind="formItemLayoutLong">
+          <a-textarea placeholder="请填写" :auto-size="{ minRows: 3, maxRows: 5 }" v-decorator="['remarks']" />
+        </a-form-item>
+      </a-col>
+      <a-col :span="24" style="margin-bottom:15px;display:flex;align-items:center;">
+        <a-col :span="3">
+          <span class="title">自定义信息</span>
+        </a-col>
+        <a-button class="caddBtn" @click="customFieldModal=true">新增字段
+        </a-button>
+      </a-col>
+      <a-col :span="12" v-for="(v,i) in customParam" :key="i">
+        <a-form-item v-bind="formItemLayout" :label="v.key">
+          <div style="display: flex;align-items: center;white-space: nowrap;">
+            <a-input placeholder="请填写" v-model="v.value" />
+            <span style="margin-left:5px"></span>
+            <a-icon type="form" title="编辑名称" @click="editCustomName(v,i)" />
+            <span style="margin-left:5px"></span>
+            <a-icon type="delete" title="删除" @click="customParam.splice(i,1)" />
+          </div>
+        </a-form-item>
       </a-col>
     </a-row>
-    <a-form-item v-bind="formItemLayout" v-for="(v,i) in customParam" :key="i" :label="v.key">
-      <div style="display: flex;align-items: center;white-space: nowrap;">
-        <a-input placeholder="请填写" v-model="v.value" />
-        <span style="margin-left:5px"></span>
-        <a-icon type="form" title="编辑名称" @click="editCustomName(v,i)" />
-        <span style="margin-left:5px"></span>
-        <a-icon type="delete" title="删除" @click="customParam.splice(i,1)" />
-      </div>
-    </a-form-item>
     <a-col :span="24" :style="{ textAlign: 'center',marginTop:'25px'}">
       <a-button type="primary" html-type="submit">保存</a-button>
     </a-col>
@@ -130,6 +163,14 @@
           },
           wrapperCol: {
             span: 15
+          }
+        },
+        formItemLayoutLong: {
+          labelCol: {
+            span: 3
+          },
+          wrapperCol: {
+            span: 20
           }
         },
         form: this.$form.createForm(this),
@@ -388,8 +429,8 @@
             latitude: data.latitude,
             stationCode: data.stationCode,
             remarks: data.remarks,
-            township:data.township,
-            hiddenCharge:data.hiddenCharge
+            township: data.township,
+            hiddenCharge: data.hiddenCharge
           }
           this.form.setFieldsValue(obj) //表单赋值
           this.setData({
@@ -452,20 +493,18 @@
   }
 
   .title {
-    width: 100%;
     font-weight: 500;
-    font-size: 1.2rem;
-    line-height: 30px;
-    display: flex;
-    align-items: center;
+    font-size: 1.6rem;
+    line-height: 40px;
+    float: right;
+    margin-right: 14px;
+    color: #1890FF;
   }
-
-  .line {
-    width: 3px;
-    height: 28px;
-    background-color: #069afe;
-    /* margin: 0 auto; */
-    margin-right: 5px;
+  
+  .caddBtn {
+    color: #188FFF;
+    border-color: #188FFF;
+    background: rgba(24, 143, 255, 0.1);
   }
 
 </style>

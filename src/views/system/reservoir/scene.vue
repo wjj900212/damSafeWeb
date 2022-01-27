@@ -123,7 +123,8 @@ export default {
       filteredInfo = filteredInfo || {}
       return [{
         title: '序号',
-        customRender: (text, record, index) => `${index + 1}`
+        customRender: (text, record, index) => `${index + 1}`,
+        width:80
       }, {
         title: '场景名称',
         dataIndex: 'hiddenName'

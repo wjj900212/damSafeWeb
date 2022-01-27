@@ -132,9 +132,9 @@
 				"children": [
 					{
 						"icon": "audit",
-						"path": "/reservoir/monitor/water",
-						"component": "reservoir/monitorScene/water",
-						"name": "水情监测",
+						"path": "/reservoir/monitor/rain",
+						"component": "reservoir/monitorScene/rain",
+						"name": "雨情监测",
 						"hidden": false,
 						"isItem": "0",
 						"meta": {
@@ -149,9 +149,9 @@
 					},
 					{
 						"icon": "audit",
-						"path": "/reservoir/monitor/rain",
-						"component": "reservoir/monitorScene/rain",
-						"name": "雨情监测",
+						"path": "/reservoir/monitor/water",
+						"component": "reservoir/monitorScene/water",
+						"name": "水情监测",
 						"hidden": false,
 						"isItem": "0",
 						"meta": {

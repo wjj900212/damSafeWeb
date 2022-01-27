@@ -1,12 +1,14 @@
 <template>
   <!-- 运维记录 -->
   <div class="warnMsg">
-    <a-card title="运维记录">
+    <a-card>
+      <template slot="title">
+        <img src="/static/img/icon-运维记录.png">
+        <span>运维记录</span>
+      </template>
       <template slot="extra">
         <div style="display: flex;white-space: nowrap;align-items: center;">
-          <a-input placeholder="请输入关键字" v-model="search" />
-          <a slot="extra" href="javascript:;" style="margin-left:5px">查看更多
-            <a-icon type="double-right" /></a>
+          <a-input-search placeholder="请输入关键字" v-model="search" @search="onSearch"/>
         </div>
       </template>
       <a-card-grid style="width: 100%; text-align: center; padding: 5px">
@@ -20,6 +22,8 @@
         </div>
         <a-table :columns="columns" :data-source="data" :pagination="pagination">
         </a-table>
+        <a href="javascript:;" style="float:right;margin-top:5px">查看更多
+          <a-icon type="double-right" /></a>
       </a-card-grid>
     </a-card>
   </div>
@@ -113,12 +117,13 @@
         }
       };
     },
-    methods: {},
+    methods: {
+      onSearch(){}
+    },
   }
 
 </script>
 <style scoped>
-
   .total {
     display: flex;
     align-items: center;

@@ -1,7 +1,11 @@
 <template>
   <!-- 库水位趋势统计 -->
   <div class="trendStatistic">
-    <a-card title="库水位趋势统计">
+    <a-card>
+      <template slot="title">
+        <img src="/static/img/超警水位统计.png">
+        <span>库水位趋势统计</span>
+      </template>
       <template slot="extra">
         <a-select v-model="queryParams.pnId" style="width:18rem" @change="getWarnValue">
           <a-select-option v-for="v in pnList" :key="v.pnId" :value="v.pnId">{{v.pnName}}</a-select-option>
@@ -16,20 +20,14 @@
         <a-button type="primary" @click="portData">数据导出</a-button>
       </template>
       <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+        <div style="display:flex;align-items: center;">
+          <div class="wvBox" v-for="v,i in warnValue" :key="i" style="margin-top:1rem;margin-right:1rem;" :class="v.act?'act':''"
+            @click="toggleMarkLine(v,i)">{{v.target}}</div>
+        </div>
         <div class="trendCon">
-          <div>
-            <div>当前 {{pnName}}</div>
-            <div style="margin: 1rem 0;">
-              <span class="cricle"></span>
-              <span>{{devCode}}</span>
-            </div>
-            <a-col v-for="v,i in warnValue" :key="i" style="margin-bottom:1rem;">
-              <div class="wvBox" :class="v.act?'act':''" @click="toggleMarkLine(v,i)">{{v.target}}</div>
-            </a-col>
-          </div>
           <div class="echartTU" ref="trendStatisticChart"></div>
           <div style="width:40%">
-            <a-table :columns="columns" :data-source="tableData" :pagination="pagination">
+            <a-table :columns="columns" :data-source="tableData" :pagination="pagination" :customRow="customRow">
             </a-table>
           </div>
         </div>
@@ -49,7 +47,6 @@
     },
     data() {
       return {
-        pnName: '',
         dateCurrent: '1',
         columns: [],
         searchTime: [],
@@ -72,7 +69,6 @@
           pageSize: ''
         },
         tableData: [],
-        devCode: '',
         myChart: ''
       }
     },
@@ -85,9 +81,7 @@
         handler: function (n, o) {
           if (!n || n.length == 0) {
             this.queryParams.pnId = ''
-            this.pnName = ''
             this.tableData = []
-            this.devCode = ''
             this.warnValue = []
             this.columns = [{
                 title: '库水位',
@@ -107,7 +101,6 @@
           }
           if (n.length > 0) {
             this.queryParams.pnId = n[0].pnId
-            this.pnName = n[0].pnName
             this.getWarnValue()
           }
         },
@@ -116,6 +109,17 @@
     },
     methods: {
       moment,
+      //设置表格隔行变色
+			customRow(record, index) {
+				return {
+					style: {
+						// 字体颜色
+						color: '#8E8E8E',
+						// 行背景色
+						'background-color': index % 2 == 1 ? '#F9FAFE' : '#fff'
+					}
+				}
+			},
       getData(init) {
         // this.queryParams.pageNum = this.pagination.current
         if (!this.queryParams.pnId) {
@@ -160,7 +164,6 @@
             // console.log(this.columns)
           }
           this.tableData = rr.data.list
-          this.devCode = rr.data.devCode
           this.pagination.total = rr.data.total
           this.drawChart()
         })
@@ -205,9 +208,6 @@
           pnId: this.queryParams.pnId,
           mark: 'meas'
         }
-        this.pnName = this.pnList.find(v => {
-          return v.pnId == this.queryParams.pnId
-        }).pnName
         this.$get('/web/monitorScene/getWarnConfigByPnIdAndMark', o).then(res => {
           let rr = res.data
           if (rr.code != 1) {
@@ -356,28 +356,34 @@
 
   .trendCon {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     margin-top: 1rem;
+    padding: 0 1rem;
   }
 
   .echartTU {
-    width: 50%;
+    width: 55%;
     height: 380px;
     margin: 0 1rem;
   }
 
   .wvBox {
     /* width: 100%; */
-    border: 1px solid #ccc;
+    border: 1px solid #1890FF;
     line-height: 3rem;
     text-align: center;
     border-radius: 5px;
+    color: #1890FF;
   }
 
   .wvBox.act {
-    background-color: #87a9d7;
+    background-color: #1890FF;
     color: #fff;
     cursor: pointer;
+  }
+  .trendCon >>> .ant-table-thead > tr > th{
+    background-color: #188FFF;
+    color: #fff;
   }
 
 </style>

@@ -1,7 +1,11 @@
 <template>
   <!-- 场景可视化 -->
   <div class="visual">
-    <a-card title="场景可视化">
+    <a-card>
+      <template slot="title">
+        <img src="/static/img/数据可视化.png">
+        <span>场景可视化</span>
+      </template>
       <a-select slot="extra" v-model="currentScene" @change="sceneChange">
         <a-select-option v-for="v,i in sceneDataArr" :key="i" :value="v.sceneId">{{v.sceneName}}</a-select-option>
       </a-select>
