@@ -218,10 +218,14 @@
     height: 380px;
     /* margin: 0 1rem; */
   }
-  
-  .trendCon >>> .ant-table-thead > tr > th{
+
+  .trendCon>>>.ant-table-thead>tr>th {
     background-color: #188FFF;
     color: #fff;
+    border-color: rgba(59, 173, 255, 0.12);
   }
 
+  .trendCon>>>.ant-table-tbody>tr>td {
+    border-color: rgba(59, 173, 255, 0.12);
+  }
 </style>

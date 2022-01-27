@@ -142,7 +142,6 @@
 
 </script>
 <style scoped>
-
   .total {
     display: flex;
     align-items: center;
@@ -167,12 +166,18 @@
     background-color: #069AFE;
     color: #fff;
   }
-  .warnMsg >>>.ant-card-grid{
+
+  .warnMsg>>>.ant-card-grid {
     min-height: 573px;
   }
-  .warnMsg  >>> .ant-table-thead > tr > th{
+
+  .warnMsg>>>.ant-table-thead>tr>th {
     background-color: #F7FAFF;
-    color: #242932;
+    border-color: rgba(59, 173, 255, 0.12);
+  }
+
+  .warnMsg>>>.ant-table-tbody>tr>td {
+    border-color: rgba(59, 173, 255, 0.12);
   }
 
 </style>

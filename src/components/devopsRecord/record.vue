@@ -148,10 +148,13 @@
     background-color: #069AFE;
     color: #fff;
   }
-  
-  .record >>> .ant-table-thead > tr > th{
+
+  .record>>>.ant-table-thead>tr>th {
     background-color: #F7FAFF;
-    color: #242932;
+    border-color: rgba(59, 173, 255, 0.12);
   }
 
+  .record>>>.ant-table-tbody>tr>td {
+    border-color: rgba(59, 173, 255, 0.12);
+  }
 </style>

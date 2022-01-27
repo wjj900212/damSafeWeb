@@ -100,7 +100,7 @@
             this.sceneName = ''
             this.tableData = []
             this.devCode = []
-            if(this.myChart)this.myChart.clear()
+            if (this.myChart) this.myChart.clear()
             return
           }
           if (n.length > 0) {
@@ -115,16 +115,16 @@
     methods: {
       moment,
       //设置表格隔行变色
-			customRow(record, index) {
-				return {
-					style: {
-						// 字体颜色
-						color: '#8E8E8E',
-						// 行背景色
-						'background-color': index % 2 == 1 ? '#F9FAFE' : '#fff'
-					}
-				}
-			},
+      customRow(record, index) {
+        return {
+          style: {
+            // 字体颜色
+            color: '#8E8E8E',
+            // 行背景色
+            'background-color': index % 2 == 1 ? '#F9FAFE' : '#fff'
+          }
+        }
+      },
       sceneChange() {
         this.sceneName = this.pnList.find(v => {
           return v.sceneId == this.queryParams.sceneId
@@ -259,9 +259,14 @@
     width: 48%;
   }
 
-  .s_right >>>.ant-table-thead>tr>th {
+  .s_right>>>.ant-table-thead>tr>th {
     background-color: #188FFF;
     color: #fff;
+    border-color: rgba(59, 173, 255, 0.12);
+  }
+
+  .s_right>>>.ant-table-tbody>tr>td {
+    border-color: rgba(59, 173, 255, 0.12);
   }
 
 

@@ -21,8 +21,8 @@
       </template>
       <a-card-grid style="width: 100%; text-align: center; padding: 5px">
         <div style="display:flex;align-items: center;">
-          <div class="wvBox" v-for="v,i in warnValue" :key="i" style="margin-top:1rem;margin-right:1rem;" :class="v.act?'act':''"
-            @click="toggleMarkLine(v,i)">{{v.target}}</div>
+          <div class="wvBox" v-for="v,i in warnValue" :key="i" style="margin-top:1rem;margin-right:1rem;"
+            :class="v.act?'act':''" @click="toggleMarkLine(v,i)">{{v.target}}</div>
         </div>
         <div class="trendCon">
           <div class="echartTU" ref="trendStatisticChart"></div>
@@ -110,16 +110,16 @@
     methods: {
       moment,
       //设置表格隔行变色
-			customRow(record, index) {
-				return {
-					style: {
-						// 字体颜色
-						color: '#8E8E8E',
-						// 行背景色
-						'background-color': index % 2 == 1 ? '#F9FAFE' : '#fff'
-					}
-				}
-			},
+      customRow(record, index) {
+        return {
+          style: {
+            // 字体颜色
+            color: '#8E8E8E',
+            // 行背景色
+            'background-color': index % 2 == 1 ? '#F9FAFE' : '#fff'
+          }
+        }
+      },
       getData(init) {
         // this.queryParams.pageNum = this.pagination.current
         if (!this.queryParams.pnId) {
@@ -381,9 +381,15 @@
     color: #fff;
     cursor: pointer;
   }
-  .trendCon >>> .ant-table-thead > tr > th{
+
+  .trendCon>>>.ant-table-thead>tr>th {
     background-color: #188FFF;
     color: #fff;
+    border-color: rgba(59, 173, 255, 0.12);
+  }
+
+  .trendCon>>>.ant-table-tbody>tr>td {
+    border-color: rgba(59, 173, 255, 0.12);
   }
 
 </style>
