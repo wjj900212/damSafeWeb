@@ -1,56 +1,58 @@
 <template>
-  <!-- 水情概况 -->
-  <div class="overview">
-    <a-card title="变形监测概况" style="width: 100%">
-      <a-button slot="extra" @click="safeVisible=true"> 安全管理预案
-        <a-icon type="read" style="fontSize:1.6rem" />
-      </a-button>
-      <a-card-grid style="width: 100%; padding: 30px">
-        <a-row>
-          <a-col :span="2">
-            <img width="48" height="48" src="static/img/u348.png" alt="">
-          </a-col>
-          <a-col :span="16">
-            <a-row>
-              <a-col :span="24">
-                <h1>{{ data.hiddenName }}</h1>
-              </a-col>
-            </a-row>
-            <a-row>
-              <a-col :span="4">测站编码</a-col>
-              <a-col :span="20">{{ data.stationCode }}</a-col>
-            </a-row>
-            <a-row>
-              <a-col :span="4">建设时间</a-col>
-              <a-col :span="20">{{ data.createTime }}</a-col>
-            </a-row>
-            <a-row>
-              <a-col :span="4">联系人</a-col>
-              <a-col :span="20">{{ data.hiddenCharge }}</a-col>
-            </a-row>
-          </a-col>
-          <a-col :span="6">
-            <img v-if="data.image" width="200" height="110" :src="data.image" alt="">
-          </a-col>
-        </a-row>
+  <!-- 变形监测概况 -->
+  <div class="overviewD">
+    <a-card style="width: 100%">
+      <template slot="title">
+        <img src="/static/img/渗压监测概况.png">
+        <span>变形监测概况</span>
+      </template>
+      <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
+      <a-card-grid style="width: 100%; padding: 5px">
+        <div class="basicMsg">
+          <div class="basic">
+            <div class="subtit"><span class="t_line"></span> {{ data.hiddenName }}</div>
+            <div class="subTxt"><span>测站编码：</span> {{data.stationCode}}</div>
+            <div class="subTxt"><span>建设时间：</span>
+              {{data.createTime?data.createTime.substring(0,10):''}}</div>
+            <div class="subTxt"><span>联系人员：</span> {{data.hiddenCharge}}</div>
+          </div>
+          <div class="reservoirStatus">
+            <template v-if="data.reservoirStatus==='0'">
+              <img src="/static/img/正常.png">
+              <div>
+                <div style="color:#3CC8AE;font-size:2.4rem;">正常</div>
+                <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>
+              </div>
+            </template>
+            <template v-if="data.reservoirStatus==='1'">
+              <img src="/static/img/异常.png">
+              <div>
+                <div style="color:#FF9809;font-size:2.4rem;">异常</div>
+                <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>
+              </div>
+            </template>
+            <template v-if="data.reservoirStatus==='2'">
+              <img src="/static/img/险情.png">
+              <div>
+                <div style="color:#FE5230;font-size:2.4rem;">险情</div>
+                <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>
+              </div>
+            </template>
+          </div>
+          <div style="flex:1;"></div>
+        </div>
       </a-card-grid>
-      <a-card-grid style="width: 100%; padding: 30px">
-        <a-row>
-          <a-col :span="18">
-            <a-row v-for="item in data.pnList" :key="item.pnId">
-              <a-col :span="12">{{ item.pnName }}</a-col>
-              <a-col :span="12"><span :style="{ color: getTypeText(item.basicOnline).color }">{{ getTypeText(item.basicOnline).name}}</span> / <span :style="{ color: getText(item.newestWarnStatus).color }">{{ getText(item.newestWarnStatus).name}}</span></a-col>
-            </a-row>
-          </a-col>
-          <a-col :span="6">
-            <a-row>
-              <a-col>安全状态</a-col>
-            </a-row>
-            <a-row>
-              <a-col><span :style="{ color: getText(data.reservoirStatus).color }">{{ getText(data.reservoirStatus).name}}</span></a-col>
-            </a-row>
-          </a-col>
-        </a-row>
+      <a-card-grid style="width: 100%; padding: 25px">
+        <div class="dataBox">
+          <div class="item" v-for="item,i in data.pnList" :key="i">
+            <span>{{ item.pnName }}</span>
+            <div><span
+                :style="{ color: getTypeText(item.basicOnline).color }">{{ getTypeText(item.basicOnline).name}}</span>
+              / <span
+                :style="{ color: getText(item.newestWarnStatus).color }">{{ getText(item.newestWarnStatus).name}}</span>
+            </div>
+          </div>
+        </div>
       </a-card-grid>
     </a-card>
     <!-- 安全管理预案 -->
@@ -59,159 +61,113 @@
 </template>
 
 <script>
-import { getText, getTypeText } from "@/utils/utils";
-import safePlanArticle from '@/components/safePlanArticle/safePlanArticle.vue'
-export default {
-  components: {
-    safePlanArticle
-  },
-  props: {
-    data: {
-      type: Object,
-      default: () => {}
-    }
-  },
-  data () {
-    return {
-      monitorList: [],
-      safeVisible: false
-    }
-  },
-  watch: {
-    
-  },
-  mounted () {
-  },
-  methods: {
-    getText (str) {
-      return getText(str)
+  import {
+    getText,
+    getTypeText
+  } from "@/utils/utils";
+  import safePlanArticle from '@/components/safePlanArticle/safePlanArticle.vue'
+  export default {
+    components: {
+      safePlanArticle
     },
-    getTypeText (str) {
-      return getTypeText(str)
+    props: {
+      data: {
+        type: Object,
+        default: () => {}
+      }
+    },
+    data() {
+      return {
+        monitorList: [],
+        safeVisible: false
+      }
+    },
+    watch: {
+
+    },
+    mounted() {},
+    methods: {
+      getText(str) {
+        return getText(str)
+      },
+      getTypeText(str) {
+        return getTypeText(str)
+      }
     }
   }
-}
 
 </script>
 <style lang="less" scoped>
-  .overview {
+  .overviewD {
     background-color: #fff;
     position: relative;
   }
 
   .basicMsg {
     display: flex;
-    /* align-items: center; */
     justify-content: space-between;
-    padding: 1rem 0;
-  }
-
-  .basicTxt {
-    display: flex;
+    padding: 1.5rem;
   }
 
   .basic {
-    margin-left: 5px;
+    flex: 1.3;
+    padding: 1rem;
+    box-shadow: 1px 0px 18px 0px rgba(172, 200, 219, 0.3);
+    border-radius: 8px;
   }
 
   .subtit {
     font-weight: 500;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    color: #191E2A;
+  }
+
+  .t_line {
+    background-color: #1890FF;
+    width: 4px;
+    height: 15px;
+    margin-right: 6px;
   }
 
   .subTxt {
+    text-indent: 4px;
     font-size: 1.4rem;
+    color: #191E2A;
   }
 
   .subTxt span {
     display: inline-block;
-    width: 8rem;
+    color: #5D6574;
   }
 
-  .stateMsg {
-    display: flex;
-    align-items: left;
-    /* justify-content: space-around; */
-    padding: 1rem 0;
-    border-bottom: 1px solid #f2f2f2;
-    font-size: 1.6rem;
-  }
-
-  .s_left,
-  .s_right {
+  .reservoirStatus {
     flex: 1;
-    text-align: center;
-  }
-
-  .s_left {
-    border-right: 1px solid #f2f2f2;
-  }
-
-  .bili {
-    width: 4.5rem;
-    height: 4.5rem;
-    background-color: skyblue;
-    border-radius: 50%;
-    margin-left: 5px;
-    position: relative;
-    overflow: hidden;
+    padding: 1.5rem;
+    background-color: rgba(246, 250, 255, 1);
+    border-radius: 10px;
     display: flex;
     align-items: center;
-    justify-content: center;
-
-  }
-
-  .bilivimg {
-    width: 3.8rem;
-    height: 3.8rem;
-    border-radius: 50%;
-    background-color: pink;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 50%;
-  }
-
-  .bliliv {
-    color: #8b8d90;
-    text-align: center;
-    text-shadow: #000;
-    position: relative;
-    z-index: 1;
+    justify-content: space-around;
+    margin: 0 1.5rem;
   }
 
   .dataBox {
-    padding: 1rem 0;
+    height: 23rem;
+    overflow: auto;
   }
 
-  .data_tit {
+  .item {
+    width: 48%;
+    float: left;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-.dataVBox{
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-}
-  .dataV{
-    width: 30%;
-    padding: 8px;
-    box-shadow: 2px 2px 15px rgba(76,89,248,16%);
-    margin-bottom: 1rem;
-    cursor: default;
+  .item:nth-child(even){
+    float: right;
   }
-  .dataV div{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .cricle {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background-color:#1a94ff;
-  }
+
 </style>

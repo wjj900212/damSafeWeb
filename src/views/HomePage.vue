@@ -180,10 +180,10 @@ export default {
     .leftView {
       position: absolute;
       width: 18%;
-      height: calc(100% - 81px - 2rem);
+      height: calc(100% - 81px - 3rem);
       z-index: 10;
       left: 1.8rem;
-      bottom: 1rem;
+      bottom: 1.5rem;
       background: url('/static/img/left-bg.png') no-repeat;
       background-size: 100% 100%;
 
@@ -199,7 +199,7 @@ export default {
         position: absolute;
         width: 100%;
         bottom: 1rem;
-        height: calc(100% - 270px - 2rem);
+        height: calc(100% - 270px - 1rem);
       }
     }
 
@@ -215,10 +215,10 @@ export default {
     .rightView {
       position: absolute;
       width: 23%;
-      height: calc(100% - 81px - 2rem);
+      height: calc(100% - 81px - 3rem);
       z-index: 10;
       right: 1.8rem;
-      bottom: 1rem;
+      bottom: 1.5rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;

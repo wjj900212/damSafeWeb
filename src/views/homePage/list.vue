@@ -137,7 +137,7 @@
   }
 
   .con {
-    /* width: calc(100% - 2rem); */
+    width: 100%;
     padding: 1rem;
     float: left;
     background: url('/static/img/model-bg.png') no-repeat;

@@ -1,7 +1,11 @@
 <template>
   <!-- 场景可视化 -->
   <div class="visual">
-    <a-card title="场景可视化" :bodyStyle="{ padding: '5px' }">
+    <a-card :bodyStyle="{ padding: '5px' }">
+      <template slot="title">
+        <img src="/static/img/数据可视化.png">
+        <span>场景可视化</span>
+      </template>
       <a-select
         slot="extra"
         v-model="scene"
@@ -31,7 +35,6 @@ export default {
   props: ['hiddenId'],
   data () {
     return {
-      current: 'jack',
       scene: '',
       sceneData: [],
       designData: {}
@@ -40,6 +43,11 @@ export default {
   watch: {
     hiddenId: {
       handler: function (n, o) {
+        if(!n){
+          this.scene=''
+          this.sceneData=[]
+          this.designData={}
+        }
         this.getDesignConfig()
       },
       immediate: true

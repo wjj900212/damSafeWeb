@@ -79,7 +79,7 @@ export default {
       if (this.hiddenId === -1) {
         return;
       }
-      this.$get('web/monitorScene/monitorConditionRain', {
+      this.$get('web/monitorScene/monitorConditionMove', {
         hiddenId: this.hiddenId
       }).then((res) => {
         if (res.data.code === 1) {
