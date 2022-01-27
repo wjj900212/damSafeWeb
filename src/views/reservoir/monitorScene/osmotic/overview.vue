@@ -1,59 +1,73 @@
 <template>
   <!-- 渗压监测概况 -->
-  <div class="overview">
-    <a-card title="渗压监测概况" style="width: 100%">
+  <div class="overviewOs">
+    <a-card style="width: 100%">
+      <template slot="title">
+        <img src="/static/img/渗压监测概况.png">
+        <span>渗压监测概况</span>
+      </template>
       <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
       <a-card-grid style="width: 100%; padding: 5px">
         <div class="basicMsg">
-          <div class="basicTxt">
-            <a-icon type="area-chart" style="fontSize:3rem;color:#1397db" />
-            <div class="basic">
-              <div class="subtit">{{overViewData.hiddenName}}</div>
-              <div class="subTxt"><span>测站编码</span> {{overViewData.stationCode}}</div>
-              <div class="subTxt"><span>建设时间</span> {{overViewData.createTime}}</div>
-              <div class="subTxt"><span>联系人</span> {{overViewData.hiddenCharge || '无'}}</div>
-            </div>
+          <div class="basic">
+            <div class="subtit"><span class="t_line"></span> 水情监测</div>
+            <div class="subTxt"><span>测站编码：</span> {{overViewData.stationCode}}</div>
+            <div class="subTxt"><span>建设时间：</span>
+              {{overViewData.createTime?overViewData.createTime.substring(0,10):''}}</div>
+            <div class="subTxt"><span>联系人员：</span> {{overViewData.hiddenCharge}}</div>
           </div>
-          <img src="static/img/u268.svg" alt="" />
+          <div class="reservoirStatus">
+            <template v-if="overViewData.reservoirStatus==='0'">
+              <img src="/static/img/正常.png">
+              <div>
+                <div style="color:#3CC8AE;font-size:2.4rem;">正常</div>
+                <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>
+              </div>
+            </template>
+            <template v-if="overViewData.reservoirStatus==='1'">
+              <img src="/static/img/异常.png">
+              <div>
+                <div style="color:#FF9809;font-size:2.4rem;">异常</div>
+                <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>
+              </div>
+            </template>
+            <template v-if="overViewData.reservoirStatus==='2'">
+              <img src="/static/img/险情.png">
+              <div>
+                <div style="color:#FE5230;font-size:2.4rem;">险情</div>
+                <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>
+              </div>
+            </template>
+          </div>
+          <div style="flex:1;"></div>
         </div>
       </a-card-grid>
       <a-card-grid style="width: 100%; padding: 5px">
         <div class="stateMsg">
-          <div class="s_left">
-            <div>
-              <span>当前</span>
-              <a-select v-model="current" :style="{width:'20rem'}" @change="handlePnPoint">
-                <a-select-option v-for="pn,i in overViewData.pnList" :key="i" :value="pn.sceneId">{{pn.sceneName}}
-                </a-select-option>
-              </a-select>
-            </div>
-
-            <div class="dataVBox">
-              <div v-if="pnTarData.length === 0">
-                无数据
-              </div>
-              <div class="dataV" v-else v-for="(pnTar,index) in pnTarData" :key="index">
-                <div>
-                  <span style="font-size:1.4rem">{{pnTar.pnName}}</span>
-                  <span class="cricle"></span>
-                </div>
-                <div>
-                  <span style="font-size:1.4rem">{{pnTar.target | ellipsis(6)}}</span>
-                  <span style="color:#1a94ff;">{{pnTar.value}}</span>
-                </div>
-                <div>
-                  <span style="font-size:1.2rem">{{pnTar.time.substring(5,16)}}</span>
-                </div>
-              </div>
-              <div class="empty"></div>
-              <div class="empty"></div>
-            </div>
+          <div style="margin-left:1.5rem;">
+            <span>当前：</span>
+            <a-select v-model="current" :style="{width:'20rem'}" @change="handlePnPoint">
+              <a-select-option v-for="pn,i in overViewData.pnList" :key="i" :value="pn.sceneId">{{pn.sceneName}}
+              </a-select-option>
+            </a-select>
           </div>
-          <div class="s_right">
-            <div>安全状态</div>
-            <div v-if="overViewData.reservoirStatus==='0'" style="font-size:1.8rem;color:#24C174;">正常</div>
-            <div v-if="overViewData.reservoirStatus==='1'" style="font-size:1.8rem;color:#ff9f00;">异常</div>
-            <div v-if="overViewData.reservoirStatus==='2'" style="font-size:1.8rem;color:#ff2626;">险情</div>
+          <div class="dataVBox">
+            <a-empty v-if="pnTarData.length === 0" />
+            <div class="dataV" v-for="(pnTar,index) in pnTarData" :key="index">
+              <div>
+                <span style="font-size:1.4rem;color:#191E2A;">{{pnTar.pnName |  ellipsis(8)}}</span>
+                <span class="cricle"></span>
+              </div>
+              <div>
+                <span style="font-size:1.4rem;color:#191E2A;">{{pnTar.target | ellipsis(8)}}</span>
+                <span style="color:#1890FF;font-size:2.2rem">{{pnTar.value}}</span>
+              </div>
+              <div>
+                <span style="font-size:1.4rem;color:#696969;">{{pnTar.time.substring(5,16)}}</span>
+              </div>
+            </div>
+            <div class="empty"></div>
+            <div class="empty"></div>
           </div>
         </div>
       </a-card-grid>
@@ -78,14 +92,14 @@
       }
     },
     watch: {
-    //   hiddenId: {
-    //     handler: function (n, o) {
-    //       if (!n) return
-    //       this.getMonitorCondition()
-    //     },
-    //     immediate: true
-    //   },
-      
+      //   hiddenId: {
+      //     handler: function (n, o) {
+      //       if (!n) return
+      //       this.getMonitorCondition()
+      //     },
+      //     immediate: true
+      //   },
+
       pnList: {
         handler: function (n, o) {
           let that = this
@@ -93,7 +107,7 @@
             this.current = ''
             this.pnTarData = []
             return
-          }else {
+          } else {
             that.current = n[0].sceneId
             that.monitorPnDataRain()
           }
@@ -104,7 +118,7 @@
     methods: {
       handlePnPoint(value) {
         this.monitorPnDataRain(value)
-      }, 
+      },
       // 获取 横截面最新监测数据
       monitorPnDataRain() {
         let _this = this
@@ -119,7 +133,7 @@
         })
       }
     },
-    
+
     filters: {
       // 名称过长时用...代替
       ellipsis(value, num) {
@@ -136,90 +150,63 @@
 
 </script>
 <style lang="less" scoped>
-  .overview {
+  .overviewOs {
     background-color: #fff;
     position: relative;
   }
 
   .basicMsg {
     display: flex;
-    /* align-items: center; */
     justify-content: space-between;
-    padding: 1rem 0;
-  }
-
-  .basicTxt {
-    display: flex;
+    padding: 1.5rem;
   }
 
   .basic {
-    margin-left: 5px;
+    flex: 1.3;
+    padding: 1rem;
+    box-shadow: 1px 0px 18px 0px rgba(172, 200, 219, 0.3);
+    border-radius: 8px;
   }
 
   .subtit {
     font-weight: 500;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    color: #191E2A;
+  }
+
+  .t_line {
+    background-color: #1890FF;
+    width: 4px;
+    height: 15px;
+    margin-right: 6px;
   }
 
   .subTxt {
+    text-indent: 4px;
     font-size: 1.4rem;
+    color: #191E2A;
   }
 
   .subTxt span {
     display: inline-block;
-    width: 8rem;
+    color: #5D6574;
+  }
+
+  .reservoirStatus {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: rgba(246, 250, 255, 1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0 1.5rem;
   }
 
   .stateMsg {
-    display: flex;
-    align-items: left;
-    /* justify-content: space-around; */
-    padding: 1rem 0;
-    font-size: 1.6rem;
-  }
-
-  .s_right {
-    flex: 1;
-    text-align: center;
-  }
-
-  .s_left {
-    flex: 3;
-    text-align: left;
-    border-right: 1px solid #f2f2f2;
-  }
-
-  .bili {
-    width: 4.5rem;
-    height: 4.5rem;
-    background-color: skyblue;
-    border-radius: 50%;
-    margin-left: 5px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-  }
-
-  .bilivimg {
-    width: 3.8rem;
-    height: 3.8rem;
-    border-radius: 50%;
-    background-color: pink;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 50%;
-  }
-
-  .bliliv {
-    color: #8b8d90;
-    text-align: center;
-    text-shadow: #000;
-    position: relative;
-    z-index: 1;
+    margin-top: 1rem;
   }
 
   .dataBox {
@@ -239,19 +226,22 @@
     justify-content: space-evenly;
     flex-wrap: wrap;
     margin-top: 1rem;
+    height: 20.8rem;
+
   }
 
   .dataV {
-    width: 30%;
+    width: 28%;
     padding: 8px;
-    box-shadow: 2px 2px 15px rgba(76, 89, 248, 16%);
     margin-bottom: 1rem;
     cursor: default;
     white-space: nowrap;
+    border: 1px solid rgba(141, 199, 252, .6);
+    border-radius: 6px;
   }
 
   .empty {
-    width: 30%;
+    width: 28%;
     padding: 8px;
   }
 
@@ -265,7 +255,7 @@
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background-color: #1a94ff;
+    background-color: #3FCAAF;
   }
 
 </style>

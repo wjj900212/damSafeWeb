@@ -28,12 +28,12 @@
             <span class="btnt" :class="queryParams.dateType==3?'act':''" @click="dateChange(3)">近一月</span>
           </div>
         </div>
-        <a-table :columns="columns" :data-source="warnData.list" :pagination="pagination"
+        <a-table style="padding:0 1rem;" :columns="columns" :data-source="warnData.list" :pagination="pagination"
           :rowKey="(record,index)=>{return index}">
           <a slot="level" slot-scope="text"
             :style="{color:text==4?'#FF2626':text==3?'#FF9F00':text==2?'#F9D044':'#3399FF'}">{{ text==4?'红色预警':text==3?'橙色预警':text==2?'黄色预警':text==1?'蓝色预警':'' }}</a>
         </a-table>
-        <a href="javascript:;" style="float:right;margin-top:5px">查看更多
+        <a href="javascript:;" style="float:right;margin-top:5px;margin-right:10px;">查看更多
           <a-icon type="double-right" /></a>
       </a-card-grid>
     </a-card>
@@ -166,6 +166,9 @@
   .btnt.act {
     background-color: #069AFE;
     color: #fff;
+  }
+  .warnMsg >>>.ant-card-grid{
+    min-height: 573px;
   }
   .warnMsg  >>> .ant-table-thead > tr > th{
     background-color: #F7FAFF;

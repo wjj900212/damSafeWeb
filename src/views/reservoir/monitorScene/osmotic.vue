@@ -1,7 +1,7 @@
 <template>
   <!-- 渗压监测 -->
   <div class="tabs Osmotic">
-    <a-tabs default-active-key="1" @change="callback" class="tabs">
+    <a-tabs default-active-key="1" @change="callback" class="tabsBox">
       <a-tab-pane v-for="v in hiddenArr" :key="v.id" :tab="v.name">
       </a-tab-pane>
     </a-tabs>
@@ -28,7 +28,7 @@
         </a-col>
         <a-col :span="12">
           <!-- 运维记录 -->
-          <record :hiddenId="hiddenId" />->
+          <record :hiddenId="hiddenId" />
         </a-col>
       </a-row>
     </div>
@@ -92,6 +92,8 @@
           }
           if (rr.data.length == 0) {
             this.$message.warning('暂无渗压监测点')
+            this.overViewData={pnList:[],reservoirStatus:''}
+            this.hiddenId=''
             return false
           }
           this.hiddenArr = rr.data
@@ -125,9 +127,13 @@
   .tabs {
     width: 100%;
   }
+  .tabsBox{
+    background-color: #fff;
+  }
 
   .com {
     width: 100%;
+    margin-top: 10px;
     /* display: flex;
     justify-content: space-between;
     flex-wrap: wrap; */

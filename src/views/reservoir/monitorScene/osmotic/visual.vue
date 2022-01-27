@@ -1,12 +1,20 @@
 <template>
   <!-- 浸润线可视化 -->
   <div class="visual">
-    <a-card title="浸润线预警模型">
-      <a-select slot="extra" v-model="sceneId" placeholder="选择断面" option-filter-prop="children" @change="sceneChange">
-        <a-select-option v-for="item in sceneList" :value="item.sceneId" :key="item.sceneId">
-          {{ item.sceneName }}
-        </a-select-option>
-      </a-select>
+    <a-card>
+      <template slot="title">
+        <img src="/static/img/数据可视化.png">
+        <span>浸润线预警模型</span>
+      </template>
+      <template slot="extra">
+        <a href="JavaScript:;" style="margin-right:10px;">指标安全说明</a>
+        <a-select v-model="sceneId" placeholder="选择断面" option-filter-prop="children" @change="sceneChange"
+          style="width:180px">
+          <a-select-option v-for="item in sceneList" :value="item.sceneId" :key="item.sceneId">
+            {{ item.sceneName }}
+          </a-select-option>
+        </a-select>
+      </template>
       <a-card-grid style="width: 100%; text-align: center; padding: 5px">
         <div class="visWrap">
           <VueDragResize w="auto" h="auto" :isResizable="false">
@@ -43,6 +51,9 @@
           // this.getDesignConfig()
           if (!n || n.length <= 0) {
             this.sceneId = ''
+            // 清空画布
+            var c = document.getElementById("myCanvas");
+            c.height = c.height;
           } else {
             this.sceneId = n[0].sceneId
             this.getSceneData()

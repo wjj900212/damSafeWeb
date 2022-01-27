@@ -1,6 +1,6 @@
 <template>
   <!-- 水情概况 -->
-  <div class="overview">
+  <div class="overviewWater">
     <a-card style="width: 100%">
       <template slot="title">
         <img src="/static/img/水情简报 (2).png">
@@ -12,13 +12,14 @@
           <div class="basic">
             <div class="subtit"><span class="t_line"></span> 水情监测</div>
             <div class="subTxt"><span>测站编码：</span> {{hiddenMsg.stationCode}}</div>
-            <div class="subTxt"><span>建设时间：</span> {{hiddenMsg.createTime?hiddenMsg.createTime.substring(0,10):''}}</div>
+            <div class="subTxt"><span>建设时间：</span> {{hiddenMsg.createTime?hiddenMsg.createTime.substring(0,10):''}}
+            </div>
             <div class="subTxt"><span>联系人员：</span> {{hiddenMsg.hiddenCharge}}</div>
           </div>
           <div class="waterState">
             <div class="wsIcon">
               <img src="/static/img/组 1048.png">
-              <span class="wsrate">46.7%</span>
+              <span class="wsrate">{{hiddenMsg.waterState?hiddenMsg.waterState.percent:''}}</span>
             </div>
             <div class="wsVal">
               <div style="color:#1890FF;font-size:2.4rem;">{{hiddenMsg.waterState?hiddenMsg.waterState.waterLevel:''}}m
@@ -54,15 +55,15 @@
       <a-card-grid style="width: 100%; padding: 5px">
         <div class="dataBox">
           <div class="data_tit">
-            <div style="margin-left:1.5rem;">
+            <div>
               <span>当前：</span>
               <a-select v-model="currentPoint" style="width:18rem" @change="pointChange">
                 <a-select-option v-for="v in pnList" :key="v.pnId" :value="v.pnId">{{v.pnName}}</a-select-option>
               </a-select>
             </div>
-            <div>
-              <a-button type="primary" size="small" @click="putReqrtd">召测</a-button>
-              <a-button type="primary" size="small" @click="collectVisible=true">加密采集</a-button>
+            <div style="color:#fff;">
+              <a-button type="primary" @click="putReqrtd">召测</a-button>
+              <a-button type="primary" @click="collectVisible=true">加密采集</a-button>
             </div>
           </div>
           <div class="dataVBox">
@@ -195,7 +196,7 @@
 
 </script>
 <style scoped>
-  .overview {
+  .overviewWater {
     /* padding: 1rem; */
     background-color: #fff;
     position: relative;
@@ -238,7 +239,6 @@
 
   .subTxt span {
     display: inline-block;
-    width: 8rem;
     color: #5D6574;
   }
 
@@ -275,6 +275,7 @@
   }
 
   .data_tit {
+    padding: 0 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -293,7 +294,6 @@
   .dataV {
     width: 24%;
     padding: 10px;
-    /* box-shadow: 2px 2px 15px rgb(76 89 248 / 16%); */
     margin-bottom: 1rem;
     cursor: default;
     white-space: nowrap;

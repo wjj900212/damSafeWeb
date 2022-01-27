@@ -1,6 +1,6 @@
 <template>
   <!-- 运维记录 -->
-  <div class="warnMsg">
+  <div class="record">
     <a-card>
       <template slot="title">
         <img src="/static/img/icon-运维记录.png">
@@ -20,9 +20,9 @@
             <span class="btnt" :class="seeAct==3?'act':''" @click="seeAct=3">近一月</span>
           </div>
         </div>
-        <a-table :columns="columns" :data-source="data" :pagination="pagination">
+        <a-table style="padding:0 1rem;" :columns="columns" :data-source="data" :pagination="pagination">
         </a-table>
-        <a href="javascript:;" style="float:right;margin-top:5px">查看更多
+        <a href="javascript:;" style="float:right;margin-top:5px;margin-right:10px;">查看更多
           <a-icon type="double-right" /></a>
       </a-card-grid>
     </a-card>
@@ -147,6 +147,11 @@
   .btnt.act {
     background-color: #069AFE;
     color: #fff;
+  }
+  
+  .record >>> .ant-table-thead > tr > th{
+    background-color: #F7FAFF;
+    color: #242932;
   }
 
 </style>

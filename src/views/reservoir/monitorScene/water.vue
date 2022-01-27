@@ -1,7 +1,7 @@
 <template>
   <!-- 水情监测 -->
   <div class="tabs">
-    <a-tabs default-active-key="1" @change="callback" class="tabs">
+    <a-tabs default-active-key="1" @change="callback" class="tabsBox">
       <a-tab-pane v-for="v in hiddenArr" :key="v.id" :tab="v.name">
       </a-tab-pane>
     </a-tabs>
@@ -136,9 +136,13 @@
   .tabs {
     width: 100%;
   }
+  .tabsBox{
+    background-color: #fff;
+  }
 
   .com {
     width: 100%;
+    margin-top: 1rem;
     /* display: flex;
     justify-content: space-between;
     flex-wrap: wrap; */

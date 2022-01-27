@@ -1,7 +1,11 @@
 <template>
   <!-- 渗压监测趋势统计 -->
   <div class="trendStatistic">
-    <a-card title="渗压监测趋势统计">
+    <a-card>
+      <template slot="title">
+        <img src="/static/img/渗压监测趋势统计.png">
+        <span>渗压监测趋势统计</span>
+      </template>
       <template slot="extra">
         <a-select v-model="queryParams.sceneId" :style="{width:'20rem'}" @change="sceneChange">
           <a-select-option v-for="pn in pnList" :key="pn.sceneId" :value="pn.sceneId">{{pn.sceneName}}</a-select-option>
@@ -16,21 +20,17 @@
         <a-button type="primary" @click="portData">数据导出</a-button>
       </template>
       <a-card-grid style="width: 100%; padding: 5px">
+        <div
+          style="background: #F9FAFE;color:#5D6574;font-size:1.6rem;line-height:40px;width:calc(100% - 20px);margin:0 auto;padding:0 1rem;">
+          当前： <span style="color:#007EFE;">{{sceneName}}</span>
+          <span style="margin-right:10px;;color:#007EFE;" v-for="v,i in devCode" :key="i">{{v}}</span>
+        </div>
         <div class="stateMsg">
-          <div class="s_left">
-            <div>
-              <div>当前 {{sceneName}}</div>
-              <div style="margin: 1rem 0;" v-for="v,i in devCode" :key="i">
-                <span class="cricle"></span>
-                <span>{{v}}</span>
-              </div>
-            </div>
-          </div>
           <div class="echartTU" ref="transChart"></div>
           <div class="s_right">
             <!-- 表格区域 -->
             <a-table ref="TableInfo" :rowKey="(record,index)=>{return index}" :columns="columns" :dataSource="tableData"
-              :pagination="pagination">
+              :pagination="pagination" :customRow="customRow">
             </a-table>
           </div>
         </div>
@@ -100,6 +100,7 @@
             this.sceneName = ''
             this.tableData = []
             this.devCode = []
+            this.myChart.clear()
             return
           }
           if (n.length > 0) {
@@ -113,6 +114,17 @@
     },
     methods: {
       moment,
+      //设置表格隔行变色
+			customRow(record, index) {
+				return {
+					style: {
+						// 字体颜色
+						color: '#8E8E8E',
+						// 行背景色
+						'background-color': index % 2 == 1 ? '#F9FAFE' : '#fff'
+					}
+				}
+			},
       sceneChange() {
         this.sceneName = this.pnList.find(v => {
           return v.sceneId == this.queryParams.sceneId
@@ -189,7 +201,7 @@
         }
 
         var option = {
-          color: '#c5595a',
+          color: '#075EFF',
           grid: {
             right: 10,
             left: 80
@@ -206,7 +218,7 @@
           }],
           xAxis: {
             type: 'category',
-            data:data.times
+            data: data.times
           },
           yAxis: {
             type: 'value',
@@ -215,8 +227,7 @@
               show: true
             }
           },
-          series: 
-          data.value.map(v=>{
+          series: data.value.map(v => {
             return {
               name: v.pnName,
               type: 'bar',
@@ -235,37 +246,26 @@
   }
 
 </script>
-<style lang="less" scoped>
+<style scoped>
   .stateMsg {
     display: flex;
-    justify-content: space-between;
-    // align-items: left;
+    justify-content: space-evenly;
     padding: 1rem 0;
     border-bottom: 1px solid #f2f2f2;
     font-size: 1.4rem;
   }
 
-  // .s_left,
-  // .s_right {
-  //   flex: 1;
-  // }
-  .s_left {
-    width: 15%;
-  }
-
   .s_right {
-    width: 30%;
+    width: 48%;
   }
 
-  .cricle {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
+  .s_right >>>.ant-table-thead>tr>th {
+    background-color: #188FFF;
+    color: #fff;
   }
 
 
   .echartTU {
-    // width: calc(50% - 2rem);
     width: 50%;
     height: 380px;
     margin: 0 1rem;
