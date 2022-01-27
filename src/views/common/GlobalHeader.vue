@@ -3,14 +3,14 @@
     <div :class="['global-header-wide']" v-if="homeVisible">
       <div :class="['global-header-left']">
         <div style="height: 5.4rem;display: flex;">
-          <div style="flex:1;display: flex;border-right:1px solid #2AA7D3;text-align: center;">
+          <div style="display: flex;border-right:1px solid #2AA7D3;text-align: center;">
             <div style="margin-right:1rem;width:40%;">
-              <div><img style="width:3.8rem;height: 3.8rem;margin-bottom:0.7rem;" src="static/img/weather/0@2x.png"/></div>
-              <div style="color:#289FC9;font-size: 1.4rem;" v-if="cityName === '全国'">北京</div>
-              <div style="color:#289FC9;font-size: 1.4rem;" v-else>{{cityName}}</div>
+              <div><img style="width:3.8rem;height: 3.8rem;margin-top:-0.2rem;" src="static/img/weather/0@2x.png"/></div>
+              <div style="color:#289FC9;font-size: 1.4rem;margin-top:0.3rem;" v-if="cityName === '全国'">北京</div>
+              <div style="color:#289FC9;font-size: 1.4rem;margin-top:0.3rem;" v-else>{{cityName}}</div>
             </div>
-            <div style="flex: 1;">
-              <div style="color:#2AA7D3;font-size: 3rem;">{{weatherData.temp}}°</div>
+            <div style="flex: 1;margin-right:1rem;">
+              <div style="color:#2AA7D3;font-size: 3rem;margin-top: -0.8rem;">{{weatherData.temp}}°</div>
               <div style="color:#289FC9;font-size: 1.4rem;">{{weatherData.wether}}</div>
             </div>
           </div>

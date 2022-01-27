@@ -1,5 +1,9 @@
 <template>
-  <a-card title="安全概况">
+  <a-card>
+    <div solt="title" class="overview">
+      <img src="static/img/control/概况.png"/>
+      <span>安全概况</span>
+    </div>
     <a-card-grid style="width: 100%; text-align: left">
       <a-row>
         <a-col :span="16">
@@ -72,7 +76,7 @@ import EchartsRadar from "@/components/echarts/EchartsRadar.vue";
 export default {
   name: "safetyOverview",
   components: {
-    EchartsRadar 
+    EchartsRadar
   },
   props: {
     reservoirInfo: {
@@ -111,10 +115,11 @@ export default {
           break
       }
       return obj
-    } 
+    }
   },
 };
 </script>
 
 <style lang="less" scoped>
+  @import "../../../../../static/less/info.css";
 </style>

@@ -1,3 +1,18 @@
+.overview{
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding:1.8rem;
+}
+.overview img{
+  margin-right:0.5rem;
+}
+.overview span{
+  font-size: 16px;
+  font-family: Source Han Sans CN;
+  font-weight: 400;
+  color: #5D6574;
+}
 .info{
   padding-left:10px;
 }

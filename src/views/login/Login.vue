@@ -6,27 +6,27 @@
           <a-form-item
             fieldDecoratorId="name"
             :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入账户名', whitespace: true}]}">
-            <a-input size="large">
-              <a-icon slot="prefix" type="user"></a-icon>
+            <a-input size="large" :style="{textIndent:'4px'}">
+              <img slot="prefix" style="width:1.8rem;height: 1.8rem;" src="static/img/login/我的.png"/>
             </a-input>
           </a-form-item>
           <a-form-item
             fieldDecoratorId="password"
             :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入密码', whitespace: true}]}">
-            <a-input size="large" type="password">
-              <a-icon slot="prefix" type="lock"></a-icon>
+            <a-input size="large" type="password" :style="{textIndent:'4px'}">
+              <img slot="prefix" style="width:1.8rem;height: 1.8rem;" src="static/img/login/密码.png"/>
             </a-input>
           </a-form-item>
       <a-form-item>
-        <a-form-item>
-          <a-checkbox :checked="checked" @change="onRememberChange">记住密码</a-checkbox>
-          <a class="login-form-forgot" @click="forgetPassword">
-            忘记密码？
-          </a>
-        </a-form-item>
-        <a-button :loading="loading" style="width: 100%; margin-top: 4px" size="large" htmlType="submit" type="primary">
+        <a-button :loading="loading" class="login-btn" size="large" htmlType="submit" type="primary">
           登录
         </a-button>
+      </a-form-item>
+      <a-form-item>
+        <a-checkbox :checked="checked" @change="onRememberChange">记住密码</a-checkbox>
+        <a class="login-form-forgot" @click="forgetPassword">
+          忘记密码？
+        </a>
       </a-form-item>
     </a-form>
     <div>
@@ -219,6 +219,9 @@ export default {
 
 <style lang="less" scoped>
   .login {
+    background: url("../../../static/img/login/圆角矩形1.png") no-repeat;
+    background-size: 100% 100%;
+    padding:5.8rem 3rem 2rem 2rem;
     .icon {
       font-size: 24px;
       color: rgba(0, 0, 0, 0.2);
@@ -233,9 +236,15 @@ export default {
     }
   }
   .ant-checkbox-wrapper{
-    color:#c5f3ff !important;
+    color:#FFFFFF !important;
   }
   .login-form-forgot{
+    color:#FFFFFF !important;
     float: right !important;
+  }
+  .login-btn{
+    width:100%;
+    background: url("../../../static/img/login/圆角矩形7拷贝2.png");
+    border:unset !important;
   }
 </style>

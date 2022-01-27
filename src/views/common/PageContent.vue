@@ -54,11 +54,12 @@ export default {
 
 <style lang="less" scoped>
   .page-content{
-    background: #fff;
-    padding: 14px 22px;
-    border-left: 1px solid #e8e8e8;
+   /* background: #fff;*/
+    padding: 14px 17px;
+   /* border-left: 1px solid #e8e8e8;
     border-right: 1px solid #e8e8e8;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8;*/
+    background: #f0f2f5;
     .page-header-wide{
       .breadcrumb{
         margin-bottom: .6rem;

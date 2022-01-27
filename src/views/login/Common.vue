@@ -3,14 +3,15 @@
     <div class="content">
       <div class="top">
         <div class="header">
-          <img alt="logo" class="logo" src="static/img/logo-blue.png" />
-          <span class="title">{{systemName}}</span>
+          <img src="static/img/login/组2.png"/>
+         <!-- <img alt="logo" class="logo" src="static/img/logo-blue.png" />
+          <span class="title">{{systemName}}</span>-->
         </div>
         <div class="desc"></div>
       </div>
       <component :is="componentName" @regist="handleRegist" class="main-content"></component>
     </div>
-    <global-footer :copyright="copyright" />
+    <!--<global-footer :copyright="copyright" />-->
   </div>
 </template>
 
@@ -49,13 +50,13 @@ export default {
     flex-direction: column;
     height: 100vh;
     overflow: auto;
-    background: url('../../../static/img/u1.jpg') no-repeat center;
+    background: url('../../../static/img/login/组211.png') no-repeat center;
     background-size: 100%;
     .content {
       padding: 32px 0;
       flex: 1;
       @media (min-width: 768px){
-        padding: 116px 0 10px;
+        padding: 216px 0 10px;
       }
       .top {
         text-align: center;

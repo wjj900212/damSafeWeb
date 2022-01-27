@@ -92,7 +92,7 @@ Date.prototype.format = function (fmt) {
   .single-page {
     margin: 0;
     width: 100%;
-    margin: 10px;
+    /*margin: 10px;*/
     overflow: auto;
     min-width: 1200px;
   }
@@ -171,7 +171,7 @@ Date.prototype.format = function (fmt) {
     line-height: unset !important;
   }
   .ant-form-item {
-    margin-bottom: 1rem !important;
+    margin-bottom: 2rem !important;
   }
   .ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
     border-right: 0 solid #ccc !important;

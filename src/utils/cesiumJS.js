@@ -13,9 +13,9 @@ let monitorBillboardUrl = {
   'devBasicId1': 'static/images/monitor_point_devBasicId1.png'
 }
 let hiddenBillboardUrl = {
-  0: 'static/img/绿.png',
-  1: 'static/img/黄.png',
-  2: 'static/img/红.png',
+  '0': 'static/img/绿.png',
+  '1': 'static/img/橙 拷贝.png',
+  '2': 'static/img/红.png',
   'other': 'static/img/绿.png'
 }
 let pickedDynamicPictureEvent
@@ -555,7 +555,6 @@ let cesiumJS = {
     }, 30000)
   },
   addHiddenHomePoint (record, vue, isAlarm = false) {
-    console.log('添加隐患点', record)
     let Cesium = vue.Cesium
     let viewer = mapviewer.viewer
     let myEntityCollection = viewer.dataSources.getByName('yhdLayers')[0]
@@ -576,6 +575,7 @@ let cesiumJS = {
     console.log('添加隐患点prop', prop)
     // 根据等级选择适应的图标，如果没有则默认灰色
     let _hiddlenBillboardUrl = hiddenBillboardUrl.other
+    console.log('隐患点图标prop', hiddenBillboardUrl[record.level])
     if (hiddenBillboardUrl[record.level]) {
       _hiddlenBillboardUrl = hiddenBillboardUrl[record.level]
     }
@@ -1549,13 +1549,13 @@ let cesiumJS = {
               pobj.label = JSON.parse(JSON.stringify(hiddlenEntity.label.text._value))
               pobj.longitude = JSON.parse(JSON.stringify(hiddlenEntity.attribute.longitude))
               pobj.latitude = JSON.parse(JSON.stringify(hiddlenEntity.attribute.latitude))
-              hiddlenEntity.billboard.show = false
+              /* hiddlenEntity.billboard.show = false
               if (pickedEntity) {
                 pickedEntity.billboard.show = true
               }
               pickedEntity = hiddlenEntity
               pickedDiv.style.backgroundImage = 'url("static/img/绿.png")'
-              pickedDiv.style.height = '65px'
+              pickedDiv.style.height = '65px' */
               this.bindDynamicPictureEvent(viewer, Cesium, {
                 'pickedDiv': pickedDiv,
                 'position': Cesium.Cartesian3.fromDegrees(pobj.longitude, pobj.latitude, 0),
