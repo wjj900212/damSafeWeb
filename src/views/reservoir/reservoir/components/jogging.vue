@@ -1,57 +1,55 @@
 <template>
   <a-card>
-    <div slot="title">
-      微动监测数据统计
-      <a style="margin-left: 20px;" href="#">查看详情</a>
+    <div class="safetyPlan">
+      <div class="card">
+        <img src="static/img/control/数据统计.png"/>
+        <span>微动监测数据统计</span>
+      </div>
+      <div>
+        <a-select
+          v-model="select.hiddenId"
+          placeholder="隐患点"
+          option-filter-prop="children"
+          @change="handleHiddenChange"
+        >
+          <a-select-option
+            v-for="item in List"
+            :value="item.hiddenId"
+            :key="item.hiddenId"
+          >
+            {{ item.hiddenName }}
+          </a-select-option>
+        </a-select>
+        <a-select
+          v-model="monitor"
+          placeholder="监测点"
+          option-filter-prop="children"
+          @change="handleMonitorChange"
+        >
+          <a-select-option
+            v-for="item in monitorData"
+            :value="item.projPnId"
+            :key="item.projPnId"
+          >
+            {{ item.projPnName }}
+          </a-select-option>
+        </a-select>
+        <a-range-picker
+          v-model="dateTimeValue"
+          style="width: 240px"
+          @change="onDateChange"
+        />
+        <a-button @click="getInfo" type="primary"> 查询 </a-button>
+
+      </div>
     </div>
-    <div slot="extra">
-    <a-select
-      v-model="select.hiddenId"
-      placeholder="隐患点"
-      option-filter-prop="children"
-      @change="handleHiddenChange"
-    >
-      <a-select-option
-        v-for="item in List"
-        :value="item.hiddenId"
-        :key="item.hiddenId"
-      >
-        {{ item.hiddenName }}
-      </a-select-option>
-    </a-select>
-    <a-select
-      v-model="monitor"
-      placeholder="监测点"
-      option-filter-prop="children"
-      @change="handleMonitorChange"
-    >
-      <a-select-option
-        v-for="item in monitorData"
-        :value="item.projPnId"
-        :key="item.projPnId"
-      >
-        {{ item.projPnName }}
-      </a-select-option>
-    </a-select>
-    <a-range-picker
-      v-model="dateTimeValue"
-      style="width: 240px"
-      @change="onDateChange"
-    />
-    <a-button @click="getInfo" type="primary"> 查询 </a-button>
-    
+    <div class="warn-info LR" style="margin-top:1rem;">
+      <div><span>当前:</span><span class="warn-value">{{ monitorName }}</span></div>
+      <div><span class="warn-value">指标安全说明</span><img src="static/img/control/自动对比说明书.png"/></div>
     </div>
-    <a-card-grid style="width: 100%; text-align: left;height:500px;">
-      <a-row>
-        <a-col :span="4">
-          <div>当前&nbsp;&nbsp;{{ monitorName }}</div>
-          <div>{{ monitorCode }}</div>
-        </a-col>
-        <a-col :span="20">
-          <main-content :list="targetList" :dateTimeValue="dateTimeValue"></main-content>
-        </a-col>
-      </a-row>
-    </a-card-grid>
+    <div :style="{ width: '100%', height: '400px' }">
+      <main-content :list="targetList" :dateTimeValue="dateTimeValue"></main-content>
+    </div>
   </a-card>
 </template>
 <script>

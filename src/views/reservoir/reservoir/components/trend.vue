@@ -1,32 +1,38 @@
 <template>
-  <a-card title="综合趋势统计">
-    <div slot="extra">
-      <a-select
-        style="width: 100px"
-        v-model="dateModel"
-        option-filter-prop="children"
-        @change="handleDateModelChange"
-      >
-        <a-select-option
-          v-for="item in dateModelData"
-          :value="item.value"
-          :key="item.value"
+  <a-card>
+    <div class="safetyPlan">
+      <div class="card">
+        <img src="static/img/control/图层648.png"/>
+        <span>综合趋势统计</span>
+      </div>
+      <div>
+        <a-select
+          style="width: 100px"
+          v-model="dateModel"
+          option-filter-prop="children"
+          @change="handleDateModelChange"
         >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-      <a-range-picker
-        v-model="dateTimeValue"
-        style="width: 240px"
-        @change="onDateChange"
-      />
-      <a-button @click="getTrendStatistics" type="primary"> 查询 </a-button>
-      <a-button @click="exportEXcel" type="primary"> 导出 </a-button>
+          <a-select-option
+            v-for="item in dateModelData"
+            :value="item.value"
+            :key="item.value"
+          >
+            {{ item.name }}
+          </a-select-option>
+        </a-select>
+        <a-range-picker
+          v-model="dateTimeValue"
+          style="width: 240px"
+          @change="onDateChange"
+        />
+        <a-button @click="getTrendStatistics" type="primary"> 查询 </a-button>
+        <a-button @click="exportEXcel" type="primary"> 导出 </a-button>
+        </div>
     </div>
-    <a-card-grid style="width: 100%">
+    <div style="width: 100%;margin-top:1rem;">
       <a-row>
         <a-col :span="6">
-          <div>
+          <div class="select-tree">
             <a-input-search
               v-model="searchStr"
               style="margin-bottom: 8px"
@@ -68,7 +74,7 @@
           </div>
         </a-col>
       </a-row>
-    </a-card-grid>
+    </div>
   </a-card>
 </template>
 <script>
@@ -193,7 +199,7 @@ export default {
       console.log(start, end);
       this.dateModel = undefined;
     },
-    
+
     onChecked(checkedKeys, e) {
       this.checkedKeys = checkedKeys;
     },
@@ -324,4 +330,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .select-tree{
+    width: 28.2rem;
+    height: 45rem;
+    overflow-y: scroll;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 13px 0px rgba(30, 57, 85, 0.08);
+  }
 </style>

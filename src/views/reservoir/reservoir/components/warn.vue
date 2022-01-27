@@ -1,13 +1,20 @@
 <template>
   <a-card>
-    <div slot="title">
+    <div class="safetyPlan">
+      <div class="card">
+        <img src="static/img/control/预案.png"/>
+        <span>预警消息</span>
+      </div>
+
+    </div>
+    <!--<div slot="title">
       <span>预警消息</span
       ><span style="font-size: 10px; margin-left: 10px; color: darkgray"
         >今日 {{total}}条消息</span
       >
     </div>
-    <a slot="extra" @click="more">更多消息</a>
-    <a-card-grid style="width: 100%; text-align: center; padding: 0px;">
+    <a slot="extra" @click="more">更多消息</a>-->
+    <div style="width: 100%; text-align: center; padding: 0px;margin-top:1rem;">
       <a-list
         :loading="loading"
         bordered
@@ -40,7 +47,10 @@
           </div>
         </a-list-item>
       </a-list>
-    </a-card-grid>
+    </div>
+    <div style="text-align: right;margin-top:1rem;">
+      <a @click="more">更多消息</a>
+    </div>
   </a-card>
 </template>
 <script>

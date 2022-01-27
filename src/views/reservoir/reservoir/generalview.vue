@@ -2,7 +2,7 @@
   <div style="width: 100%; height: 100%">
     <a-row
       :gutter="{ xs: 8, sm: 16, md: 24 }"
-      :style="{ marginBottom: '24px' }"
+      :style="{ marginBottom: '14px' }"
     >
       <a-col :span="12" :style="{ height: '100%' }">
         <safetyOverview :reservoirInfo="reservoirInfo" :radarData="radarData"></safetyOverview>
@@ -13,7 +13,7 @@
     </a-row>
     <a-row
       :gutter="{ xs: 8, sm: 16, md: 24 }"
-      :style="{ marginBottom: '24px' }"
+      :style="{ marginBottom: '14px' }"
     >
       <a-col :span="24">
         <safetyPlan :aqglyadataSource="aqglyadataSource" @getPlanList="getPlanList"></safetyPlan>
@@ -21,7 +21,7 @@
     </a-row>
     <a-row
       :gutter="{ xs: 8, sm: 16, md: 24 }"
-      :style="{ marginBottom: '24px' }"
+      :style="{ marginBottom: '14px' }"
     >
       <a-col :span="24">
         <trend :relationshipData="relationshipData" :treeData="treeData" @exportEXcel="exportEXcel" @getTrendStatistics="getTrendStatistics"></trend>
@@ -29,7 +29,7 @@
     </a-row>
     <a-row
       :gutter="{ xs: 8, sm: 16, md: 24 }"
-      :style="{ marginBottom: '24px' }"
+      :style="{ marginBottom: '14px' }"
     >
       <a-col :span="12">
         <rain :List="rainList"></rain>
@@ -364,5 +364,6 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style scoped>
+  @import "../../../../static/less/info.css";
 </style>

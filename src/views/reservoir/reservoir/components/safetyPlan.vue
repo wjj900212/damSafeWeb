@@ -1,25 +1,30 @@
 <template>
-  <a-card title="安全管理预案">
-    <a-select
-      slot="extra"
-      style="width: 120px"
-      v-model="plan"
-      placeholder="预案类型"
-      option-filter-prop="children"
-      @change="handlePlanChange"
-    >
-      <a-select-option v-for="item in planData" :value="item.id" :key="item.id">
-        {{ item.name }}
-      </a-select-option>
-    </a-select>
-    <a-card-grid style="width: 100%; text-align: center">
+  <a-card>
+    <div class="safetyPlan">
+      <div class="card">
+        <img src="static/img/control/可视化.png"/>
+        <span>安全管理预案</span>
+      </div>
+      <a-select
+        style="width: 120px"
+        v-model="plan"
+        placeholder="预案类型"
+        option-filter-prop="children"
+        @change="handlePlanChange"
+      >
+        <a-select-option v-for="item in planData" :value="item.id" :key="item.id">
+          {{ item.name }}
+        </a-select-option>
+      </a-select>
+    </div>
+
+    <div style="width: 100%; text-align: center">
       <a-table
-        bordered
         :data-source="aqglyadataSource"
         :columns="aqglyacolumns"
       >
       </a-table>
-    </a-card-grid>
+    </div>
     <a-modal v-model="planVisible" title="安全预案管理">
       <div v-html="planDetail"></div>
       <template slot="footer">
