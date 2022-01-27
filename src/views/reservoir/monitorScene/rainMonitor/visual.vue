@@ -1,22 +1,27 @@
 <template>
   <!-- 场景可视化 -->
   <div class="visual">
-    <a-card title="场景可视化" :bodyStyle="{ padding: '5px' }">
-      <a-select
-        slot="extra"
-        v-model="scene"
-        placeholder="选择场景"
-        option-filter-prop="children"
-        @change="handleSceneChange"
-      >
-        <a-select-option
-          v-for="item in sceneData"
-          :value="item.sceneId"
-          :key="item.sceneId"
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="scene">
+        <div class="card">
+          <img src="static/img/control/可视化.png"/>
+          <span>场景可视化</span>
+        </div>
+        <a-select
+          v-model="scene"
+          placeholder="选择场景"
+          option-filter-prop="children"
+          @change="handleSceneChange"
         >
-          {{ item.sceneName }}
-        </a-select-option>
-      </a-select>
+          <a-select-option
+            v-for="item in sceneData"
+            :value="item.sceneId"
+            :key="item.sceneId"
+          >
+            {{ item.sceneName }}
+          </a-select-option>
+        </a-select>
+      </div>
       <div style="width: 100%; text-align: center; padding: 5px;overflow: auto;">
         <design :data="designData"></design>
       </div>

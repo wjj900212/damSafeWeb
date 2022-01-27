@@ -1,40 +1,39 @@
 <template>
   <!-- 水情概况 -->
-  <div class="overview">
-    <a-card title="雨情概况" style="width: 100%">
-      <!--<a slot="extra" href="#">安全管理预案</a>-->
-      <a-button slot="extra" @click="safeVisible=true"> 安全管理预案
-        <a-icon type="read" style="fontSize:1.6rem" />
-      </a-button>
-      <a-card-grid style="width: 100%; padding: 5px">
-        <div class="basicMsg">
-          <div class="basicTxt">
-            <a-icon type="area-chart" style="fontSize:3rem;color:#1397db" />
-            <div class="basic">
-              <div class="subtit">{{overViewData.hiddenName}}</div>
-              <div class="subTxt"><span>测站编码</span> {{overViewData.stationCode}}</div>
-              <div class="subTxt"><span>建设时间</span> {{overViewData.createTime}}</div>
-              <div class="subTxt"><span>联系人</span> {{overViewData.hiddenCharge || '无'}}</div>
-            </div>
-          </div>
-          <img src="static/img/u268.svg" alt="" />
+  <div style="width: 100%;">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/control/雨情简报.png"/>
+          <span>雨情概况</span>
         </div>
-      </a-card-grid>
-      <a-card-grid style="width: 100%; padding: 5px">
-        <div class="stateMsg">
-          <div class="s_left">
-            <div>
-              <div>所在位置</div>
-              <div style="font-size:1.8rem;color:#1a94ff;">{{overViewData.waterState || '无'}}</div>
-            </div>
-          </div>
-          <div class="s_right">
-            <div>安全状态</div>
-            <div :style="{ color: getText(overViewData.reservoirStatus).color }">{{ getText(overViewData.reservoirStatus).name }}</div>
+        <a-button @click="safeVisible=true"> 安全管理预案
+          <a-icon type="read" style="fontSize:1.6rem" />
+        </a-button>
+      </div>
+      <div class="overview-top">
+        <div class="overview-top-hidden">
+          <div style="font-size: 1.6rem;font-weight: 400;display: flex;justify-content: flex-start;align-items: center;"><div style="width: 4px;height: 15px;background: #1890FF;margin-right:1rem;"></div><span style="color:#191E2A;">{{overViewData.hiddenName}}</span></div>
+          <div>测站编码:<span style="color:#191E2A;">{{ overViewData.stationCode}}</span></div>
+          <div>建设时间:<span style="color:#191E2A;">{{ overViewData.createTime}}</span></div>
+          <div>联系人员:<span style="color:#191E2A;">{{ overViewData.hiddenCharge || '无'}}</span></div>
+        </div>
+        <div class="overview-top-warn" style=" margin-right:1.9rem;">
+          <img src="static/img/control/组127.png"/>
+          <div>
+            <div style="font-size: 2.4rem;color: #1890FF;">{{overViewData.waterState || '无'}}</div>
+            <div class="warn-label">降水状态</div>
           </div>
         </div>
-      </a-card-grid>
-      <a-card-grid style="width: 100%; padding: 5px">
+        <div class="overview-top-warn">
+          <img src="static/img/control/组126.png"/>
+          <div>
+            <div :style="{ color: getText(overViewData.reservoirStatus).color,fontSize: '24px' }">{{ getText(overViewData.reservoirStatus).name }}</div>
+            <div class="warn-label">安全状态</div>
+          </div>
+        </div>
+      </div>
+      <div style="width: 100%; padding: 5px">
         <div class="dataBox">
           <div class="data_tit">
             <div>
@@ -52,7 +51,19 @@
             <div v-if="pnRainData.length === 0">
               无数据
             </div>
-            <div class="dataV" v-else v-for="(pnRain,index) in pnRainData" :key="index">
+            <div class="dataV" v-for="(v,i) in pnRainData" :key="i">
+              <div>
+                <span style="color:#191E2A;font-size:1.6rem;">{{v.target}}{{v.unit?'('+v.unit+')':''}}</span>
+                <span class="cricle"
+                      :style="{background:v.level==4?'#FF2626':v.level==3?'#FF9F00':v.level==2?'#F9D044':v.level==1?'#3399FF':'#3FCAAF'}"></span>
+              </div>
+              <div>
+                <span
+                  :style="{color:v.level==4?'#FF2626':v.level==3?'#FF9F00':v.level==2?'#F9D044':v.level==1?'#3399FF':'#3FCAAF',fontSize:'2.2rem'}">{{v.value}}</span>
+              </div>
+              <div style="color:#696969;font-size:1.4rem;">{{v.time}}</div>
+            </div>
+            <!--<div class="dataV" v-else v-for="(pnRain,index) in pnRainData" :key="index">
               <div>
                 <span>{{pnRain.target}}</span>
                 <span class="cricle"></span>
@@ -61,10 +72,10 @@
                 <span style="color:#1a94ff;">{{pnRain.value}}</span>
                 <span>{{pnRain.time}}</span>
               </div>
-            </div>
+            </div>-->
           </div>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
     <!-- 加密采集 -->
     <a-modal v-model="collectVisible" title="加密采集" :confirm-loading="confirmLoading" @ok="handleOk"
@@ -203,9 +214,43 @@ export default {
 
 </script>
 <style lang="less" scoped>
-  .overview {
-    background-color: #fff;
-    position: relative;
+  .overview-top {
+    display: flex;
+    padding-top:2rem;
+    .overview-top-hidden {
+      flex: 1;
+      color:#5D6574;
+      padding:1rem;
+      font-size: 1.4rem;
+      background: #FFFFFF;
+      box-shadow: 1px 0px 18px 0px rgba(172, 200, 219, 0.3);
+      border-radius: 8px;
+      margin-right:1.9rem;
+      div{
+        line-height: 2;
+      }
+    }
+    .overview-top-warn {
+      flex: 1;
+      width: 240px;
+      height: 132px;
+      background: #F7F8FD;
+      opacity: 0.7;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img{
+        margin-right:3rem;
+      }
+      .warn-label{
+        font-size: 12px;
+        font-family: Source Han Sans CN;
+        font-weight: 400;
+        color: #5D6574;
+        margin-top:0.5rem;
+      }
+    }
   }
 
   .basicMsg {
@@ -297,21 +342,26 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding:2rem 0rem;
+    border-bottom:1px solid rgba(24, 144, 255, 0.2);
   }
 .dataVBox{
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-    padding:0px 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  overflow: auto;
+  height: 12.8rem;
 }
   .dataV{
-    width: 25%;
-    padding: 8px;
-    box-shadow: 2px 2px 15px rgba(76,89,248,16%);
+    width: 24%;
+    padding: 10px;
     margin-bottom: 1rem;
     cursor: default;
+    white-space: nowrap;
+    border: 1px solid rgba(141, 199, 252, .6);
+    border-radius: 6px;
   }
   .dataV div{
     display: flex;

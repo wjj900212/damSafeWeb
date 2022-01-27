@@ -1,21 +1,51 @@
 <template>
   <!-- 降水量趋势统计 -->
   <div class="trendStatistic">
-    <a-card title="降水量趋势统计">
-      <template slot="extra">
-        <a-select v-model="queryParams.pnId" :style="{width:'20rem'}" @change="getRainPn">
-          <a-select-option v-for="pn in pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
-        </a-select>
-        <a-select v-model="queryParams.dateType" @change="dateChange">
-          <a-select-option value="1">日数据</a-select-option>
-          <a-select-option value="2">月数据</a-select-option>
-          <a-select-option value="3">年数据</a-select-option>
-        </a-select>
-        <a-range-picker @change="onChange" style="width:250px;"/>
-        <a-button type="primary">数据导出</a-button>
-      </template>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/control/数据统计.png"/>
+          <span>降水量趋势统计</span>
+        </div>
+        <div>
+          <a-range-picker @change="onChange" style="width:250px;"/>
+          <a-select v-model="queryParams.pnId" :style="{width:'20rem'}" @change="getRainPn">
+            <a-select-option v-for="pn in pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
+          </a-select>
+          <a-select v-model="queryParams.dateType" @change="dateChange">
+            <a-select-option value="1">日数据</a-select-option>
+            <a-select-option value="2">月数据</a-select-option>
+            <a-select-option value="3">年数据</a-select-option>
+          </a-select>
+          <a-button type="primary">数据导出</a-button>
+        </div>
+      </div>
+      <div style="width: 100%; text-align: center; padding: 5px">
+        <div class="warn-info LR">
+          <div><span>当前:</span><span class="warn-value">{{pnName}}  {{devCode}}</span></div>
+        </div>
+        <div style="display: flex;justify-content: flex-start;margin-top:1rem;">
+          <div v-for="(v,i) in rainValue" :key="i" style="margin-right:1rem;">
+            <div class="wvBox" :class="selectId === v.value?'act':''" @click="toggleMarkLine(v)">{{v.label}}</div>
+          </div>
+        </div>
         <div class="trendCon">
+          <div class="echartTU">
+            <component
+              :is="'EchartsBarLine'"
+              refid="BarRainLine"
+              :cordon="cordon"
+              :rainfall="rainfall"
+              :totalRainfall="totalRainfall"
+              class="main-content"
+            ></component>
+          </div>
+          <div style="width:40%">
+            <a-table :columns="columns" :data-source="tableData" :pagination="pagination">
+            </a-table>
+          </div>
+        </div>
+        <!--<div class="trendCon">
           <div>
             <div>当前 {{pnName}}</div>
             <div style="margin: 1rem 0;">
@@ -36,13 +66,12 @@
               class="main-content"
             ></component>
           </div>
-         <!-- <div class="echartTU" ref="trendStatisticRainChart"></div>-->
           <div style="width:40%">
             <a-table :columns="columns" :data-source="tableData" :pagination="pagination">
             </a-table>
           </div>
-        </div>
-      </a-card-grid>
+        </div>-->
+      </div>
     </a-card>
   </div>
 </template>
@@ -208,15 +237,16 @@ export default {
   }
 
   .wvBox {
-    /* width: 100%; */
-    border: 1px solid #ccc;
+    border: 1px solid #1890FF;
     line-height: 3rem;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 4px;
+    color:#1890FF;
+    padding:0.5rem 1rem;
   }
 
   .wvBox.act {
-    background-color: #87a9d7;
+    background-color: #1890FF;
     color: #fff;
     cursor: pointer;
   }
@@ -225,5 +255,9 @@ export default {
     height: 9px;
     border-radius: 50%;
     background-color:#1a94ff;
+  }
+  .trendCon /deep/ .ant-table-thead > tr > th{
+    background-color: #188FFF;
+    color: #fff;
   }
 </style>

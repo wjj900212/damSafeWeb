@@ -1,32 +1,42 @@
 <template>
   <!-- 气象数据 -->
   <div class="weather">
-    <a-card title="气象数据">
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/control/气象.png"/>
+          <span>气象数据</span>
+        </div>
+      </div>
+      <div style="width: 100%; text-align: center; padding: 5px">
         <div class="stateMsg">
           <div class="s_left">
             <div class="address">
-              <span>所在位置: {{weatherMsg.address}}</span>
-              <a-icon type="environment" class="addressIcon" theme="filled" />
+              <img src="static/img/control/形状674拷贝.png"/><span style="margin-left:1rem;">{{weatherMsg.address}}</span>
             </div>
             <div class="wrap">
               <div class="weatherData">
-                <div class="state">{{ weatherMsg.wether }}</div>
-                <div>
+                <div class="weather">
                   <img :src="'static/img/weather/'+weatherMsg.code+'@2x.png'" />
-                  <span style="font-size:2.4rem;">{{ weatherMsg.temp }}°C</span>
+                </div>
+                <div style="margin:0rem 2rem;">
+                  <div style="font-size: 4.7rem;color: #5D6574;font-family: 'Microsoft YaHei UI';">{{ weatherMsg.temp }}</div>
+                </div>
+                <div style="font-size: 2.2rem;color:#5D6574;">
+                  <div style="font-weight: bold;">°C</div>
+                  <div >{{ weatherMsg.wether }}</div>
                 </div>
               </div>
               <div class="basicD">
                 <div class="item">
-                  <img src="static/pic/形状 671 拷贝.png" alt="" />
+                  <img src="static/img/control/湿度.png" alt="" />
                   <div>
-                    <p class="state">温度</p>
+                    <p class="state">湿度</p>
                     <p class="val">{{ weatherMsg.humidity + "%RH" }}</p>
                   </div>
                 </div>
                 <div class="item">
-                  <img src="static/pic/降雨量.png" alt="" />
+                  <img src="static/img/control/降雨量.png" alt="" />
                   <div>
                     <p class="state">降雨量</p>
                     <p class="val">
@@ -35,7 +45,7 @@
                   </div>
                 </div>
                 <div class="item">
-                  <img src="static/pic/形状 670 拷贝.png" alt="" />
+                  <img src="static/img/control/风力.png" alt="" />
                   <div>
                     <p class="state">风力</p>
                     <p class="val">{{ weatherMsg.windScale + "级" }}</p>
@@ -51,7 +61,10 @@
             </div>
           </div>
           <div class="s_center">
-            <div>24小时天气</div>
+            <div class="res-title">
+              <div class="res-circle"></div>
+              <div>24小时天气</div>
+            </div>
             <div class="chartBox">
               <a-icon type="left" class="slipbtn" @click="turnleft" />
               <div class="chartWarp" ref="chartWarp">
@@ -61,11 +74,14 @@
             </div>
           </div>
           <div class="s_right">
-            <div>7日时天气</div>
+            <div class="res-title">
+              <div class="res-circle"></div>
+              <div>7日天气</div>
+            </div>
             <EchartsWeather :chartData="weather7DayMsg" class="futureChart"></EchartsWeather>
           </div>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>
@@ -210,7 +226,7 @@ export default {
             type: 'category',
             boundaryGap: false,
             position: 'top',
-            offset: 130,
+            offset: 150,
             zlevel: 100,
             axisLine: {
               show: false
@@ -251,7 +267,7 @@ export default {
               interval: 0,
               formatter: function (value, index) {
                // console.log(data[index].code, value)
-                return `{b${data[index].code}|${value}}`
+                return `{b${data[index].code}|}` + '\n\n' + value
               },
               rich: richX
             },
@@ -382,16 +398,24 @@ export default {
     font-size: 1.4rem;
   }
 
-  .s_left,
-  .s_right {
+  .s_left{
     width:30%;
     padding: 1rem;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 13px 0px rgba(30, 57, 85, 0.08);
+    margin-right:1rem;
+  }
+  .s_right {
+    flex: 1;
+    padding: 1rem;
+    border: 1px solid rgba(221,221,221,0.5);
   }
 
   .s_center {
     width: 35%;
-    border-right: 1px solid #f2f2f2;
-    border-left: 1px solid #f2f2f2;
+    padding: 1rem;
+    border: 1px solid rgba(221,221,221,0.5);
+    margin-right:1rem;
   }
 
   .weather /deep/ .ant-card-grid {
@@ -407,18 +431,29 @@ export default {
     height: 40px;
     display: flex;
     align-items: center;
-    color: #333333;
-    font-size: 1.2rem;
-    font-family: Microsoft YaHei;
+    font-size: 16px;
+    font-family: Source Han Sans CN;
     font-weight: 400;
+    color: #1890FF;
   }
 
   .weatherData {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     margin: 10px 0;
-
+    .weather{
+      width:112px;
+      height: 111px;
+      background: url("../../../../../static/img/control/矢量.png") no-repeat;
+      background-size: 100% 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     img {
       width: 57px;
-      margin-right: 16px;
+      margin:0px auto;
     }
 
     .temp {
@@ -431,10 +466,10 @@ export default {
     }
 
     .state {
-      font-size: 1.4rem !important;
-      color: #333;
-      font-family: Microsoft YaHei;
+      font-size: 1.6rem;
+      font-family: Source Han Sans CN;
       font-weight: 400;
+      color: #5D6574;
     }
   }
 
@@ -465,11 +500,10 @@ export default {
       }
 
       .val {
-        font-size: 1.2rem !important;
-        // line-height: 1.5;
+        font-size: 14px;
         font-family: Microsoft YaHei;
         font-weight: 400;
-        color: #ffd610;
+        color: #191E2A;
         margin: 0;
       }
     }
@@ -537,5 +571,22 @@ export default {
   }
   .e_con {
     display: inline-block;
+  }
+  .res-title{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 1.6rem;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #298AFF;
+    margin-left:1rem;
+    .res-circle{
+      width: 9px;
+      height: 9px;
+      background: #1890FF;
+      border-radius: 50%;
+      margin-right:1rem;
+    }
   }
 </style>

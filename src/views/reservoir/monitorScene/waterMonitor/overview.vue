@@ -176,7 +176,7 @@
           this.confirmLoading = false
         });
       },
-      // 召测（立即采集） 
+      // 召测（立即采集）
       putReqrtd() {
         if (!this.currentPoint) {
           this.$message.error('未选择监测点')

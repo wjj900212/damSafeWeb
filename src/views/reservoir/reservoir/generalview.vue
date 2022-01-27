@@ -70,10 +70,7 @@
         </div>
       </a-col>
       <a-col :span="12">
-        <a-card title="运维记录">
-          <a slot="extra" href="#">查看更多</a>
-          <a-card-grid style="width: 100%; text-align: center"></a-card-grid>
-        </a-card>
+        <record :hiddenId="reservoirId"></record>
       </a-col>
     </a-row>
 
@@ -94,6 +91,7 @@ import piezometric from './components/piezometric.vue';
 import transshape from './components/transshape.vue';
 import jogging from './components/jogging.vue';
 import warn from './components/warn.vue';
+import Record from '@/components/devopsRecord/record'
 
 export default {
   name: "generalview",
@@ -108,7 +106,8 @@ export default {
     piezometric,
     transshape,
     jogging,
-    warn
+    warn,
+    Record
   },
   data() {
     return {

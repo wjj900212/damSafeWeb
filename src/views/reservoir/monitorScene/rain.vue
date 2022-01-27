@@ -1,7 +1,7 @@
 <template>
   <!--雨情监测-->
   <div class="rainTabs">
-    <a-tabs @change="callback" class="tabs">
+    <a-tabs @change="callback" class="tabsBox">
       <a-tab-pane v-for="rain in rainScene" :key="rain.id" :tab="rain.name">
       </a-tab-pane>
     </a-tabs>
@@ -114,7 +114,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  @import "../../../../static/less/info.css";
 .rainTabs{
   width:100%;
+}
+.tabsBox{
+  background-color: #fff;
+}
+.com {
+  width: 100%;
+  margin-top: 1rem;
 }
 </style>

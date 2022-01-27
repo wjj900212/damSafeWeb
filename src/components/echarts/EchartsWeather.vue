@@ -49,6 +49,7 @@ export default {
           backgroundColor: {
             image: `static/img/weather/${i}@2x.png`
           },
+          align: 'center',
           height: 40,
           width: 40
         }
@@ -74,7 +75,7 @@ export default {
             type: 'category',
             boundaryGap: false,
             position: 'top',
-            offset: 130,
+            offset: 150,
             zlevel: 100,
             axisLine: {
               show: false
@@ -104,7 +105,7 @@ export default {
             type: 'category',
             boundaryGap: false,
             position: 'top',
-            offset: 110,
+            offset: 120,
             zlevel: 100,
             axisLine: {
               show: false
@@ -137,7 +138,7 @@ export default {
             type: 'category',
             boundaryGap: false,
             position: 'top',
-            offset: 60,
+            offset: 50,
             zlevel: 100,
             axisLine: {
               show: false
@@ -148,8 +149,8 @@ export default {
             axisLabel: {
               interval: 0,
               formatter: function (value, index) {
-               // console.log(data[index].code, value)
-                return `{b${data[index].code}|${value}}`
+                // console.log(data[index].code, value)
+                return `{b${data[index].code}|}` + '\n\n' + value
               },
               rich: richX
             },
@@ -216,7 +217,7 @@ export default {
             },
             label: {
               show: true,
-              position: 'bottom',
+              position: 'top',
               formatter: '{c} °C'
             },
             lineStyle: {
