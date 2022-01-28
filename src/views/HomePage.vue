@@ -43,7 +43,7 @@
       </div>
       <!-- 实时动态 -->
       <div class="right_modelC">
-        <dynamic />
+        <dynamic :websocketData="websocketData"/>
       </div>
     </div>
   </div>
