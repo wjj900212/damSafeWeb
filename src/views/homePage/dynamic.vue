@@ -116,7 +116,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     background: url('../../../static/img/组188.png') no-repeat;
-    /* background-size: 100%; */
+    background-size: 100%;
     background-position: bottom;
     text-indent: 23px;
   }
