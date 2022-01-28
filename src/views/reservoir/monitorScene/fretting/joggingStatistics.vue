@@ -65,7 +65,7 @@
 </template>
 <script>
 import moment from "moment";
-import MainContent from '@/components/survey/MainContent.vue';
+import MainContent from '@/components/jogging/MainContent.vue';
 export default {
   name: "joggingStatistics",
   components: { MainContent },

@@ -1,7 +1,7 @@
 <template>
   <!-- 场景可视化 -->
-  <div class="visual">
-    <a-card :bodyStyle="{ padding: '5px' }">
+  <div style="width:100%;">
+    <a-card :bodyStyle="{ padding: '10px' }">
       <a-tabs :activeKey="activeKey" slot="title" @change="callback" class="tabs">
         <a-tab-pane v-for="tab in tabs" :key="tab.key" :tab="tab.name">
         </a-tab-pane>
@@ -43,7 +43,7 @@ export default {
       designData: {},
       tabs: [
         {name: '场景可视化', key: 'cjksh'},
-        // {name: '微动模型安全说明', key: 'wdmxaqsm'}
+        {name: '微动模型安全说明', key: 'wdmxaqsm'}
       ]
     }
   },

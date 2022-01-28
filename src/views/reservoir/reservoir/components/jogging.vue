@@ -47,14 +47,14 @@
       <div><span>当前:</span><span class="warn-value">{{ monitorName }}</span></div>
       <div><span class="warn-value">指标安全说明</span><img src="static/img/control/自动对比说明书.png"/></div>
     </div>
-    <div :style="{ width: '100%', height: '400px' }">
+    <div :style="{ width: '100%', height: '450px' }">
       <main-content :list="targetList" :dateTimeValue="dateTimeValue"></main-content>
     </div>
   </a-card>
 </template>
 <script>
 import moment from "moment";
-import MainContent from '@/components/survey/MainContent.vue';
+import MainContent from '@/components/jogging/MainContent.vue';
 
 export default {
   name: 'jogging',

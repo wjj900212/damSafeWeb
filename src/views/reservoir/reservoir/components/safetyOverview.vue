@@ -20,7 +20,9 @@
         </div>
       </div>
       <div class="overview-top-warn">
-        <img src="static/img/control/组126.png"/>
+        <img v-if="reservoirInfo.safeLevel==='0'" src="static/img/正常.png"/>
+        <img v-else-if="reservoirInfo.safeLevel==='1'" src="static/img/异常.png"/>
+        <img v-else-if="reservoirInfo.safeLevel==='2'" src="static/img/险情.png"/>
         <div>
           <div :style="{ color: getText(reservoirInfo.safeLevel).color,fontSize: '24px' }">{{ getText(reservoirInfo.safeLevel).name }}</div>
           <div class="warn-label">综合安全等级</div>
@@ -44,71 +46,6 @@
         </div>
       </div>
     </div>
-    <!--<a-card-grid style="width: 100%; text-align: left">
-      <a-row>
-        <a-col :span="16">
-          <h2>{{ reservoirInfo.reservoirName }}</h2>
-          <a-row>
-            <a-col :span="4">所在地址</a-col>
-            <a-col :span="20">{{ reservoirInfo.cityName }}</a-col>
-          </a-row>
-          <a-row>
-            <a-col :span="4">管理单位</a-col>
-            <a-col :span="20">{{ reservoirInfo.managerUnit }}</a-col>
-          </a-row>
-        </a-col>
-        <a-col :span="8">
-          <img
-            v-if="reservoirInfo.images"
-            width="200"
-            height="100"
-            :src="reservoirInfo.images"
-          />
-        </a-col>
-      </a-row>
-    </a-card-grid>-->
-    <!--<a-card-grid style="width: 100%; text-align: center">
-      <a-row>
-        <a-col :span="12">
-          <a-row>
-            <a-col>综合安全等级</a-col>
-          </a-row>
-          <a-row>
-            <a-col :style="{ color: getText(reservoirInfo.safeLevel).color }">{{ getText(reservoirInfo.safeLevel).name }}</a-col>
-          </a-row>
-        </a-col>
-        <a-col :span="12">
-          <a-row>
-            <a-col :span="24">预警数</a-col>
-          </a-row>
-          <a-row>
-            <a-col :style="{ color: 'rgba(217, 0, 27, 0.753)' }" :span="24">{{ reservoirInfo.warnCount }}</a-col>
-          </a-row>
-        </a-col>
-      </a-row>
-    </a-card-grid>-->
-    <!--<a-card-grid style="width: 100%; text-align: center">
-      <a-row>
-        <a-col :span="12">
-          &lt;!&ndash; <img src="static/img/u289.png" alt="" /> &ndash;&gt;
-          <div :style="{ width: '100%', height: '220px' }">
-            <component
-              v-if="radarData.length > 2"
-              :is="'EchartsRadar'"
-              refid="radar"
-              :data="radarData"
-              class="main-content"
-            ></component>
-          </div>
-        </a-col>
-        <a-col :span="12" :style="{ marginTop: '25px' }">
-          <a-row v-for="item in reservoirInfo.monitorList" :key="item.name">
-            <a-col :span="12">{{ item.name }}</a-col>
-            <a-col :span="12" :style="{ color: getText(item.warnLevel).color }">{{ getText(item.warnLevel).name }}</a-col>
-          </a-row>
-        </a-col>
-      </a-row>
-    </a-card-grid>-->
   </a-card>
 </template>
 <script>

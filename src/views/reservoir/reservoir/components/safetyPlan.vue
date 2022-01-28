@@ -2,7 +2,7 @@
   <a-card>
     <div class="safetyPlan">
       <div class="card">
-        <img src="static/img/control/可视化.png"/>
+        <img src="static/img/control/预案.png"/>
         <span>安全管理预案</span>
       </div>
       <a-select
@@ -18,7 +18,7 @@
       </a-select>
     </div>
 
-    <div style="width: 100%; text-align: center">
+    <div style="width: 100%; text-align: center;margin-top:1rem;">
       <a-table
         :data-source="aqglyadataSource"
         :columns="aqglyacolumns"
