@@ -1,5 +1,5 @@
 <template>
-  <!-- 水情概况 -->
+  <!-- 雨情概况 -->
   <div style="width: 100%;">
     <a-card :bodyStyle="{ padding: '10px' }">
       <div class="safetyPlan">

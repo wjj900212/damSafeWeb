@@ -227,4 +227,11 @@ Date.prototype.format = function (fmt) {
   .ant-popover{
     width:60rem !important;
   }
+  .ant-tabs-ink-bar{
+    bottom: unset !important;
+  }
+  .ant-tabs-bar{
+    margin:0px !important;
+    border-bottom: unset !important;
+  }
 </style>

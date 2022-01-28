@@ -1,7 +1,7 @@
 <template>
-  <!--变形监测-->
+  <!--微动监测-->
   <div class="rainTabs">
-    <a-tabs @change="callback" class="tabs">
+    <a-tabs @change="callback" class="tabsBox">
       <a-tab-pane v-for="rain in rainScene" :key="rain.id" :tab="rain.name">
       </a-tab-pane>
     </a-tabs>
@@ -16,7 +16,6 @@
       </a-row>
       <a-row :gutter="24" :style="{ marginBottom: '24px' }">
         <a-col :span="24">
-          <!-- <trendStatistic :hiddenId="hiddenId"></trendStatistic> -->
           <joggingStatistics :List="pnList" :hiddenId="hiddenId"></joggingStatistics>
         </a-col>
       </a-row>
@@ -112,7 +111,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  @import "../../../../static/less/info.css";
   .rainTabs{
     width:100%;
+  }
+  .tabsBox{
+    background-color: #fff;
+  }
+  .com {
+    width: 100%;
+    margin-top: 1rem;
   }
 </style>

@@ -1,45 +1,57 @@
 <template>
-  <a-card title="变形监测趋势统计">
-    <div slot="extra">
-      <a-select
-        v-model="monitor"
-        placeholder="监测点"
-        option-filter-prop="children"
-        @change="handleMonitorChange"
-      >
-        <a-select-option
-          v-for="item in List"
-          :value="item.pnId"
-          :key="item.pnId"
+  <a-card>
+    <div class="safetyPlan">
+      <div class="card">
+        <img src="static/img/control/数据统计.png"/>
+        <span>微动监测数据统计</span>
+      </div>
+      <div>
+        <a-select
+          v-model="monitor"
+          placeholder="监测点"
+          option-filter-prop="children"
+          @change="handleMonitorChange"
         >
-          {{ item.pnName }}
-        </a-select-option>
-      </a-select>
-      <a-select
-        style="width: 100px"
-        v-model="dateModel"
-        option-filter-prop="children"
-        @change="handleDateModelChange"
-      >
-        <a-select-option
-          v-for="item in dateModelData"
-          :value="item.value"
-          :key="item.value"
+          <a-select-option
+            v-for="item in List"
+            :value="item.pnId"
+            :key="item.pnId"
+          >
+            {{ item.pnName }}
+          </a-select-option>
+        </a-select>
+        <a-select
+          style="width: 100px"
+          v-model="dateModel"
+          option-filter-prop="children"
+          @change="handleDateModelChange"
         >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-      <a-range-picker
-        v-model="dateTimeValue"
-        style="width: 240px"
-        @change="onDateChange"
-      />
+          <a-select-option
+            v-for="item in dateModelData"
+            :value="item.value"
+            :key="item.value"
+          >
+            {{ item.name }}
+          </a-select-option>
+        </a-select>
+        <a-range-picker
+          v-model="dateTimeValue"
+          style="width: 240px"
+          @change="onDateChange"
+        />
 
-      <a-button @click="getChartInfo" type="primary"> 查询 </a-button>
-      <a-button @click="exportEXcel" type="primary"> 导出 </a-button>
+        <a-button @click="getChartInfo" type="primary"> 查询 </a-button>
+        <a-button @click="exportEXcel" type="primary"> 导出 </a-button>
+      </div>
     </div>
-    <a-card-grid style="width: 100%; text-align: left; height: 500px">
-      <a-row>
+    <div style="width: 100%; text-align: left; height: 500px">
+      <div class="warn-info LR" style="margin-top:1rem;">
+        <div><span>当前:</span><span class="warn-value">{{monitorName}}  {{monitorCode}}</span></div>
+      </div>
+      <div style="width: 100%;">
+        <main-content ref="jogging" :list="targetList" :dateTimeValue="dateTimeValue"></main-content>
+      </div>
+      <!--<a-row>
         <a-col :span="4">
           <div>当前&nbsp;&nbsp;{{ monitorName }}</div>
           <div>{{ monitorCode }}</div>
@@ -47,8 +59,8 @@
         <a-col :span="20">
           <main-content ref="jogging" :list="targetList" :dateTimeValue="dateTimeValue"></main-content>
         </a-col>
-      </a-row>
-    </a-card-grid>
+      </a-row>-->
+    </div>
   </a-card>
 </template>
 <script>
