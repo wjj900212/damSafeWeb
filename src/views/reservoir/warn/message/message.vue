@@ -2,8 +2,8 @@
 <template>
   <div class="standardList">
     <!-- 搜索区域 -->
-    <a-card :bordered="false" class="card-area" :style="{ height: '140px',border:'1px solid #e9e9e9' }">
-      <div :class="advanced ? 'search' : null">
+    <a-card :bordered="false" class="card-area">
+      <div style="border-bottom:1px solid rgba(24, 144, 255, 0.2)" :class="advanced ? 'search' : null">
         <a-form layout="horizontal">
           <a-row >
             <div :class="advanced ? null: 'fold'">
@@ -47,8 +47,12 @@
               </a-col>
             </div>
             <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
-            <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            <a-button type="primary" @click="search">
+              查询<img src="/static/img/查询 拷贝 3.png" style="margin-left:8px;">
+            </a-button>
+            <a-button  style="margin-left: 8px;border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;" @click="reset">
+              重置<img src="/static/img/重置.png" style="margin-left:8px;">
+            </a-button>
           </span>
           </a-row>
           <a-row >
@@ -73,45 +77,48 @@
           </a-row>
         </a-form>
       </div>
-    </a-card>
-    <a-card :bordered="false" class="card-area" style="margin-top:10px;">
-      <div style="display: flex;justify-content: space-between;align-content: space-between;">
-        <div>
-          <span>蓝色预警：{{statisData.blue}}</span>
-          <span>黄色预警：{{statisData.yellow}}</span>
-          <span>橙色预警：{{statisData.orange}}</span>
-          <span>红色预警：{{statisData.red}}</span>
+    <!--</a-card>
+    <a-card :bordered="false" class="card-area" style="margin-top:10px;">-->
+      <div style="display: flex;justify-content: space-between;align-content: space-between;margin-top:1rem;margin-bottom:2rem;">
+        <div style="font-size: 1.6rem;font-family: Source Han Sans CN;font-weight: 400;flex: 1;">
+          <span style="color:#FE5C3D;">红色预警：{{statisData.red}}</span>
+          <span style="color:#FF9500;">橙色预警：{{statisData.orange}}</span>
+          <span style="color:#FBDB05;">黄色预警：{{statisData.yellow}}</span>
+          <span style="color:#1890FF;">蓝色预警：{{statisData.blue}}</span>
         </div>
-        <div>
-          <a-radio-group :defaultValue="flagTime" button-style="solid" @change="handleRadioChange">
-            <a-radio-button v-for="tag in tagList" :key="tag.id" :value="tag.id">
-              {{tag.name}}
-            </a-radio-button>
-          </a-radio-group>
-          <a-button type="primary">
-            导出
+        <div style="display: flex;width:50%;">
+          <a-select
+            v-model="tabPane"
+            style="width: 100%;margin-right:1rem;"
+            placeholder="请选择"
+            @change="handleTypeChange">
+            <a-select-option v-for="g in tabPaneList" :key="g.key">{{g.tab}}</a-select-option>
+          </a-select>
+          <a-range-picker @change="onChange" :style="{width:'100%',marginRight:'1rem'}"/>
+          <a-select
+            v-model="flagTime"
+            :style="{width: '100%',marginRight:'1rem'}"
+            placeholder="请选择"
+            @change="handleRadioChange">
+            <a-select-option v-for="g in tagList" :key="g.id">{{g.name}}</a-select-option>
+          </a-select>
+          <a-button type="primary" @click="portData">
+            数据导出
           </a-button>
         </div>
       </div>
       <div>
-        <a-tabs default-active-key="1" @change="callback">
-          <a-tab-pane v-for="tab in tabPaneList" :key="tab.key" :tab="tab.tab">
-            <!--<table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>-->
-            <a-table ref="TableMessInfo"
-                     :columns="columns"
-                     :dataSource="dataSource"
-                     :pagination="pagination"
-                     :loading="loading"
-                     @change="handleTableChange">
-              <template slot="operation" slot-scope="text, record">
-                <div>
-                   <a v-if="tabPane === '3'" disabled="true">详情</a>
-                    <a v-else disabled="false" @Click="warnInfo(record)">详情</a>
-                </div>
-              </template>
-            </a-table>
-          </a-tab-pane>
-        </a-tabs>
+        <a-table ref="TableMessInfo"
+                 :columns="columns"
+                 :dataSource="dataSource"
+                 :pagination="pagination"
+                 :loading="loading"
+                 @change="handleTableChange">
+
+          <template v-if="tabPane === '1' || tabPane === '2'" slot="operation" slot-scope="text, record">
+            <a @click = "warnInfo(record)">详情</a>
+          </template>
+        </a-table>
       </div>
     </a-card>
     <!--设备预警详情-->
@@ -127,6 +134,7 @@
 
 <script>
 import EquipmentWarningInfo from './model/equipmentWarningInfo'
+import moment from 'moment'
 export default {
   name: 'message',
   components: {
@@ -135,11 +143,15 @@ export default {
   data () {
     return {
       advanced: false,
-      queryParams: {},
+      queryParams: {
+        startTime: moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+        endTime: moment().format('YYYY-MM-DD HH:mm:ss')
+      },
       warnLevelList: [{id: 1, label: '蓝色预警'}, {id: 2, label: '黄色预警'}, {id: 3, label: '橙色预警'}, {id: 4, label: '红色预警'}],
       disposalList: [{id: 0, label: '未处置'}, {id: 1, label: '已处置'}, {id: 2, label: '不予处置'}],
       tagList: [{id: 0, name: '今日'}, {id: 1, name: '近三天'}, {id: 2, name: '近一周'}, {id: 3, name: '近一月'}],
-      flagTime: 3,
+      flagTime: 0,
+      searchTime: [],
       paginationInfo: null,
       dataSource: [],
       tabPane: '1',
@@ -166,19 +178,21 @@ export default {
         dataIndex: 'warnLevel',
         customRender: (text) => {
           switch (text) {
-            case '0':
-              return '蓝色预警'
-            case '1':
-              return '黄色预警'
-            case '2':
-              return '橙色预警'
+            case '4':
+              return <span style="color:#FE5C3D;">红色预警</span>
             case '3':
-              return '红色预警'
+              return  <span style="color:#FF9500;">橙色预警</span>
+            case '2':
+              return <span style="color:#FBDB05;">黄色预警</span>
+            case '1':
+              return <span style="color:#1890FF;">蓝色预警</span>
           }
         }
       }, {
         title: '预警指标',
-        dataIndex: 'devValueMark'
+        dataIndex: 'devValueMark',
+        width: '8%',
+        ellipsis: true
       }, {
         title: '预警信息',
         dataIndex: 'warnInfo',
@@ -242,6 +256,7 @@ export default {
     this.groupStatistics()
   },
   methods: {
+    moment,
     fetch (params = {}) {
       // 显示loading
       this.loading = true
@@ -341,10 +356,48 @@ export default {
         }
       })
     },
-    handleRadioChange (e) {
-      this.flagTime = e.target.value
+    handleRadioChange (value) {
+      this.flagTime = value
+      this.dateChange()
+      console.log('获取时间', value)
+    },
+    handleTypeChange(value){
+      console.log('获取类型', value)
+      this.tabPane = value
       this.search()
-      console.log('获取时间', e)
+    },
+    onChange (date, dateString) {
+      this.queryParams.startTime = dateString[0] ? dateString[0] + ' 00:00:00' : ''
+      this.queryParams.endTime = dateString[1] ? dateString[1] + ' 59:59:59' : ''
+      this.search()
+    },
+    // 快捷选择时间
+    dateChange() {
+      if (this.flagTime == 0) {
+        this.searchTime = [
+          this.moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          this.moment().format('YYYY-MM-DD HH:mm:ss')
+        ]
+      } else if (this.flagTime == 1) {
+        this.searchTime = [
+          this.moment().subtract(3, 'day').format('YYYY-MM-DD HH:mm:ss'),
+          this.moment().format('YYYY-MM-DD HH:mm:ss')
+        ]
+      } else if (this.flagTime == 2) {
+        this.searchTime = [
+          this.moment().subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss'),
+          this.moment().format('YYYY-MM-DD HH:mm:ss')
+        ]
+      } else if (this.flagTime == 3) {
+        this.searchTime = [
+          this.moment().subtract(1, 'months').format('YYYY-MM-DD HH:mm:ss'),
+          this.moment().format('YYYY-MM-DD HH:mm:ss')
+        ]
+      }
+
+      this.queryParams.startTime = this.searchTime[0]
+      this.queryParams.endTime = this.searchTime[1]
+      this.search()
     },
     //各等级预警数量
     groupStatistics(params = {}){
@@ -360,6 +413,9 @@ export default {
         // 数据加载完毕，关闭loading
         this.loading = false
       })
+    },
+    portData () {
+      this.$export('web/earlyWarningBasic/exportEarlyWarningList', this.queryParams)
     }
   }
 }

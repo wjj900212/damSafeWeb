@@ -7,17 +7,14 @@
     :zIndex="2"
     @cancel="cancelModal"
   >
-    <div style="display: flex;flex-direction: row;margin-top:0.5rem;">
-      <div style="display: flex;justify-content: center;align-items: center;">
-        <img src="static/imgs/多边形1.png"/>
-        <span class="modelTitle">预警详情</span>
-      </div>
+    <div style="display: flex;flex-direction: row;margin-top:0.5rem;border-bottom:1px solid rgba(24,143,255,0.3)">
+      <span class="modelTitle">预警信息-详情</span>
     </div>
     <!--预警详情-->
     <div style="height: 67rem;overflow-y: auto;">
       <div style="display: flex;flex-direction: row;justify-content: space-between;align-content: space-between;margin-top:2rem;">
         <div class="titleIcon">
-          <img class="s-img" src="static/imgs/圆角矩形1220.png"/>
+          <img class="s-img" src="static/img/圆角矩形1220.png"/>
           <span class="s-title">基本信息</span>
         </div>
       </div>
@@ -65,19 +62,19 @@
             水库名称
           </a-col>
           <a-col :span="3" :order="2" class="info-content">
-            <a class="aStyle" :title="warnDetailData.reservoirName">{{warnDetailData.reservoirName | ellipsis(7)}}</a>
+            <span :title="warnDetailData.reservoirName">{{warnDetailData.reservoirName | ellipsis(6)}}</span>
           </a-col>
           <a-col :span="3" :order="3" class="info-label">
             所属隐患点
           </a-col>
           <a-col :span="3" :order="4" class="info-content">
-            <a class="aStyle" :title="warnDetailData.hiddenName">{{warnDetailData.hiddenName | ellipsis(7)}}</a>
+            <span :title="warnDetailData.hiddenName">{{warnDetailData.hiddenName | ellipsis(6)}}</span>
           </a-col>
           <a-col :span="3" :order="5" class="info-label">
             所属监测点
           </a-col>
           <a-col :span="3" :order="6" class="info-content">
-            <a class="aStyle" :title="warnDetailData.projPnName">{{warnDetailData.projPnName | ellipsis(7)}}</a>
+            <span :title="warnDetailData.projPnName">{{warnDetailData.projPnName | ellipsis(6)}}</span>
           </a-col>
           <a-col :span="3" :order="7" class="info-label">
             设备名称
@@ -91,7 +88,7 @@
             所属地区
           </a-col>
           <a-col :span="3" :order="2" class="info-content">
-            <span :title="warnDetailData.cityName">{{warnDetailData.cityName | ellipsis(7)}}</span>
+            <span :title="warnDetailData.cityName">{{warnDetailData.cityName | ellipsis(6)}}</span>
           </a-col>
           <a-col :span="3" :order="3" class="info-label">
             监测类型
@@ -287,7 +284,7 @@
       <div v-if="cur !== 1">
         <div style="display: flex;flex-direction: row;justify-content: space-between;align-content: space-between;margin-top:2rem;">
           <div class="titleIcon">
-            <img class="s-img" src="static/imgs/CHART拷贝3.png"/>
+            <img class="s-img" src="static/img/CHART拷贝3.png"/>
             <span class="s-title">监测数据详情</span>
           </div>
         </div>
@@ -299,10 +296,10 @@
           <div>
             <span>类型</span>
             <a-select
-              v-model="devValueName"
+              v-model="devValueId"
               style="width:12rem"
             >
-              <a-select-option v-for="item in warnDetailData.target" @click="handleDevValueNameChange(item)" :key="item.devValueId" :value="item.devValueName">
+              <a-select-option v-for="item in warnDetailData.target" @click="handleDevValueNameChange(item)" :key="item.devValueId">
                 {{ item.devValueName }}
               </a-select-option>
             </a-select>
@@ -310,7 +307,7 @@
         </div>
         <component v-if="data.length !== 0" refid="main" :is="componentName" :yname="yname" :data="data" :boundary="boundary" :echart2DHeight="echart2DHeight" :pnDevId="chartsID(devValueId)" class="main-content" style="height: 350px;"></component>
         <div v-if="data.length === 0" style="margin:4rem 0;text-align: center;">
-          <img src="static/imgs/暂无数据.png"/>
+          <img src="static/img/control/暂无内容.png"/>
           <span class="no-data">暂无数据</span>
         </div>
         <div>
@@ -327,9 +324,9 @@
         </div>
       </div>
       <!--甲方处置结果-->
-      <div>
+      <div style="margin-top:2rem;">
         <div  class="titleIcon" style="margin-bottom:2rem;">
-          <img class="s-img" src="static/imgs/圆角矩形1220.png"/>
+          <img class="s-img" src="static/img/圆角矩形1220.png"/>
           <span class="s-title">甲方处置信息</span>
         </div>
           <a-row type="flex" class="info">
@@ -478,7 +475,7 @@ export default {
           if (this.warnDetailData.target.length !== 0) {
             let indexItem = {}
             this.warnInfo = this.warnDetailData.target[0]
-            // this.devValueName = this.warnDetailData.devValueList[0].devValueName
+           // this.devValueName = this.warnDetailData.target[0].devValueName
             let valueId = ''
             if (this.warnDetailData.basicIndex !== undefined) {
               valueId = this.warnDetailData.basicIndex
@@ -842,6 +839,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  @import "../../../../../../static/less/info.css";
   .handleResult{
     font-family: 'Microsoft YaHei UI';
     font-size: 1.8rem;

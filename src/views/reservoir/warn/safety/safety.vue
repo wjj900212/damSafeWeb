@@ -1,8 +1,28 @@
 <template>
     <div class="standardList">
       <a-card :bordered="false" class="card-area">
-        <div :class="advanced ? 'search' : null">
-          <a-form layout="horizontal">
+        <div>
+          <!-- 搜索区域 -->
+          <a-form layout="inline" style="display:flex;align-items: center;justify-content: space-between;">
+            <a-form-item label="关键字">
+              <a-input placeholder="请输入" v-model="queryParams.keyword" style="width:220px;margin-right:18px" />
+              <a-button style="border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;" type="primary"
+                        @click="addSafety">添加
+                <img src="static/img/添加.png" style="margin-left:8px;">
+              </a-button>
+            </a-form-item>
+            <a-form-item>
+              <a-button type="primary" @click="search">查询
+                <img src="static/img/查询 拷贝 3.png" style="margin-left:8px;">
+              </a-button>
+              <a-button style="margin-left: 8px;border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;"
+                        @click="reset">重置
+                <img src="static/img/重置.png" style="margin-left:8px;"></a-button>
+            </a-form-item>
+          </a-form>
+        </div>
+        <!--<div :class="advanced ? 'search' : null">
+          <a-form layout="inline" style="display:flex;align-items: center;justify-content: space-between;">
             <a-row >
               <div :class="advanced ? null: 'fold'">
                 <a-col :md="8" :sm="24" >
@@ -10,7 +30,11 @@
                     label="关键字"
                     :labelCol="{span: 5}"
                     :wrapperCol="{span: 18, offset: 1}">
-                    <a-input placeholder="请输入" v-model="queryParams.keyword"/>
+                    <a-input placeholder="请输入" v-model="queryParams.keyword" style="width:220px;margin-right:18px" />
+                    <a-button style="border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;" type="primary"
+                              @click="addSafety">添加
+                      <img src="static/img/添加.png" style="margin-left:8px;">
+                    </a-button>
                   </a-form-item>
                 </a-col>
               </div>
@@ -20,14 +44,9 @@
           </span>
             </a-row>
           </a-form>
-        </div>
+        </div>-->
       </a-card>
       <a-card :bordered="false" class="card-area" style="margin-top:10px;">
-        <div class="operator">
-          <a-button type="primary" @click="addSafety">
-            添加
-          </a-button>
-        </div>
         <div>
           <table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>
         </div>

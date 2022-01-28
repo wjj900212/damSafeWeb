@@ -1,8 +1,10 @@
 <template>
     <div class="standardList">
-      <a-tabs border="1" type="card" v-model="tabPane" @change="callback">
+      <a-tabs v-model="tabPane" @change="callback">
         <a-tab-pane v-for="v in sceneTypeList" :key="v.ID" :tab="v.NAME">
-          <a-button type="primary" style="margin-bottom:10px;" @click="addConfig">添加规则</a-button>
+          <a-button  style="margin-bottom: 1rem;border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;"  @click="addConfig">
+            添加规则
+          </a-button>
           <div class="operator">
             <a-table ref="TableInfo"
                      :columns="columns"
@@ -211,5 +213,8 @@ export default {
   @import "../../../../../static/less/Common";
   .standardList{
     width:100%;
+    background-color: #FFFFFF;
+    padding:1rem;
+    min-height: 70rem;
   }
 </style>
