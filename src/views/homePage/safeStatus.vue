@@ -54,7 +54,7 @@
         })
       },
       drawChart(op) {
-        let that=this
+        let that = this
         if (!this.myChart) {
           var chartDom = document.getElementById('safeStatusChart');
           this.myChart = this.$echarts.init(chartDom);
@@ -163,10 +163,15 @@
   }
 
   .safeStatusCon {
-    width: 100%;
+    /* width: 100%; */
+    width: 99%;
+    margin: 0 auto;
     height: 22rem;
-    background: url('../../../static/img/model-bg.png') no-repeat;
-    background-size: 100% 100%;
+    /* background: url('../../../static/img/model-bg.png') no-repeat;
+    background-size: 100% 100%; */
+    background: rgba(13, 76, 145, 0.4);
+    box-shadow: 0px 0px 10px 0px rgba(17, 40, 255, 0.66) inset;
+    border-radius: 3px;
     display: flex;
     align-items: center;
     justify-content: space-evenly;

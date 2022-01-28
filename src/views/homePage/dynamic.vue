@@ -64,12 +64,17 @@
   }
 
   .dynamicBox {
+    width: 99%;
+    margin: 0 auto;
     padding: 1rem;
     position: relative;
     z-index: 2;
-    background: url('../../../static/img/model-bg.png') no-repeat;
-    background-size: 100% 100%;
+    /* background: url('../../../static/img/model-bg.png') no-repeat;
+    background-size: 100% 100%; */
     height: calc(100% - 5rem);
+    background: rgba(13, 76, 145, 0.4);
+    box-shadow: 0px 0px 10px 0px rgba(17, 40, 255, 0.66) inset;
+    border-radius: 3px;
   }
 
   .dynamicArr {
