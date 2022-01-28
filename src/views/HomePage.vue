@@ -184,7 +184,7 @@ export default {
       z-index: 10;
       left: 1.8rem;
       bottom: 1.5rem;
-      background: url('/static/img/left-bg.png') no-repeat;
+      background: url('../../static/img/left-bg.png') no-repeat;
       background-size: 100% 100%;
 
 
@@ -222,7 +222,7 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: url('/static/img/left-bg.png') no-repeat;
+      background: url('../../static/img/left-bg.png') no-repeat;
       background-size: 100% 100%;
 
       .right_modelA,

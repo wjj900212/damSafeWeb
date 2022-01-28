@@ -3,7 +3,7 @@
   <div class="record">
     <a-card>
       <template slot="title">
-        <img src="/static/img/icon-运维记录.png">
+        <img src="static/img/icon-运维记录.png">
         <span>运维记录</span>
       </template>
       <template slot="extra">

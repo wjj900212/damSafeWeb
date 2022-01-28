@@ -3,7 +3,7 @@
   <div class="storageCapacity">
     <a-card>
       <template slot="title">
-        <img src="/static/img/水位库容曲线.png">
+        <img src="static/img/水位库容曲线.png">
         <span>水位库容曲线</span>
       </template>
       <a-card-grid style="width: 100%; text-align: center; padding: 5px">

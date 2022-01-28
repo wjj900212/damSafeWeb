@@ -3,7 +3,7 @@
   <div class="trendStatistic">
     <a-card>
       <template slot="title">
-        <img src="/static/img/渗压监测趋势统计.png">
+        <img src="static/img/渗压监测趋势统计.png">
         <span>渗压监测趋势统计</span>
       </template>
       <template slot="extra">

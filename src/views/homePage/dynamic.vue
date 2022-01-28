@@ -8,12 +8,12 @@
           <div class="item" :key="i">
             <div class="item_tit">
               <template v-if="v.flag==1">
-                <img src="/static/img/b.png" v-if="v.warnLevel==1">
-                <img src="/static/img/y.png" v-if="v.warnLevel==2">
-                <img src="/static/img/o.png" v-if="v.warnLevel==3">
-                <img src="/static/img/r.png" v-if="v.warnLevel==4">
+                <img src="static/img/b.png" v-if="v.warnLevel==1">
+                <img src="static/img/y.png" v-if="v.warnLevel==2">
+                <img src="static/img/o.png" v-if="v.warnLevel==3">
+                <img src="static/img/r.png" v-if="v.warnLevel==4">
               </template>
-              <img src="/static/img/w.png" v-else>
+              <img src="static/img/w.png" v-else>
               <span class="i_txt"
                 :style="{color:v.flag==1?v.warnLevel==1?'#188efc':v.warnLevel==2?'#ff9500':v.warnLevel==3?'#fbdb05':v.warnLevel==4?'#cd4b4d':'':'#2ABBB2'}">{{v.title}}</span>
               <span class="i_time">{{v.time}}</span>
@@ -67,7 +67,7 @@
     padding: 1rem;
     position: relative;
     z-index: 2;
-    background: url('/static/img/model-bg.png') no-repeat;
+    background: url('../../../static/img/model-bg.png') no-repeat;
     background-size: 100% 100%;
     height: calc(100% - 5rem);
   }
@@ -115,7 +115,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    background: url('/static/img/组 188.png') no-repeat;
+    background: url('../../../static/img/组188.png') no-repeat;
     /* background-size: 100%; */
     background-position: bottom;
     text-indent: 23px;

@@ -7,7 +7,7 @@
         <template v-for="v,i in allData">
           <div class="item" :key="i">
             <div class="imgIcon">
-              <img src="/static/img/组 981.png" alt="">
+              <img src="static/img/组 981.png" alt="">
               <span class="waterLevelRate">{{v.waterLevelRate}}</span>
             </div>
             <div class="msg">
@@ -249,7 +249,7 @@
   .arrWarp {
     padding: 1rem;
     height: calc(100% - 5rem);
-    background: url('/static/img/model-bg.png') no-repeat;
+    background: url('../../../static/img/model-bg.png') no-repeat;
     background-size: 100% 100%;
     overflow: hidden;
   }
@@ -269,7 +269,7 @@
     position: relative;
     z-index: 2;
     float: left;
-    background: url('/static/img/model-bg.png') no-repeat;
+    background: url('../../../static/img/model-bg.png') no-repeat;
     background-size: 100% 100%;
   }
 
@@ -295,7 +295,7 @@
   }
 
   .timeItem.act {
-    background: url('/static/img/矩形.png') no-repeat;
+    background: url('../../../static/img/矩形.png') no-repeat;
     background-size: 100% 100%;
   }
 

@@ -52,7 +52,7 @@
 <style scoped>
   /* @import url(); 引入公共css类 */
   .centerTotal {
-    background: url('/static/img/数据展示-b g.png') no-repeat;
+    background: url('../../../static/img/数据展示-bg.png') no-repeat;
     background-size: 100% 100%;
     border-radius: 20px;
     line-height: 1;

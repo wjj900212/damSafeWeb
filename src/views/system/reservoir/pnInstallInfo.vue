@@ -14,7 +14,7 @@
       <a-col :span="8" :order="2" class="info-value">
           <a v-if="installInfo.longitude!==0 && installInfo.latitude !== 0" style="display: flex;align-items: center;">
             {{installInfo.longitude}},{{installInfo.latitude}}
-            <img src="/static/img/定位.png" style="zoom:.8;margin-left: 8px;">
+            <img src="static/img/定位.png" style="zoom:.8;margin-left: 8px;">
           </a>
       </a-col>
       <a-col :span="4" :order="3" class="info-label">
@@ -23,7 +23,7 @@
       <a-col :span="8" :order="4" class="info-value">
           <a style="display: flex;align-items: center;">
             {{installInfo.lon}},{{installInfo.lat}}
-            <img src="/static/img/定位.png" style="zoom:.8;margin-left: 8px;">
+            <img src="static/img/定位.png" style="zoom:.8;margin-left: 8px;">
           </a>
       </a-col>
     </a-row>

@@ -3,7 +3,7 @@
   <div class="visual">
     <a-card>
       <template slot="title">
-        <img src="/static/img/数据可视化.png">
+        <img src="static/img/数据可视化.png">
         <span>场景可视化</span>
       </template>
       <a-select slot="extra" v-model="currentScene" @change="sceneChange">

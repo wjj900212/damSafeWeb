@@ -46,7 +46,7 @@
             <span style="margin-left:5px"></span>
             <!-- <a-icon type="pushpin" style="cursor: pointer;font-size:14px;" /> -->
             <a-button type="primary" @click="MapVisible=true">定位
-              <img src="/static/img/组 211.png" style="margin-left:8px;zoom:.8;">
+              <img src="static/img/组 211.png" style="margin-left:8px;zoom:.8;">
             </a-button>
           </div>
         </a-form-item>
@@ -116,7 +116,7 @@
           <span class="title">自定义信息</span>
         </a-col>
         <a-button class="caddBtn" @click="customFieldModal=true">新增字段
-          <img src="/static/img/添加.png" style="margin-left:8px;">
+          <img src="static/img/添加.png" style="margin-left:8px;">
         </a-button>
       </a-col>
       <a-col :span="12" v-for="v,i in customField" :key="i">

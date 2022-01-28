@@ -51,7 +51,7 @@
           </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary">查询
-              <img src="/static/img/查询 拷贝 3.png" style="margin-left:8px;"></a-button>
+              <img src="static/img/查询 拷贝 3.png" style="margin-left:8px;"></a-button>
           </span>
         </a-row>
       </a-form>

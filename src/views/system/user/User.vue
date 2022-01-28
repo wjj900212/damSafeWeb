@@ -17,13 +17,13 @@
           </a-col>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询
-              <img src="/static/img/查询 拷贝 3.png" style="margin-left:8px;"></a-button>
+              <img src="static/img/查询 拷贝 3.png" style="margin-left:8px;"></a-button>
             <a-button style="margin-left: 8px;border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;"
               @click="reset">重置
-              <img src="/static/img/重置.png" style="margin-left:8px;"></a-button>
+              <img src="static/img/重置.png" style="margin-left:8px;"></a-button>
             <a-button style="margin-left: 8px;border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;"
               @click="add">添加
-              <img src="/static/img/添加.png" style="margin-left:8px;"></a-button>
+              <img src="static/img/添加.png" style="margin-left:8px;"></a-button>
           </span>
         </a-row>
       </a-form>

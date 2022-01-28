@@ -3,7 +3,7 @@
   <div class="overviewOs">
     <a-card style="width: 100%">
       <template slot="title">
-        <img src="/static/img/渗压监测概况.png">
+        <img src="static/img/渗压监测概况.png">
         <span>渗压监测概况</span>
       </template>
       <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
@@ -18,21 +18,21 @@
           </div>
           <div class="reservoirStatus">
             <template v-if="overViewData.reservoirStatus==='0'">
-              <img src="/static/img/正常.png">
+              <img src="static/img/正常.png">
               <div>
                 <div style="color:#3CC8AE;font-size:2.4rem;">正常</div>
                 <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>
               </div>
             </template>
             <template v-if="overViewData.reservoirStatus==='1'">
-              <img src="/static/img/异常.png">
+              <img src="static/img/异常.png">
               <div>
                 <div style="color:#FF9809;font-size:2.4rem;">异常</div>
                 <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>
               </div>
             </template>
             <template v-if="overViewData.reservoirStatus==='2'">
-              <img src="/static/img/险情.png">
+              <img src="static/img/险情.png">
               <div>
                 <div style="color:#FE5230;font-size:2.4rem;">险情</div>
                 <div style="color:#5D6574;font-size:1.2rem;">安全状态</div>

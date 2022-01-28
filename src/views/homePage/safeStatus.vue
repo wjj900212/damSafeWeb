@@ -165,7 +165,7 @@
   .safeStatusCon {
     width: 100%;
     height: 22rem;
-    background: url('/static/img/model-bg.png') no-repeat;
+    background: url('../../../static/img/model-bg.png') no-repeat;
     background-size: 100% 100%;
     display: flex;
     align-items: center;
@@ -175,14 +175,14 @@
   #safeStatusChart {
     width: 15rem;
     height: 15rem;
-    background: url('/static/img/饼图外环.png') no-repeat;
+    background: url('../../../static/img/饼图外环.png') no-repeat;
     background-size: 100% 100%;
   }
 
   .item {
     width: 13rem;
     height: 5rem;
-    background: url('/static/img/组 980.png') no-repeat;
+    background: url('../../../static/img/组980.png') no-repeat;
     background-size: 100% 100%;
     color: #fff;
     display: flex;

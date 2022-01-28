@@ -7,18 +7,18 @@
           <a-input v-model="queryParams.name" placeholder="请输入关键字" style="width:220px;margin-right:18px" />
           <a-button style="border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;" type="primary"
             @click="$router.push('/system/reservoir/reservoir_add')">添加
-            <img src="/static/img/添加.png" style="margin-left:8px;">
+            <img src="static/img/添加.png" style="margin-left:8px;">
           </a-button>
         </a-form-item>
         <a-form-item label="所在地区">
           <cascader @getDistData="getDistData" :updateOptions="optionCityInfo" :defaultValue="casdata"
             style="width:300px;margin-right:18px"></cascader>
           <a-button type="primary" @click="searchTable">查询
-            <img src="/static/img/查询 拷贝 3.png" style="margin-left:8px;">
+            <img src="static/img/查询 拷贝 3.png" style="margin-left:8px;">
           </a-button>
           <a-button style="margin-left: 8px;border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;"
             @click="resetFilter">重置
-            <img src="/static/img/重置.png" style="margin-left:8px;"></a-button>
+            <img src="static/img/重置.png" style="margin-left:8px;"></a-button>
         </a-form-item>
       </a-form>
     </div>

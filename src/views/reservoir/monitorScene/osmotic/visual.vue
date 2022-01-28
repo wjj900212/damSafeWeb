@@ -3,7 +3,7 @@
   <div class="visual">
     <a-card>
       <template slot="title">
-        <img src="/static/img/数据可视化.png">
+        <img src="static/img/数据可视化.png">
         <span>浸润线预警模型</span>
       </template>
       <template slot="extra">

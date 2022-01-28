@@ -9,7 +9,7 @@
         <div class="monitor">
           <div class="mbox" v-for="i in 2" :key='i'>
             <div class="videoArea">
-              <img src="/static/img/监控.png">
+              <img src="static/img/监控.png">
             </div>
             <div class="m_name">
               水库大门东侧
@@ -525,7 +525,7 @@
   .conBox {
     padding: 1rem;
     height: calc(100% - 5rem);
-    background: url('/static/img/model-bg.png') no-repeat;
+    background: url('../../../static/img/model-bg.png') no-repeat;
     background-size: 100% 100%;
     overflow: hidden;
     /* position: relative; */
@@ -561,7 +561,7 @@
   }
 
   .typeItem.act {
-    background: url('/static/img/矩形.png') no-repeat;
+    background: url('../../../static/img/矩形.png') no-repeat;
     background-size: 100% 100%;
   }
 

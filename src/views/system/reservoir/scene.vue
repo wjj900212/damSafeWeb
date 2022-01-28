@@ -35,17 +35,17 @@
           </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询
-              <img src="/static/img/查询 拷贝 3.png" style="margin-left:8px;"></a-button>
+              <img src="static/img/查询 拷贝 3.png" style="margin-left:8px;"></a-button>
             <a-button
               style="margin-left: 8px;border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;margin-left: 8px"
               @click="reset">重置
-              <img src="/static/img/重置.png" style="margin-left:8px;"></a-button>
+              <img src="static/img/重置.png" style="margin-left:8px;"></a-button>
           </span>
 
           <a-button
             style="border: 1px solid #188FFF;background: #188fff1a;color: #1890FF;float:right;margin-bottom:10px;"
             type="primary" @click="$router.push('/system/reservoir/scene/scene_add?reservoirId=' + reservoirId)">添加
-            <img src="/static/img/添加.png" style="margin-left:8px;">
+            <img src="static/img/添加.png" style="margin-left:8px;">
           </a-button>
         </a-row>
       </a-form>
@@ -86,11 +86,13 @@
   } from 'vuex'
   import sceneVisual from './scene2D.vue'
   import Cascader from '@/components/distselect/cascader.vue'
+  import phreaticLine from "./phreaticLine.vue"
   export default {
     name: 'reservoir',
     components: {
       sceneVisual,
-      Cascader
+      Cascader,
+      phreaticLine
     },
     data() {
       return {
@@ -116,7 +118,8 @@
         hiddenId: 0,
         hiddenName: '',
         hiddenType: '',
-        sceneType: 1
+        sceneType: 1,
+        lineVisible:false
       }
     },
     computed: {

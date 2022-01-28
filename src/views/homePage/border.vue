@@ -1,19 +1,6 @@
 <template>
   <!-- 首页显示组件的边框 -->
   <div class="borderCom">
-    <!-- <div class="titBox" v-if="typeof(titTxt)=='string'">
-      <div class="tit">
-        <img src="/static/img/u22.svg" alt="" class="bg">
-        <span>{{titTxt}}</span>
-      </div>
-    </div> -->
-    <!-- <div class="titBox" v-else>
-      <div v-for="v,i in titTxt" :key='i' :class="i==0?'tit':'tit2'" @click="$emit('toggle',i)">
-        <img v-if="i==0" src="/static/img/u22.svg" alt="" class="bg">
-        <img v-else src="/static/img/u214.svg" alt="" class="bg">
-        <span>{{v}}</span>
-      </div>
-    </div> -->
     <div class="titBox act" v-if="typeof(titTxt)=='string'">
       <span class="line"></span>
       <span class="tit">{{titTxt}}</span>

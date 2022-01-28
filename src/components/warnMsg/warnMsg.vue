@@ -3,7 +3,7 @@
   <div class="warnMsg">
     <a-card>
       <template slot="title">
-        <img src="/static/img/预案.png">
+        <img src="static/img/预案.png">
         <span>预警信息</span>
       </template>
       <template slot="extra">

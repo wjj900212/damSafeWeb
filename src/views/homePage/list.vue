@@ -140,7 +140,7 @@
     width: 100%;
     padding: 1rem;
     float: left;
-    background: url('/static/img/model-bg.png') no-repeat;
+    background: url('../../../static/img/model-bg.png') no-repeat;
     background-size: 100% 100%;
     height: calc(100% - 50px);
   }
@@ -176,7 +176,7 @@
   }
 
   .item {
-    background: url('/static/img/矩形 1718 拷贝.png') no-repeat;
+    background: url('../../../static/img/矩形1718拷贝.png') no-repeat;
     background-size: 100% 100%;
     padding: .8rem;
     margin-bottom: 1rem;
