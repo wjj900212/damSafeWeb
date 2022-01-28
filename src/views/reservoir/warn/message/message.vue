@@ -133,6 +133,7 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
 import EquipmentWarningInfo from './model/equipmentWarningInfo'
 import moment from 'moment'
 export default {
@@ -172,6 +173,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      reservoirId: state => state.account.reservoirId
+    }),
     columns () {
       return [{
         title: '预警级别',
@@ -243,12 +247,15 @@ export default {
         scopedSlots: {
           customRender: 'operation'
         }
-        /*customRender: (text, record) => (
-          <div>
-            <a onClick={() => this.warnInfo(record)}>详情</a>
-          </div>
-        )*/
       }]
+    }
+  },
+  watch: {
+    reservoirId (val) {
+      if(val){
+        this.fetch()
+        this.groupStatistics()
+      }
     }
   },
   mounted () {
@@ -274,6 +281,7 @@ export default {
       }
       params.type = this.tabPane
       params.flag = this.flagTime
+      params.reservoirId = this.reservoirId
       this.$get('web/earlyWarningBasic/getEarlyWarningList', {
         ...params
       }).then((r) => {
@@ -415,7 +423,7 @@ export default {
       })
     },
     portData () {
-      this.$export('web/earlyWarningBasic/exportEarlyWarningList', this.queryParams)
+      this.$export('web/earlyWarningBasic/exportEarlyWarningList', {...this.queryParams,reservoirId:this.reservoirId})
     }
   }
 }
