@@ -409,7 +409,7 @@ export default {
     },
     //各等级预警数量
     groupStatistics(params = {}){
-      params.flag = this.flagTime
+      params.reservoirId = this.reservoirId
       this.$get('web/earlyWarningBasic/groupStatistics', {
         ...params
       }).then((r) => {

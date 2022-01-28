@@ -77,7 +77,7 @@ let webSocketJS = {
       notification.warn({
       // message: '技术预警  ',
         description: (h) => {
-          return (<div style="color:#c5f3ff"><div style="display:none;"><audio autoPlay="autoPlay" loop><source src={`static/media/audio_${data.level}.mp3`} type="audio/mpeg"/></audio></div><div style="position: absolute;top: 5px;left: 8px;"><img src= {`static/images/矩形2609拷贝${data.level}@3x.png`} /></div><div><span>预警类型:</span>{typeName}</div><div><span>隐患点:</span>{data.hiddenName}</div><div><span>监测点:</span>{data.pnName}</div><div><span>预警信息:</span>{data.warningInformation} {data.value}</div><div><span>预警等级:</span>{typeLabel}</div><div><span>时间:</span>{data.warningTime}</div></div>)
+          return (<div style="color:#c5f3ff"><div style="display:none;"><audio autoPlay="autoPlay" loop><source src={`static/media/audio_${data.level}.mp3`} type="audio/mpeg"/></audio></div><div style="position: absolute;top: 5px;left: 8px;"><img src= {`static/img/矩形2609拷贝${data.level}@3x.png`} /></div><div><span>预警类型:</span>{typeName}</div><div><span>隐患点:</span>{data.hiddenName}</div><div><span>监测点:</span>{data.pnName}</div><div><span>预警信息:</span>{data.warningInformation} {data.value}</div><div><span>预警等级:</span>{typeLabel}</div><div><span>时间:</span>{data.warningTime}</div></div>)
         },
         key,
         placement: 'bottomRight',
