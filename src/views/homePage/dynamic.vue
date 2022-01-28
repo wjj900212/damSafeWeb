@@ -66,7 +66,7 @@
   .dynamicBox {
     width: 99%;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 1.2rem;
     position: relative;
     z-index: 2;
     /* background: url('../../../static/img/model-bg.png') no-repeat;

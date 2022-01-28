@@ -140,7 +140,7 @@
     /* width: 100%; */
     width: 99%;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 1.2rem;
     /* float: left; */
     /* background: url('../../../static/img/model-bg.png') no-repeat;
     background-size: 100% 100%; */
