@@ -1,7 +1,7 @@
 <template>
   <!--渗流监测-->
   <div class="rainTabs">
-    <a-tabs @change="callback" class="tabs">
+    <a-tabs @change="callback" class="tabs" style="background:#fff;margin-bottom: 10px;">
       <a-tab-pane v-for="rain in rainScene" :key="rain.id" :tab="rain.name">
       </a-tab-pane>
     </a-tabs>
@@ -83,6 +83,12 @@ export default {
       params.type = 11
       this.$get('web/monitorScene/getHiddenListByReservoirId', {...params}).then((res) => {
         if (res.data.code === 1) {
+          if(res.data.data.length==0){
+            this.hiddenId=''
+            this.rainScene=[]
+            this.$message.warning('暂无渗流监测点')
+            return
+          }
           this.hiddenId = res.data.data[0].id
           this.rainScene = res.data.data
         } else {
@@ -92,6 +98,10 @@ export default {
     },
     getMonitorConditionRain (hiddenId) {
       let _this = this
+      if(!hiddenId){
+        this.overViewData={}
+        return
+      }
       this.$get('web/monitorScene/monitorConditionRain', {
         hiddenId: hiddenId
       }).then((res) => {

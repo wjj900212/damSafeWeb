@@ -10,7 +10,7 @@
       <a-card-grid style="width: 100%; padding: 5px">
         <div class="basicMsg">
           <div class="basic">
-            <div class="subtit"><span class="t_line"></span> 水情监测</div>
+            <div class="subtit"><span class="t_line"></span> {{hiddenMsg.hiddenName}}</div>
             <div class="subTxt"><span>测站编码：</span> {{hiddenMsg.stationCode}}</div>
             <div class="subTxt"><span>建设时间：</span> {{hiddenMsg.createTime?hiddenMsg.createTime.substring(0,10):''}}
             </div>

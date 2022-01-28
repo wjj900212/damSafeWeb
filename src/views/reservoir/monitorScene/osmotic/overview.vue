@@ -10,7 +10,7 @@
       <a-card-grid style="width: 100%; padding: 5px">
         <div class="basicMsg">
           <div class="basic">
-            <div class="subtit"><span class="t_line"></span> 水情监测</div>
+            <div class="subtit"><span class="t_line"></span> {{overViewData.hiddenName}}</div>
             <div class="subTxt"><span>测站编码：</span> {{overViewData.stationCode}}</div>
             <div class="subTxt"><span>建设时间：</span>
               {{overViewData.createTime?overViewData.createTime.substring(0,10):''}}</div>
@@ -227,6 +227,7 @@
     flex-wrap: wrap;
     margin-top: 1rem;
     height: 20.8rem;
+    overflow: auto;
 
   }
 

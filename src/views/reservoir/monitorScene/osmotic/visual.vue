@@ -53,7 +53,7 @@
             this.sceneId = ''
             // 清空画布
             var c = document.getElementById("myCanvas");
-            c.height = c.height;
+            if(c)c.height = c.height;
           } else {
             this.sceneId = n[0].sceneId
             this.getSceneData()

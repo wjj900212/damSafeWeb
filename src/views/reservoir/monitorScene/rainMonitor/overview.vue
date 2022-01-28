@@ -4,31 +4,34 @@
     <a-card :bodyStyle="{ padding: '10px' }">
       <div class="safetyPlan">
         <div class="card">
-          <img src="static/img/control/雨情简报.png"/>
+          <img src="static/img/control/雨情简报.png" />
           <span>雨情概况</span>
         </div>
-        <a-button @click="safeVisible=true"> 安全管理预案
-          <a-icon type="read" style="fontSize:1.6rem" />
-        </a-button>
+        <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
       </div>
       <div class="overview-top">
         <div class="overview-top-hidden">
-          <div style="font-size: 1.6rem;font-weight: 400;display: flex;justify-content: flex-start;align-items: center;"><div style="width: 4px;height: 15px;background: #1890FF;margin-right:1rem;"></div><span style="color:#191E2A;">{{overViewData.hiddenName}}</span></div>
+          <div
+            style="font-size: 1.6rem;font-weight: 400;display: flex;justify-content: flex-start;align-items: center;">
+            <div style="width: 4px;height: 15px;background: #1890FF;margin-right:1rem;"></div><span
+              style="color:#191E2A;">{{overViewData.hiddenName}}</span>
+          </div>
           <div>测站编码:<span style="color:#191E2A;">{{ overViewData.stationCode}}</span></div>
           <div>建设时间:<span style="color:#191E2A;">{{ overViewData.createTime}}</span></div>
           <div>联系人员:<span style="color:#191E2A;">{{ overViewData.hiddenCharge || '无'}}</span></div>
         </div>
         <div class="overview-top-warn" style=" margin-right:1.9rem;">
-          <img src="static/img/control/组127.png"/>
+          <img src="static/img/control/组127.png" />
           <div>
             <div style="font-size: 2.4rem;color: #1890FF;">{{overViewData.waterState || '无'}}</div>
             <div class="warn-label">降水状态</div>
           </div>
         </div>
         <div class="overview-top-warn">
-          <img src="static/img/control/组126.png"/>
+          <img src="static/img/control/组126.png" />
           <div>
-            <div :style="{ color: getText(overViewData.reservoirStatus).color,fontSize: '24px' }">{{ getText(overViewData.reservoirStatus).name }}</div>
+            <div :style="{ color: getText(overViewData.reservoirStatus).color,fontSize: '24px' }">
+              {{ getText(overViewData.reservoirStatus).name }}</div>
             <div class="warn-label">安全状态</div>
           </div>
         </div>
@@ -55,7 +58,7 @@
               <div>
                 <span style="color:#191E2A;font-size:1.6rem;">{{v.target}}{{v.unit?'('+v.unit+')':''}}</span>
                 <span class="cricle"
-                      :style="{background:v.level==4?'#FF2626':v.level==3?'#FF9F00':v.level==2?'#F9D044':v.level==1?'#3399FF':'#3FCAAF'}"></span>
+                  :style="{background:v.level==4?'#FF2626':v.level==3?'#FF9F00':v.level==2?'#F9D044':v.level==1?'#3399FF':'#3FCAAF'}"></span>
               </div>
               <div>
                 <span
@@ -79,7 +82,7 @@
     </a-card>
     <!-- 加密采集 -->
     <a-modal v-model="collectVisible" title="加密采集" :confirm-loading="confirmLoading" @ok="handleOk"
-             @cancel="collectVisible=false">
+      @cancel="collectVisible=false">
       <a-form :form="form">
         <a-form-item label="加密监测时长" :label-col="{ span: 6 }" :wrapper-col="{ span:  16}">
           <div style="display:flex;align-items: center;">
@@ -101,135 +104,141 @@
 </template>
 
 <script>
-import safePlanArticle from '@/components/safePlanArticle/safePlanArticle.vue'
-import { getText } from '@/utils/utils'
-export default {
-  props: {
-    pnList: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    },
-    overViewData: {
-      type: Object,
-      default: () => {}
-    },
-    hiddenId: {
-      type: Number,
-      default: -1
-    }
-  },
-  components: {safePlanArticle},
-  data () {
-    return {
-      currentPoint: '',
-      pnRainData: [],
-      pnId: '',
-      safeVisible: false,
-      safetyColor: '',
-      safetyName: '',
-      confirmLoading: false,
-      form: this.$form.createForm(this, {
-        name: 'rainMonitor'
-      }),
-      collectVisible: false
-    }
-  },
-  watch: {
-    pnList: {
-      handler: function (n, o) {
-        let that = this
-        if (!n || n.length === 0) {
-          this.currentPoint = ''
-          this.monitorPnData = []
-        } else {
-          that.currentPoint = n[0].pnId.toString()
-          that.monitorPnDataRain(n[0].pnId)
+  import safePlanArticle from '@/components/safePlanArticle/safePlanArticle.vue'
+  import {
+    getText
+  } from '@/utils/utils'
+  export default {
+    props: {
+      pnList: {
+        type: Array,
+        default: () => {
+          return []
         }
       },
-      immediate: true
-    }
-  },
-  mounted () {
-  },
-  methods: {
-    getText (str) {
-      return getText(str)
-    },
-    handlePnPoint (value) {
-      this.pnId = value.toString()
-      this.monitorPnDataRain(value)
-      console.log('选中监测点', value)
-    },
-    // 获取当前监测点列表信息
-    monitorPnDataRain (pnId) {
-      let _this = this
-      this.$get('web/monitorScene/monitorPnDataRain', {
-        pnId: pnId
-      }).then((res) => {
-        if (res.data.code === 1) {
-          let data = res.data.data
-          for (let i = 0; i < data.length; i++) {
-            data[i].time = data[i].time.substring(5, 16)
-          }
-          _this.pnRainData = data
-        } else {
-          this.$message.error(res.data.msg)
-        }
-      })
-    },
-    // 加密采集
-    handleOk () {
-      this.confirmLoading = true
-      const form = this.form
-      form.validateFields((err, values) => {
-        if (err) {
-          this.confirmLoading = false
-          return
-        }
-        console.log('form 表单内容: ', values)
-        form.resetFields()
-        this.collectVisible = false
-        this.confirmLoading = false
-      })
-    },
-    // 召测（立即采集）
-    putReqrtd () {
-      if (!this.currentPoint) {
-        this.$message.error('未选择监测点')
-        return
+      overViewData: {
+        type: Object,
+        default: () => {}
+      },
+      hiddenId: {
+        type: Number,
+        default: -1
       }
-      this.$get('/web/monitorScene/reqrtd?pnId=' + this.currentPoint).then(res => {
-        let rr = res.data
-        if (rr.code != 1) {
-          this.$message.error(rr.msg)
+    },
+    components: {
+      safePlanArticle
+    },
+    data() {
+      return {
+        currentPoint: '',
+        pnRainData: [],
+        pnId: '',
+        safeVisible: false,
+        safetyColor: '',
+        safetyName: '',
+        confirmLoading: false,
+        form: this.$form.createForm(this, {
+          name: 'rainMonitor'
+        }),
+        collectVisible: false
+      }
+    },
+    watch: {
+      pnList: {
+        handler: function (n, o) {
+          let that = this
+          if (!n || n.length === 0) {
+            this.currentPoint = ''
+            this.monitorPnData = []
+          } else {
+            that.currentPoint = n[0].pnId.toString()
+            that.monitorPnDataRain(n[0].pnId)
+          }
+        },
+        immediate: true
+      }
+    },
+    mounted() {},
+    methods: {
+      getText(str) {
+        return getText(str)
+      },
+      handlePnPoint(value) {
+        this.pnId = value.toString()
+        this.monitorPnDataRain(value)
+        console.log('选中监测点', value)
+      },
+      // 获取当前监测点列表信息
+      monitorPnDataRain(pnId) {
+        let _this = this
+        this.$get('web/monitorScene/monitorPnDataRain', {
+          pnId: pnId
+        }).then((res) => {
+          if (res.data.code === 1) {
+            let data = res.data.data
+            for (let i = 0; i < data.length; i++) {
+              data[i].time = data[i].time.substring(5, 16)
+            }
+            _this.pnRainData = data
+          } else {
+            this.$message.error(res.data.msg)
+          }
+        })
+      },
+      // 加密采集
+      handleOk() {
+        this.confirmLoading = true
+        const form = this.form
+        form.validateFields((err, values) => {
+          if (err) {
+            this.confirmLoading = false
+            return
+          }
+          console.log('form 表单内容: ', values)
+          form.resetFields()
+          this.collectVisible = false
+          this.confirmLoading = false
+        })
+      },
+      // 召测（立即采集）
+      putReqrtd() {
+        if (!this.currentPoint) {
+          this.$message.error('未选择监测点')
           return
         }
-        this.$message.success('采集成功')
-      })
+        this.$get('/web/monitorScene/reqrtd?pnId=' + this.currentPoint).then(res => {
+          let rr = res.data
+          if (rr.code != 1) {
+            this.$message.error(rr.msg)
+            return
+          }
+          this.$message.success('采集成功')
+        })
+      }
     }
   }
-}
 
 </script>
 <style lang="less" scoped>
   .overview-top {
     display: flex;
-    padding-top:2rem;
+    padding-top: 2rem;
+
     .overview-top-hidden {
       flex: 1;
-      color:#5D6574;
-      padding:1rem;
+      color: #5D6574;
+      padding: 1rem;
       font-size: 1.4rem;
       background: #FFFFFF;
       box-shadow: 1px 0px 18px 0px rgba(172, 200, 219, 0.3);
       border-radius: 8px;
-      margin-right:1.9rem;
-      div{
+      margin-right: 1.9rem;
+
+      div {
         line-height: 2;
       }
     }
+
     .overview-top-warn {
       flex: 1;
       width: 240px;
@@ -240,15 +249,17 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      img{
-        margin-right:3rem;
+
+      img {
+        margin-right: 3rem;
       }
-      .warn-label{
+
+      .warn-label {
         font-size: 12px;
         font-family: Source Han Sans CN;
         font-weight: 400;
         color: #5D6574;
-        margin-top:0.5rem;
+        margin-top: 0.5rem;
       }
     }
   }
@@ -342,19 +353,21 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding:2rem 0rem;
-    border-bottom:1px solid rgba(24, 144, 255, 0.2);
+    padding: 2rem 0rem;
+    border-bottom: 1px solid rgba(24, 144, 255, 0.2);
   }
-.dataVBox{
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  margin-top: 2rem;
-  overflow: auto;
-  height: 12.8rem;
-}
-  .dataV{
+
+  .dataVBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    overflow: auto;
+    height: 12.8rem;
+  }
+
+  .dataV {
     width: 24%;
     padding: 10px;
     margin-bottom: 1rem;
@@ -363,15 +376,18 @@ export default {
     border: 1px solid rgba(141, 199, 252, .6);
     border-radius: 6px;
   }
-  .dataV div{
+
+  .dataV div {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
+
   .cricle {
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background-color:#1a94ff;
+    background-color: #1a94ff;
   }
+
 </style>
