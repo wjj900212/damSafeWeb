@@ -1,0 +1,99 @@
+.overview{
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 0px 1.8rem 1.8rem;
+  border-bottom:1px solid rgba(24, 144, 255, 0.2)
+}
+.card{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card img{
+  margin-right:0.5rem;
+}
+.card span{
+  font-size: 16px;
+  font-family: Source Han Sans CN;
+  font-weight: 400;
+  color: #5D6574;
+}
+.scene{
+  display: flex;
+  justify-content: space-between;
+  align-content: space-between;
+  padding: 0px 1.8rem 1rem 1.8rem;
+  border-bottom:1px solid rgba(24, 144, 255, 0.2)
+}
+.safetyPlan{
+  display: flex;
+  justify-content: space-between;
+  align-content: space-between;
+  padding: 0rem 1.8rem 1rem 1.8rem;
+  border-bottom:1px solid rgba(24, 144, 255, 0.2)
+}
+/**
+左右布局
+*/
+.LR{
+  display: flex;
+  justify-content: space-between;
+  align-content: space-between;
+}
+.warn-info{
+  width: 100%;
+  background: #F9FAFE;
+  align-items: center;
+  padding:1.8rem;
+
+}
+.warn-value{
+  font-size: 16px;
+  font-family: Source Han Sans CN;
+  font-weight: 400;
+  color: #188FFF;
+  margin-left:1rem;
+}
+.warn-value span{
+  margin-right:1rem;
+}
+.info{
+  padding-left:10px;
+}
+.base-info{
+  margin-top:10px;
+  font-size:12px;
+}
+.base-info-title{
+  height: 45px;
+  line-height: 45px;
+  font-size: 18px;
+  font-family: "时尚中黑简体";
+  text-align: left;
+  padding-left: 45px;
+  color: #ffffff;
+  width:485px;
+  background-size: 100% 100%;
+}
+.info-label,.info-content{
+  font-family: "Microsoft YaHei UI";
+  font-weight: 400;
+  font-size: 1.4rem;
+  text-align: left;
+  text-indent: 1rem;
+  height: 6rem;
+  line-height: 6rem;
+  border: 1px solid #CED7E6;
+}
+.info-label{
+  color:#98A3B7;
+  background: #F0F3F7;
+}
+.info-content{
+  color:#333333;
+  background: rgba(0, 0, 0, 0);
+}
+.no-data{
+  display: block;
+}
