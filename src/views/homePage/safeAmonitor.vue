@@ -3,6 +3,7 @@
   <div class="safeAmonitor">
     <borderCom :titTxt="title" @toggle="titToggle" />
     <div class="conBox">
+      <horn />
       <div id="safeChart" v-show="actInd===0&&!reservoirId"></div>
       <div v-show="actInd===1&&!reservoirId">
         <!-- <a-empty :description="false" /> -->
@@ -41,6 +42,7 @@
 
 <script>
   import borderCom from "./border.vue"
+  import horn from "./horn.vue"
   import Bus from "../../utils/bus"
   var labelOption = {
     show: true,
@@ -50,7 +52,8 @@
   }
   export default {
     components: {
-      borderCom
+      borderCom,
+      horn
     },
     data() {
       return {
@@ -516,10 +519,10 @@
 </script>
 <style scoped>
   .safeAmonitor {
-    width: calc(100% - 10px);
+    width: calc(100% - 16px);
     height: 100%;
     position: absolute;
-    margin: 0 5px;
+    margin: 0 8px;
   }
 
   .conBox {
@@ -534,6 +537,7 @@
     background: rgba(13, 76, 145, 0.4);
     box-shadow: 0px 0px 10px 0px rgba(17, 40, 255, 0.66) inset;
     border-radius: 3px;
+    position: relative;
   }
 
   #safeChart,
@@ -586,8 +590,9 @@
   .selectBox>>>.ant-select-arrow {
     color: #fff;
   }
+
   /* 监控视频 */
-  .monitor{
+  .monitor {
     color: #fff;
     display: flex;
     align-items: center;
@@ -598,26 +603,30 @@
     overflow: auto;
     position: absolute;
   }
-  .mbox{
+
+  .mbox {
     width: 48%;
     height: 49%;
     padding-bottom: 1%;
   }
-  .videoArea{
+
+  .videoArea {
     width: 100%;
     height: calc(100% - 30px);
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
   /* .videoArea img{
     max-width: 100%;
     height: 100%;
     float: left;
   } */
-  .m_name{
+  .m_name {
     background-color: rgba(0, 0, 0, 0.5);
     text-indent: 20px;
     line-height: 30px;
   }
+
 </style>

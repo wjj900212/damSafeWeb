@@ -108,7 +108,7 @@ export default {
         title: '预案名称',
         dataIndex: 'reserveName'
       }, {
-        title: '适用监测场景',
+        title: '预案类型',
         dataIndex: 'reserveType'
       }, {
         title: '创建人',

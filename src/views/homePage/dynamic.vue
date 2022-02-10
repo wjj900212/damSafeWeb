@@ -3,6 +3,7 @@
   <div class="dynamic">
     <borderCom titTxt="实时动态" />
     <div class="dynamicBox">
+      <horn />
       <div class="dynamicArr">
         <template v-for="(v,i) in dynamicArr">
           <div class="item" :key="i">
@@ -28,10 +29,11 @@
 
 <script>
   import borderCom from "./border.vue"
+  import horn from "./horn.vue"
   export default {
     props:['websocketData'],
     components: {
-      borderCom
+      borderCom,horn
     },
     data() {
       return {
@@ -73,10 +75,10 @@
 </script>
 <style scoped>
   .dynamic {
-    width: calc(100% - 10px);
+    width: calc(100% - 16px);
     height: 100%;
     position: absolute;
-    margin: 0 5px;
+    margin: 0 8px;
   }
 
   .dynamicBox {

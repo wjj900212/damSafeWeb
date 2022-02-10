@@ -224,7 +224,7 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: url('../../static/img/left-bg.png') no-repeat;
+      background: url('../../static/img/right-bg.png') no-repeat;
       background-size: 100% 100%;
 
       .right_modelA,

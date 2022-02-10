@@ -3,6 +3,7 @@
   <div class="rainWaterMonitor">
     <borderCom titTxt="雨水情监测" />
     <div class="arrWarp" v-if="!reservoirId">
+      <horn />
       <div class="arrBox">
         <template v-for="v,i in allData">
           <div class="item" :key="i">
@@ -24,16 +25,21 @@
       <div class="timeItem timeItem2" :class="timeAct==2?'act':''" @click="timeChange(2)">近3天</div>
       <div class="timeItem" :class="timeAct==3?'act':''" @click="timeChange(3)">近7天</div>
     </div>
-    <div id="chartRainWater" v-show="reservoirId"></div>
+    <div class="arrWarp" v-show="reservoirId">
+      <horn />
+      <div id="chartRainWater"></div>
+    </div>
   </div>
 </template>
 
 <script>
   import borderCom from "./border.vue"
+  import horn from "./horn.vue"
   import Bus from "../../utils/bus"
   export default {
     components: {
-      borderCom
+      borderCom,
+      horn
     },
     data() {
       return {
@@ -56,11 +62,11 @@
       },
       // 单个水库雨水情监测
       getReservoirData() {
-        let o={
-          reservoirId:this.reservoirId,
-          dateType:this.timeAct
+        let o = {
+          reservoirId: this.reservoirId,
+          dateType: this.timeAct
         }
-        this.$get('/web/onePicture/rainWaterMonitorDataList',o).then(res => {
+        this.$get('/web/onePicture/rainWaterMonitorDataList', o).then(res => {
           let rr = res.data
           if (rr.code != 1) {
             this.$message.error(rr.msg)
@@ -161,7 +167,9 @@
               name: '库水位',
               type: 'line',
               yAxisIndex: 0,
-              data: chartData.waterData.map(v=>{return[v.time,v.value]}),
+              data: chartData.waterData.map(v => {
+                return [v.time, v.value]
+              }),
               lineStyle: {
                 color: '#1DD682' //改变折线颜色
               },
@@ -185,7 +193,9 @@
               name: '降水量',
               type: 'bar',
               yAxisIndex: 1,
-              data: chartData.rainData.map(v=>{return[v.time,v.value]}),
+              data: chartData.rainData.map(v => {
+                return [v.time, v.value]
+              }),
               barWidth: 20,
               itemStyle: {
                 normal: {
@@ -214,7 +224,7 @@
       // 点击左侧水库概览列表水库时显示该水库雨水情监测
       Bus.$on('reservoirId', (reservoirId) => {
         // console.log("组件收到bus消息：", reservoirId);
-        if(reservoirId!=this.reservoirId)this.timeAct = ''
+        if (reservoirId != this.reservoirId) this.timeAct = ''
         this.reservoirId = reservoirId
         if (reservoirId) {
           setTimeout(() => {
@@ -240,10 +250,10 @@
 </script>
 <style scoped>
   .rainWaterMonitor {
-    width: calc(100% - 10px);
+    width: calc(100% - 16px);
     height: 100%;
     position: absolute;
-    margin: 0 5px;
+    margin: 0 8px;
   }
 
   .arrWarp {
@@ -257,6 +267,7 @@
     background: rgba(13, 76, 145, 0.4);
     box-shadow: 0px 0px 10px 0px rgba(17, 40, 255, 0.66) inset;
     border-radius: 3px;
+    position: relative;
   }
 
   .arrBox {
@@ -270,12 +281,11 @@
 
   #chartRainWater {
     width: 100%;
-    height: calc(100% - 4rem);
+    /* height: calc(100% - 4rem); */
+    height: 100%;
     position: relative;
     z-index: 2;
     float: left;
-    background: url('../../../static/img/model-bg.png') no-repeat;
-    background-size: 100% 100%;
   }
 
   .timeBox {

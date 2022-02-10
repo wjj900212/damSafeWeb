@@ -3,6 +3,7 @@
   <div class="left_list">
     <borderCom titTxt="水库概览" />
     <div class="con">
+      <horn/>
       <a-input-search placeholder="水库名称搜索" enter-button @search="onSearch">
       </a-input-search>
       <Cascader style="width:100%;margin-top:.8rem;background: transparent;color: #fff;" @getDistData="getDistData"
@@ -48,11 +49,13 @@
 
 <script>
   import borderCom from "./border.vue"
+  import horn from "./horn.vue"
   import Cascader from '@/components/distselect/cascader.vue'
   import Bus from "../../utils/bus"
   export default {
     components: {
       borderCom,
+      horn,
       Cascader
     },
     data() {
@@ -76,7 +79,7 @@
       // 获取子组件返回的cityCode和cityType
       getDistData(distData) {
         this.queryParams.cityCode = distData.cityCode ? distData.cityCode : ''
-        // this.getData()
+        this.getData()
       },
       pageChange(page, pageSize) {
         //   console.log(page, pageSize)
@@ -130,10 +133,10 @@
 </script>
 <style scoped>
   .left_list {
-    width: calc(100% - 10px);
+    width: calc(100% - 16px);
     height: 100%;
     position: absolute;
-    margin: 0 5px;
+    margin: 0 8px;
   }
 
   .con {
@@ -148,6 +151,7 @@
     background: rgba(13, 76, 145, 0.4);
     box-shadow: 0px 0px 10px 0px rgba(17, 40, 255, 0.66) inset;
     border-radius: 3px;
+    position: relative;
   }
 
   .con>>>.ant-input {

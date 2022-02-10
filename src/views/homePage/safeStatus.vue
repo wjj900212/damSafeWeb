@@ -3,6 +3,7 @@
   <div class="safeStatus">
     <borderCom titTxt="水库安全状态" />
     <div class="safeStatusCon">
+      <horn/>
       <div id="safeStatusChart"></div>
       <div>
         <div class="item">
@@ -27,9 +28,11 @@
 
 <script>
   import borderCom from "./border.vue"
+  import horn from "./horn.vue"
   export default {
     components: {
-      borderCom
+      borderCom,
+      horn
     },
     data() {
       return {
@@ -156,10 +159,10 @@
 </script>
 <style scoped>
   .safeStatus {
-    width: calc(100% - 10px);
+    width: calc(100% - 16px);
     height: 100%;
     position: absolute;
-    margin: 0 5px;
+    margin: 0 8px;
   }
 
   .safeStatusCon {
@@ -175,7 +178,9 @@
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+    position: relative;
   }
+
 
   #safeStatusChart {
     width: 15rem;
