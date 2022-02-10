@@ -50,7 +50,7 @@
             </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary">查询
+            <a-button type="primary" @click="search">查询
               <img src="static/img/查询 拷贝 3.png" style="margin-left:8px;"></a-button>
           </span>
         </a-row>
@@ -90,7 +90,7 @@
 
         <template slot="devBonline" slot-scope="text">
           <div v-if="text === ''"></div>
-          
+
           <a-tag color="#DDF6F1" v-if="text === '0'" style="color:#40CAAF;">在线</a-tag>
           <a-tag color="#EFF0F3" v-if="text === '1'" style="color:#656D7B;">离线</a-tag>
         </template>
@@ -358,7 +358,10 @@ export default {
       } else {
         this.selectedKeys = selectedKeys
       }
-      this.queryParams.hiddenDangerAreaId = selectedKeys.toString()
+      this.queryParams.hiddenId = selectedKeys.toString()
+      if (selectedKeys[0] === 'all') {
+        delete this.queryParams.hiddenId
+      }
       this.search()
     },
     onExpand (expandedKeys, e) {

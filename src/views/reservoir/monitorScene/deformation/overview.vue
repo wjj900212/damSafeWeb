@@ -1,13 +1,15 @@
 <template>
   <!-- 变形监测概况 -->
   <div class="overviewD">
-    <a-card style="width: 100%">
-      <template slot="title">
-        <img src="static/img/渗压监测概况.png">
-        <span>变形监测概况</span>
-      </template>
-      <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
-      <a-card-grid style="width: 100%; padding: 5px">
+    <a-card style="width: 100%" :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/渗压监测概况.png">
+          <span>变形监测概况</span>
+        </div>
+        <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
+      </div>
+      <div style="width: 100%; padding-top: 1.5rem">
         <div class="basicMsg">
           <div class="basic">
             <div class="subtit"><span class="t_line"></span> {{ data.hiddenName }}</div>
@@ -41,8 +43,8 @@
           </div>
           <div style="flex:1;"></div>
         </div>
-      </a-card-grid>
-      <a-card-grid style="width: 100%; padding: 25px">
+      </div>
+      <div style="width: 100%; padding-top: 2rem;margin-top:2rem;border-top: 1px solid rgba(24, 144, 255, 0.2);">
         <div class="dataBox">
           <div class="item" v-for="item,i in data.pnList" :key="i">
             <span>{{ item.pnName }}</span>
@@ -53,7 +55,7 @@
             </div>
           </div>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
     <!-- 安全管理预案 -->
     <safePlanArticle :safeVisible="safeVisible" :reserveType="15" @onClose="()=>{safeVisible=false}" />
@@ -106,7 +108,7 @@
   .basicMsg {
     display: flex;
     justify-content: space-between;
-    padding: 1.5rem;
+    // padding: 1.5rem;
   }
 
   .basic {
@@ -154,7 +156,7 @@
   }
 
   .dataBox {
-    height: 23rem;
+    height: 25rem;
     overflow: auto;
   }
 
@@ -166,7 +168,8 @@
     align-items: center;
     justify-content: space-between;
   }
-  .item:nth-child(even){
+
+  .item:nth-child(even) {
     float: right;
   }
 

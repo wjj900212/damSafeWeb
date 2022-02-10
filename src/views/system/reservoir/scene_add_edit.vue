@@ -45,10 +45,14 @@
         <a-form-item label="位置坐标" v-bind="formItemLayout">
           <div style="height:40px;display: flex;align-items: center;white-space: nowrap;">
             <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
-              placeholder="请填写经度" />
+              placeholder="请填写经度"
+              @change="(e) => {e.target.value = e.target.value.replace(/[^1-9.]/g,'')}"
+            />
             <span style="margin-left:5px"></span>
             <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
-              placeholder="请填写纬度" />
+              placeholder="请填写纬度"
+              @change="(e) => {e.target.value = e.target.value.replace(/[^1-9.]/g,'')}"
+            />
             <span style="margin-left:5px"></span>
             <!-- <a-icon type="pushpin" style="cursor: pointer;" @click="MapVisible=true" /> -->
             <a-button type="primary" @click="MapVisible=true">定位
@@ -114,9 +118,11 @@
           <div style="display: flex;align-items: center;white-space: nowrap;">
             <a-input placeholder="请填写" v-model="v.value" />
             <span style="margin-left:5px"></span>
-            <a-icon type="form" title="编辑名称" @click="editCustomName(v,i)" />
+            <a-icon type="form" title="编辑名称" :style="{ fontSize: '16px', color: '#1890FF' }"
+              @click="editCustomName(v,i)" />
             <span style="margin-left:5px"></span>
-            <a-icon type="delete" title="删除" @click="customParam.splice(i,1)" />
+            <a-icon type="delete" title="删除" :style="{ fontSize: '16px', color: '#1890FF' }"
+              @click="customParam.splice(i,1)" />
           </div>
         </a-form-item>
       </a-col>
@@ -126,7 +132,7 @@
     </a-col>
 
     <!-- 自定义字段弹框 -->
-    <a-modal v-model="customFieldModal" title="自定义字段" @ok="customFieldOk">
+    <a-modal v-model="customFieldModal" title="自定义字段" @ok="customFieldOk" @cancel="isEditCustomName='';customName=''">
       <a-form>
         <a-form-item label="字段名" v-bind="formItemLayout" :validate-status="customErr.status" :help="customErr.help">
           <a-input placeholder="请输入" v-model="customName" />

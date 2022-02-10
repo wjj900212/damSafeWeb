@@ -15,18 +15,17 @@
         </div>
       </div>
       <div style="width:100%;position: relative;padding:5px;">
-        <!-- :disabled="panes.length > 4" @click="add" -->
         <div style="position: absolute;top:0px;right: 0px;z-index: 2;">
-          <a-button type="primary" icon="plus" @click="isShowAddScene=true">添加</a-button>
+          <a-button type="primary" icon="plus" :disabled="panes.length > 4" @click="add">添加</a-button>
         </div>
-        <a-tabs v-model="activetabInd" hide-add type="editable-card" class="tabStyle" style="width: 100%;"
-          @change="callback">
-          <a-tab-pane v-for="(pane,ind) in panes" :key="ind">
+        <a-tabs v-model="activeKey" hide-add type="editable-card" class="tabStyle" style="width: 100%;"
+          @change="callback" @edit="onEdit">
+          <a-tab-pane v-for="pane in panes" :key="pane.sceneId" :closable="pane.closable">
             <template slot="tab">
               <span :title="pane.sceneName">{{ pane.sceneName | ellipsis(6) }}</span>
             </template>
             <div class="tempCon" ref="tempBox">
-              <img :src="pane.sceneImage" class="upImged" />
+              <img :src="pane.sceneImage" class="upImged" v-if="imgUrl" />
               <VueDragResize v-for="(v,i) in pane.itemList" :key="i" :isActive="v.isActive" :w="v.width-28" :h="v.height-28"
                 v-on:clicked="dragClick(i)" v-on:dragging="resize" :isResizable="false" :parentLimitation="true"
                 :parentW="765" :parentH="398" :x="v.xaxis" :y="v.yaxis">
@@ -79,6 +78,7 @@ export default {
   },
   data () {
     return {
+      activeKey: '',
       searchStr: '',
       treeDisabled: false,
       panes: [], // 场景列表
@@ -90,15 +90,15 @@ export default {
       imgUrl: '',
       itemList: [],
       actItemI: 0,
-      activetabInd: 0, // 当前选择的场景下标
+      // activetabInd: 0, // 当前选择的场景下标
       isShowAddScene: false // 显示添加场景弹框
     }
   },
   watch: {
     visible (newVal) {
       if (newVal) {
-        this.getProjPnTreeList()
         this.getHiddenSceneList()
+        this.getProjPnTreeList()
       }
     },
     imgUrl (newVal) {
@@ -107,7 +107,7 @@ export default {
     panes (newVal) {
       let _this = this
       _this.panes = newVal
-      console.log('当前场景及监测点信息', newVal)
+      // console.log('当前场景及监测点信息', newVal)
       if (newVal.length === 0) {
         _this.treeDisabled = true
       } else {
@@ -348,6 +348,63 @@ export default {
         }
       }).catch((e) => {
         console.log(e)
+      })
+    },
+    onEdit (targetKey, action) {
+      console.log('action', action)
+      this[action](targetKey)
+    },
+    add () {
+      this.isShowAddScene = true
+    },
+    // 删除场景
+    remove (targetKey) {
+      let _this = this
+      let scenePath = this.panes.find(item => item.sceneId === targetKey)
+      console.log('要删除的tab', targetKey)
+      console.log('获取场景信息', this.panes)
+      console.log('获取场景信息', scenePath)
+      this.$confirm({
+        title: `确定要删除${scenePath.sceneName}?`,
+        content: '该场景下的配置将会被全部删除，请谨慎操作！',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          _this.deleteScene(targetKey)
+        },
+        onCancel () {
+          console.log('Cancel')
+        }
+      })
+    },
+    deleteScene (targetKey) {
+      this.$post('web/hiddenScene/deleteScene', {
+        sceneId: targetKey
+      }).then((r) => {
+        if (r.data.code === 1) {
+          this.checkedKeys = []
+          this.$message.success('删除成功')
+          let activeKey = this.activeKey
+          let lastIndex
+          this.panes.forEach((pane, i) => {
+            if (pane.key === targetKey) {
+              lastIndex = i - 1
+            }
+          })
+          const panes = this.panes.filter(pane => pane.sceneId !== targetKey)
+          if (panes.length && activeKey === targetKey) {
+            if (lastIndex >= 0) {
+              activeKey = panes[lastIndex].sceneId
+            } else {
+              activeKey = panes[0].sceneId
+            }
+          }
+          this.panes = panes
+          this.activeKey = activeKey
+        } else {
+          this.$message.error(r.data.msg)
+        }
       })
     },
     diffent (fArr, cArr) {

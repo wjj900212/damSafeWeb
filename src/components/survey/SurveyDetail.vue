@@ -509,7 +509,7 @@ export default {
           title: "值",
           dataIndex: "value",
           key: "value",
-          width: "15%",
+          // width: "25%",
         },
       ],
       paginationInfo: null,

@@ -39,10 +39,14 @@
         <a-form-item label="位置坐标" v-bind="formItemLayout">
           <div style="height:40px;display: flex;align-items: center;white-space: nowrap;">
             <a-input v-decorator="['longitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
-              placeholder="请填写经度" />
+              placeholder="请填写经度"
+              @change="(e) => {e.target.value = e.target.value.replace(/[^1-9.]/g,'')}"
+            />
             <span style="margin-left:5px"></span>
             <a-input v-decorator="['latitude',{ rules: [{ required: true, message: '请填写中心点' }] }]"
-              placeholder="请填写纬度" />
+              placeholder="请填写纬度"
+              @change="(e) => {e.target.value = e.target.value.replace(/[^1-9.]/g,'')}"
+            />
             <span style="margin-left:5px"></span>
             <!-- <a-icon type="pushpin" style="cursor: pointer;font-size:14px;" /> -->
             <a-button type="primary" @click="MapVisible=true">定位
@@ -72,12 +76,12 @@
       </a-col>
       <a-col :span="12">
         <a-form-item label="设计库容" v-bind="formItemLayout">
-            <a-input v-decorator="['capacity']" placeholder="请输入" suffix="亿m³" />
+          <a-input v-decorator="['capacity']" placeholder="请输入" suffix="亿m³" />
         </a-form-item>
       </a-col>
       <a-col :span="12">
         <a-form-item label="最大水位" v-bind="formItemLayout">
-            <a-input v-decorator="['depth']" placeholder="请输入" suffix="m"/>
+          <a-input v-decorator="['depth']" placeholder="请输入" suffix="m" />
         </a-form-item>
       </a-col>
       <a-col :span="12">
@@ -140,7 +144,7 @@
     </a-row>
 
     <!-- 自定义字段弹框 -->
-    <a-modal v-model="customFieldModal" title="自定义字段" @ok="customFieldOk">
+    <a-modal v-model="customFieldModal" title="自定义字段" @ok="customFieldOk" @cancel="isEditCustomName='';customName=''">
       <a-form>
         <a-form-item label="字段名" v-bind="formItemLayout" :validate-status="customErr.status" :help="customErr.help">
           <a-input placeholder="请输入" v-model="customName" />
@@ -318,9 +322,13 @@
             customParam,
             reservoirStatus,
             cityInfo,
+            reservoirId,
+            cityName,
+            introduct,
+            notes,
             ...obj
           } = data
-          // console.log(obj)
+          // console.log('obj', obj)
           // form 赋值
           this.form.setFieldsValue(obj)
           this.form.setFieldsValue({

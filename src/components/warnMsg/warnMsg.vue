@@ -1,20 +1,22 @@
 <template>
   <!-- 预警信息 -->
   <div class="warnMsg">
-    <a-card>
-      <template slot="title">
-        <img src="static/img/预案.png">
-        <span>预警信息</span>
-      </template>
-      <template slot="extra">
-        <a-select v-model="queryParams.type" @change="getWarnMsg()">
-          <a-select-option value="">全部预警</a-select-option>
-          <a-select-option value="1">设备预警</a-select-option>
-          <a-select-option value="2">安全预警</a-select-option>
-          <a-select-option value="5">模型预警</a-select-option>
-        </a-select>
-      </template>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/预案.png">
+          <span>预警信息</span>
+        </div>
+        <div>
+          <a-select v-model="queryParams.type" @change="getWarnMsg()">
+            <a-select-option value="">全部预警</a-select-option>
+            <a-select-option value="1">设备预警</a-select-option>
+            <a-select-option value="2">安全预警</a-select-option>
+            <a-select-option value="5">模型预警</a-select-option>
+          </a-select>
+        </div>
+      </div>
+      <div style="width: 100%; text-align: center;">
         <div class="total">
           <div>
             <span style="color:#FF2626;margin-right: 10px;">红色预警:{{warnData.red}}</span>
@@ -35,7 +37,7 @@
         </a-table>
         <a href="javascript:;" style="float:right;margin-top:5px;margin-right:10px;">查看更多
           <a-icon type="double-right" /></a>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>

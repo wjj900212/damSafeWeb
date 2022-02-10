@@ -1,17 +1,19 @@
 <template>
   <!-- 运维记录 -->
   <div class="record">
-    <a-card>
-      <template slot="title">
-        <img src="static/img/icon-运维记录.png">
-        <span>运维记录</span>
-      </template>
-      <template slot="extra">
-        <div style="display: flex;white-space: nowrap;align-items: center;">
-          <a-input-search placeholder="请输入关键字" v-model="search" @search="onSearch"/>
+    <a-card :bodyStyle="{ padding: '5px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/icon-运维记录.png">
+          <span>运维记录</span>
         </div>
-      </template>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+        <div>
+          <div style="display: flex;white-space: nowrap;align-items: center;">
+            <a-input-search placeholder="请输入关键字" v-model="search" @search="onSearch" />
+          </div>
+        </div>
+      </div>
+      <div style="width: 100%; text-align: center;">
         <div class="total">
           <div></div>
           <div>
@@ -24,7 +26,7 @@
         </a-table>
         <a href="javascript:;" style="float:right;margin-top:5px;margin-right:10px;">查看更多
           <a-icon type="double-right" /></a>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>
@@ -55,6 +57,7 @@
     },
     {
       title: '信息',
+      width:230,
       dataIndex: 'msg',
       key: 'msg',
       ellipsis: true,
@@ -118,7 +121,7 @@
       };
     },
     methods: {
-      onSearch(){}
+      onSearch() {}
     },
   }
 
@@ -157,4 +160,5 @@
   .record>>>.ant-table-tbody>tr>td {
     border-color: rgba(59, 173, 255, 0.12);
   }
+
 </style>

@@ -1,13 +1,13 @@
 <template>
   <div style="display: flex;justify-content: center;align-items: center;">
-    <a-dropdown>
+    <a-dropdown :trigger="['click']">
       <span style="cursor: pointer">
         <img v-if=" homeVisible === true" src="static/img/组178.png">
         <img v-else src="static/img/组 121.png">
         <span v-if=" homeVisible === true" class="curr-user-home">{{user.realName}}</span>
         <span v-else class="curr-user">{{user.realName}}</span>
       </span>
-      <a-menu style="width: 150px" slot="overlay">
+      <!-- <a-menu style="width: 150px" slot="overlay">
         <a-menu-item @click="openProfile">
           <a-icon type="user"/>
           <span>个人中心</span>
@@ -17,13 +17,25 @@
           <a-icon type="logout"/>
           <span>退出登录</span>
         </a-menu-item>
-      </a-menu>
+      </a-menu> -->
+      <div class="userMsg" slot="overlay">
+        <!-- <div>
+        <a-avatar :size="77" icon="user" src="static/avatar/2dd7a2d09fa94bf8b5c52e5318868b4d9.jpg" />
+        <div>
+          <span>{{userInfoData.userName}}</span><span>{{userInfoData.mobile}}</span>
+          <span>{{userInfoData.roleName}}</span>
+        </div>
+        </div>
+        <div>
+          
+        </div> -->
+      </div>
     </a-dropdown>
-    <user-info
+    <!-- <user-info
       :userInfoVisiable="userInfoVisiable"
       :userInfoData="userInfo"
       @onClose="()=>{userInfoVisiable=false}"
-    ></user-info>
+    ></user-info> -->
   </div>
 </template>
 
@@ -120,5 +132,13 @@ export default {
     font-size: 14px;
     font-family: Source Han Sans CN;
     font-weight: 400;
+  }
+  .userMsg{
+    width: 400px;
+    margin-top: 25px;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0px 3px 24px 0px rgba(160, 170, 199, 0.36);
   }
 </style>

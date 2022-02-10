@@ -1,25 +1,27 @@
 <template>
   <!-- 库水位趋势统计 -->
   <div class="trendStatistic">
-    <a-card>
-      <template slot="title">
-        <img src="static/img/超警水位统计.png">
-        <span>库水位趋势统计</span>
-      </template>
-      <template slot="extra">
-        <a-select v-model="queryParams.pnId" style="width:18rem" @change="getWarnValue">
-          <a-select-option v-for="v in pnList" :key="v.pnId" :value="v.pnId">{{v.pnName}}</a-select-option>
-        </a-select>
-        <a-range-picker style="width: 250px;" @change="onDateChange" />
-        <a-select v-model="dateCurrent" @change="dateChange" style="width: 100px;">
-          <a-select-option value="1">今日</a-select-option>
-          <a-select-option value="2">近三天</a-select-option>
-          <a-select-option value="3">近一周</a-select-option>
-          <a-select-option value="4">近一月</a-select-option>
-        </a-select>
-        <a-button type="primary" @click="portData">数据导出</a-button>
-      </template>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/超警水位统计.png">
+          <span>库水位趋势统计</span>
+        </div>
+        <div>
+          <a-select v-model="queryParams.pnId" style="width:18rem" @change="getWarnValue">
+            <a-select-option v-for="v in pnList" :key="v.pnId" :value="v.pnId">{{v.pnName}}</a-select-option>
+          </a-select>
+          <a-range-picker style="width: 250px;" @change="onDateChange" />
+          <a-select v-model="dateCurrent" @change="dateChange" style="width: 100px;">
+            <a-select-option value="1">今日</a-select-option>
+            <a-select-option value="2">近三天</a-select-option>
+            <a-select-option value="3">近一周</a-select-option>
+            <a-select-option value="4">近一月</a-select-option>
+          </a-select>
+          <a-button type="primary" @click="portData">数据导出</a-button>
+        </div>
+      </div>
+      <div style="width: 100%; text-align: center; padding: 5px">
         <div style="display:flex;align-items: center;">
           <div class="wvBox" v-for="v,i in warnValue" :key="i" style="margin-top:1rem;margin-right:1rem;"
             :class="v.act?'act':''" @click="toggleMarkLine(v,i)">{{v.target}}</div>
@@ -31,7 +33,7 @@
             </a-table>
           </div>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>

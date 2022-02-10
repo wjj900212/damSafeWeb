@@ -14,12 +14,12 @@
       </a-form-item>
       <a-form-item label="场景图片" v-bind="formItemLayout">
         <a-radio-group default-value="a" button-style="solid" @change="onSceneChange">
-          <a-radio-button value="a">
+          <a-radio value="a">
             上传图片
-          </a-radio-button>
-          <a-radio-button value="b" v-if="sceneType !== 0">
+          </a-radio>
+          <a-radio value="b" v-if="sceneType !== 0">
             默认图片
-          </a-radio-button>
+          </a-radio>
         </a-radio-group>
       </a-form-item>
       <div v-if="imgType === 'a'" style="width:80%;margin:0px auto;">

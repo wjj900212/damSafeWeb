@@ -28,7 +28,7 @@
         :pagination="pagination" :loading="loading" :scroll="{ x: 900 }" @change="handleTableChange">
         <template slot="tags" slot-scope="text">
           <a-tag color="#DDF6F1" style="color:#40CAAF;" v-if="text==0">正常</a-tag>
-          <a-tag color="blue" v-if="text==1">异常</a-tag>
+          <a-tag color="orange" v-if="text==1">异常</a-tag>
           <a-tag color="red" v-if="text==2">险情</a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
@@ -190,6 +190,20 @@
         ]
       }
     },
+    watch: {
+      '$route': function (to, from) {
+        if (to.path === '/system/reservoir/reservoir') {
+          this.getReservoirList({
+            ...this.queryParams
+          })
+        }
+      }
+    },
+    mounted(){
+      this.getReservoirList({
+        ...this.queryParams
+      })
+    },
     methods: {
       // 获取子组件返回的cityCode和cityType
       getDistData(distData) {
@@ -227,6 +241,7 @@
       // 重置
       resetFilter() {
         this.queryParams = {}
+        this.casdata = []
         this.pagination.current = 1
         this.pagination.pageSize = 10
         this.getReservoirList({
@@ -273,12 +288,7 @@
         this.reservoirName = record.reservoirName
         this.visualVisible = true
       }
-    },
-    mounted() {
-      this.getReservoirList({
-        ...this.queryParams
-      })
-    },
+    }
   }
 
 </script>

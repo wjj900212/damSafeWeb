@@ -8,12 +8,12 @@
       </a-form-item>
       <a-form-item label="场景图片" v-bind="formItemLayout">
         <a-radio-group default-value="a" button-style="solid" @change="onSceneChange">
-          <a-radio-button value="a">
-            上传图片
-          </a-radio-button>
-          <a-radio-button value="b" v-if="sceneType !== 0">
+          <a-radio value="a">
+            自选图片
+          </a-radio>
+          <a-radio value="b" v-if="sceneType !== 0 && hiddenType === '11' || hiddenType === '12'">
             默认图片
-          </a-radio-button>
+          </a-radio>
         </a-radio-group>
       </a-form-item>
       <div v-if="imgType === 'a'" style="width:80%;margin:0px auto;">
@@ -28,20 +28,6 @@
           <img :src="img" style="width:10rem;height: 10rem;"/>
         </div>
       </div>
-      <!--<a-form-item label="场景图片" v-bind="formItemLayout">
-        <a-upload :file-list="fileList" :before-upload="beforeUpload"
-          v-decorator="['image', { rules: [{ required: true, message: '上传场景图片' }] }]">
-          <a-button icon="upload">上传</a-button>
-        </a-upload>
-        <div style="color:#4FA0D9;font-size: 12px;">注:建议尺寸1390*940,上传文件支持JPG/PNG</div>
-      </a-form-item>
-      <a-form-item v-if="sceneType !== 0" label="默认图片" v-bind="formItemLayout">
-        <div style="display: flex;flex-direction: row;">
-          <div v-for="(img,index) in imgList" :key="index" :class="selectId === index? 'imgActive':''" style="margin-right:1rem;" @click="selectDefaultImg(img,index)">
-            <img :src="img" style="width:10rem;height: 10rem;"/>
-          </div>
-        </div>
-      </a-form-item>-->
     </a-form>
   </a-modal>
 </template>

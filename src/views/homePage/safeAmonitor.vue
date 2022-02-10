@@ -107,7 +107,7 @@
               formatter: function (param) {
                 let color = ['rgba(6, 252, 255, .72)', 'rgba(255, 239, 64, .66)', 'rgba(2, 163, 253, .75)']
                 let str = ''
-                str += `<div>${param[0].name}</div>`
+                str += `<div>${param[0].name.length>8?param[0].name.substring(0,8)+ '...':param[0].name}</div>`
                 param.forEach((v, i) => {
                   str += `<div style="display:flex;align-items: center;margin-top: 3px;">
                 <span style="border-radius:10px;width:10px;height:10px;background-color:${color[i]};"></span>

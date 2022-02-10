@@ -1,13 +1,15 @@
 <template>
   <!-- 渗流监测概况 -->
   <div class="overviewT">
-    <a-card style="width: 100%">
-      <template slot="title">
-        <img src="static/img/渗流监测概况.png">
-        <span>渗流监测概况</span>
-      </template>
-      <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
-      <a-card-grid style="width: 100%; padding: 5px">
+    <a-card style="width: 100%" :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/渗流监测概况.png">
+          <span>渗流监测概况</span>
+        </div>
+        <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
+      </div>
+      <div style="width: 100%; padding-top: 1.5rem">
         <div class="basicMsg">
           <div class="basic">
             <div class="subtit"><span class="t_line"></span> {{overViewData.hiddenName}}</div>
@@ -41,10 +43,10 @@
           </div>
           <div style="flex:1;"></div>
         </div>
-      </a-card-grid>
-      <a-card-grid style="width: 100%; padding: 5px">
+      </div>
+      <div style="width: 100%; padding: 5px">
         <div class="stateMsg">
-          <div style="margin-left:1.5rem;">
+          <div style="padding: 2rem 0rem;border-bottom: 1px solid rgba(24, 144, 255, 0.2);">
             <span>当前：</span>
             <a-select v-model="currentPoint" :style="{width:'20rem'}" @change="handlePnPoint">
               <a-select-option v-for="pn in pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
@@ -55,8 +57,7 @@
             <div style="display: flex;align-items: center;justify-content:space-evenly;width:100%;flex-wrap: wrap;">
               <div class="dataV" v-for="(pnRain,index) in pnRainData" :key="index">
                 <div>
-                  <span
-                    style="color:#191E2A;font-size:1.6rem;">{{pnRain.target}}{{pnRain.unit?'('+pnRain.unit+')':''}}</span>
+                  <span class="tarName">{{pnRain.target}}{{pnRain.unit?'('+pnRain.unit+')':''}}</span>
                   <span class="cricle"
                     :style="{background:pnRain.level==4?'#FF2626':pnRain.level==3?'#FF9F00':pnRain.level==2?'#F9D044':pnRain.level==1?'#3399FF':'#3FCAAF'}"></span>
                 </div>
@@ -66,10 +67,13 @@
                 </div>
                 <div style="color:#696969;font-size:1.4rem;min-height: 21px;">{{pnRain.time.substring(5,16)}}</div>
               </div>
+              <div style="width:24%;"></div>
+              <div style="width:24%;"></div>
+              <div style="width:24%;"></div>
             </div>
           </div>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
     <!-- 安全管理预案 -->
     <safePlanArticle :safeVisible="safeVisible" :reserveType="11" @onClose="()=>{safeVisible=false}" />
@@ -121,7 +125,7 @@
           let that = this
           if (!n || n.length === 0) {
             this.currentPoint = ''
-            this.pnRainData=[]
+            this.pnRainData = []
           } else {
             that.currentPoint = n[0].pnId.toString()
             that.monitorPnDataRain(n[0].pnId)
@@ -140,7 +144,7 @@
         console.log('选中监测点', value)
       },
       getMonitorConditionRain() {
-        if(!this.hiddenId){
+        if (!this.hiddenId) {
           return false
         }
         let _this = this
@@ -178,6 +182,15 @@
 
 </script>
 <style lang="less" scoped>
+  .tarName {
+    color: #191E2A;
+    font-size: 1.6rem;
+    width: calc(100% - 16px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .overviewT {
     background-color: #fff;
     position: relative;
@@ -186,7 +199,7 @@
   .basicMsg {
     display: flex;
     justify-content: space-between;
-    padding: 1.5rem;
+    // padding: 1.5rem;
   }
 
   .basic {
@@ -233,10 +246,6 @@
     margin: 0 1.5rem;
   }
 
-  .stateMsg {
-    margin-top: 1rem;
-  }
-
   .dataBox {
     padding: 1rem 0;
   }
@@ -256,7 +265,7 @@
   }
 
   .dataV {
-    width: 28%;
+    width: 24%;
     padding: 8px;
     margin-bottom: 1rem;
     cursor: default;

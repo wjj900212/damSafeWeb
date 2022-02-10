@@ -1,13 +1,15 @@
 <template>
   <!-- 渗压监测概况 -->
   <div class="overviewOs">
-    <a-card style="width: 100%">
-      <template slot="title">
-        <img src="static/img/渗压监测概况.png">
-        <span>渗压监测概况</span>
-      </template>
-      <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
-      <a-card-grid style="width: 100%; padding: 5px">
+    <a-card style="width: 100%" :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/渗压监测概况.png">
+          <span>渗压监测概况</span>
+        </div>
+        <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
+      </div>
+      <div style="width: 100%; padding-top: 1.5rem">
         <div class="basicMsg">
           <div class="basic">
             <div class="subtit"><span class="t_line"></span> {{overViewData.hiddenName}}</div>
@@ -41,10 +43,10 @@
           </div>
           <div style="flex:1;"></div>
         </div>
-      </a-card-grid>
-      <a-card-grid style="width: 100%; padding: 5px">
+      </div>
+      <div style="width: 100%; padding: 5px">
         <div class="stateMsg">
-          <div style="margin-left:1.5rem;">
+          <div style="padding: 2rem 0rem;border-bottom: 1px solid rgba(24, 144, 255, 0.2);">
             <span>当前：</span>
             <a-select v-model="current" :style="{width:'20rem'}" @change="handlePnPoint">
               <a-select-option v-for="pn,i in overViewData.pnList" :key="i" :value="pn.sceneId">{{pn.sceneName}}
@@ -53,24 +55,26 @@
           </div>
           <div class="dataVBox">
             <a-empty v-if="pnTarData.length === 0" />
-            <div class="dataV" v-for="(pnTar,index) in pnTarData" :key="index">
-              <div>
-                <span style="font-size:1.4rem;color:#191E2A;">{{pnTar.pnName |  ellipsis(8)}}</span>
-                <span class="cricle"></span>
+            <div style="display: flex;align-items: center;justify-content:space-evenly;width:100%;flex-wrap: wrap;">
+              <div class="dataV" v-for="(pnTar,index) in pnTarData" :key="index">
+                <div>
+                  <span style="font-size:1.4rem;color:#191E2A;">{{pnTar.pnName |  ellipsis(20)}}</span>
+                  <span class="cricle"></span>
+                </div>
+                <div>
+                  <span style="font-size:1.4rem;color:#191E2A;">{{pnTar.target | ellipsis(10)}}</span>
+                  <span style="color:#1890FF;font-size:2.2rem">{{pnTar.value}}</span>
+                </div>
+                <div>
+                  <span style="font-size:1.4rem;color:#696969;">{{pnTar.time.substring(5,16)}}</span>
+                </div>
               </div>
-              <div>
-                <span style="font-size:1.4rem;color:#191E2A;">{{pnTar.target | ellipsis(8)}}</span>
-                <span style="color:#1890FF;font-size:2.2rem">{{pnTar.value}}</span>
-              </div>
-              <div>
-                <span style="font-size:1.4rem;color:#696969;">{{pnTar.time.substring(5,16)}}</span>
-              </div>
+              <div class="empty"></div>
+              <div class="empty"></div>
             </div>
-            <div class="empty"></div>
-            <div class="empty"></div>
           </div>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
     <!-- 安全管理预案 -->
     <safePlanArticle :safeVisible="safeVisible" :reserveType="12" @onClose="()=>{safeVisible=false}" />
@@ -158,7 +162,7 @@
   .basicMsg {
     display: flex;
     justify-content: space-between;
-    padding: 1.5rem;
+    // padding: 1.5rem;
   }
 
   .basic {
@@ -205,9 +209,9 @@
     margin: 0 1.5rem;
   }
 
-  .stateMsg {
-    margin-top: 1rem;
-  }
+  // .stateMsg {
+  //   margin-top: 1rem;
+  // }
 
   .dataBox {
     padding: 1rem 0;
@@ -221,18 +225,13 @@
 
   .dataVBox {
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
     margin-top: 1rem;
     height: 20.8rem;
     overflow: auto;
-
   }
 
   .dataV {
-    width: 28%;
+    width: 32%;
     padding: 8px;
     margin-bottom: 1rem;
     cursor: default;
@@ -242,7 +241,7 @@
   }
 
   .empty {
-    width: 28%;
+    width: 32%;
     padding: 8px;
   }
 

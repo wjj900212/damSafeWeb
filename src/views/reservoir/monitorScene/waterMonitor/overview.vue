@@ -1,13 +1,16 @@
 <template>
   <!-- 水情概况 -->
   <div class="overviewWater">
-    <a-card style="width: 100%">
-      <template slot="title">
-        <img src="static/img/水情简报 (2).png">
-        <span>水情概况</span>
-      </template>
-      <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
-      <a-card-grid style="width: 100%; padding: 5px">
+    <a-card style="width: 100%" :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/水情简报 (2).png">
+          <span>水情概况</span>
+        </div>
+        <a href="JavaScript:;" slot="extra" @click="safeVisible=true">安全管理预案</a>
+      </div>
+      <!-- a-card-grid -->
+      <div style="width: 100%; padding-top: 1.5rem">
         <div class="basicMsg">
           <div class="basic">
             <div class="subtit"><span class="t_line"></span> {{hiddenMsg.hiddenName}}</div>
@@ -51,8 +54,8 @@
             </template>
           </div>
         </div>
-      </a-card-grid>
-      <a-card-grid style="width: 100%; padding: 5px">
+      </div>
+      <div style="width: 100%; padding: 5px">
         <div class="dataBox">
           <div class="data_tit">
             <div>
@@ -104,7 +107,7 @@
         </a-modal>
         <!-- 安全管理预案 -->
         <safePlanArticle :safeVisible="safeVisible" :reserveType="16" @onClose="()=>{safeVisible=false}" />
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>
@@ -206,7 +209,7 @@
   .basicMsg {
     display: flex;
     justify-content: space-between;
-    padding: 1.5rem;
+    /* padding: 1.5rem; */
   }
 
   .basic {
@@ -270,15 +273,17 @@
     transform: translateX(-50%);
   }
 
-  .dataBox {
+  /* .dataBox {
     padding: 1rem 0;
-  }
+  } */
 
   .data_tit {
-    padding: 0 1.5rem;
+    /* padding: 0 1.5rem; */
+    padding: 2rem 0rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 1px solid rgba(24, 144, 255, 0.2)
   }
 
   .dataVBox {
@@ -286,7 +291,7 @@
     align-items: center;
     justify-content: space-evenly;
     flex-wrap: wrap;
-    margin-top: 1rem;
+    /* margin-top: .8rem; */
     overflow: auto;
     height: 18.8rem;
   }

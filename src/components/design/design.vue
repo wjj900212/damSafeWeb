@@ -23,9 +23,11 @@
         </a-row>
       </div>
       <div class="bodybox">
-        <a-row v-for="(item, index) in select.list" :key="index">
-          <a-col :span="12" :style="{ textAlign: 'left'}">{{ item.targetName }}</a-col>
-          <a-col :span="12" :style="{ textAlign: 'right'}">{{ item.value }}</a-col>
+        <a-row  v-for="(item, index) in select.list" :key="index" type="flex" justify="space-between">
+          <!-- <a-col :style="{ textAlign: 'left'}"></a-col>
+          <a-col :style="{ textAlign: 'right'}"></a-col> -->
+          <a-col>{{ item.targetName }}</a-col>
+          <a-col>{{ item.value }}</a-col>
         </a-row>
       </div>
     </div>
@@ -244,12 +246,13 @@ export default {
   .pointer_info {
     position: absolute;
     display: none;
-    width: 205px;
+    min-width: 205px;
     line-height: 24px;
     background: white;
     background-position: center;
     background-size: 100% 100%;
     border-radius: 5px;
+    white-space: nowrap;
   }
   .headtitle {
     border-bottom: 1px solid #aaa;

@@ -50,7 +50,7 @@ export default {
     flex-direction: column;
     height: 100vh;
     overflow: auto;
-    background: url('../../../static/img/login/组211.png') no-repeat center;
+    background: url('../../../static/img/login/bgicon.png') no-repeat center;
     background-size: 100%;
     .content {
       padding: 32px 0;

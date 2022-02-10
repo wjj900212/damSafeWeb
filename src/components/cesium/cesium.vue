@@ -26,7 +26,7 @@ export default {
   },
   mounted () {
     console.log(mapviewer.viewer)
-    if (Object.keys(mapviewer.viewer).length !== 0){
+    if (Object.keys(mapviewer.viewer).length !== 0) {
       console.log('buweik')
       mapviewer.viewer.dataSources.removeAll(true)
       mapviewer.viewer.destroy()
@@ -36,12 +36,12 @@ export default {
     let that = this
     let key = '0186b13012737ef2707cee467002778d' // 天地图申请的密钥     网上的KEY: a89df02c93e5474e9ebeb81a32fcb487
     // 在线天地图影像中文标记服务(墨卡托投影)
-    let tdtCiaW = 'http://{s}.tianditu.gov.cn/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0' +
-            '&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}' +
-            '&style=default&format=tiles&tk=' + key
-    let tdtImgW = 'http://{s}.tianditu.gov.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0' +
-            '&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}' +
-            '&style=default&format=tiles&tk=' + key
+    let tdtCiaW = 'https://{s}.tianditu.gov.cn/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0' +
+      '&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}' +
+      '&style=default&format=tiles&tk=' + key
+    let tdtImgW = 'https://{s}.tianditu.gov.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0' +
+      '&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}' +
+      '&style=default&format=tiles&tk=' + key
     let Cesium = this.Cesium
     let img = new Cesium.WebMapTileServiceImageryProvider({ // 调用影响中文注记服务
       url: tdtImgW,
@@ -93,8 +93,8 @@ export default {
       fullscreenButton: false
     })
     let dzdt = new Cesium.ArcGisMapServerImageryProvider({
-        url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer'
-      })
+      url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer'
+    })
     viewer.imageryLayers.addImageryProvider(dzdt)
     viewer.imageryLayers._layers[1].show = false
     // window.Cesium = Cesium;
@@ -120,7 +120,7 @@ export default {
     })
     viewer.imageryLayers.addImageryProvider(cia) // 添加到cesium图层上
     let ttr = new Cesium.WebMapServiceImageryProvider({
-      url: 'http://isafety.hazardscience.com.cn/geoserver/pmc/wms',
+      url: 'https://isafety.zgcsafety.com.cn/geoserver/pmc/wms',
       layers: 'chinaline',
       parameters: {
         service: 'WMS',
@@ -135,10 +135,10 @@ export default {
     viewer.imageryLayers.addImageryProvider(ttr)
 
     // 自定义影响（临时）
-    let zdy = new Cesium.ArcGisMapServerImageryProvider({
+    /* let zdy = new Cesium.ArcGisMapServerImageryProvider({
         url: 'http://isafety.hazardscience.com.cn/layers/arcgis/rest/services/BEIJING/BEIJING/MapServer'
       })
-    viewer.imageryLayers.addImageryProvider(zdy)
+    viewer.imageryLayers.addImageryProvider(zdy) */
     // let yanqing = new Cesium.WebMapServiceImageryProvider({
     //   url: 'http://211.157.166.115/geoserver/nurc/wms',
     //   layers: 'nurc:ASTGTM2_N40E115_dem',
@@ -150,7 +150,7 @@ export default {
     //   }
     // })
     // viewer.imageryLayers.addImageryProvider(yanqing)
-    //延庆地形
+    // 延庆地形
     // let terrainProvider = new Cesium.CesiumTerrainProvider({
     //   url: 'http://39.100.228.243/web/map/dadem',
     //   requestWaterMask: false
@@ -169,16 +169,16 @@ export default {
     //  全局变量
     mapviewer.viewer = viewer
     if (that.isSpin) {
-        viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(107.12656, 30.72759, 10000000.0),
-          duration: 4
-        })
-      } else {
-        viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(111.30101, 36.03767, 10000000.0),
-          duration: 0
-        })
-      }
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(107.12656, 30.72759, 10000000.0),
+        duration: 4
+      })
+    } else {
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(111.30101, 36.03767, 10000000.0),
+        duration: 0
+      })
+    }
     console.log('全国')
     // 球体挪动结束监听事件
     let handlerMove = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)

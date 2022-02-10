@@ -58,7 +58,7 @@
           <span>{{record.longitude}},{{record.latitude}}</span>
         </template>
         <template slot="image" slot-scope="text">
-          <img :src="text" style="width:3rem;height: 3rem;" />
+          <img :src="text.split('||')[0]" style="width:3rem;height: 3rem;" v-if="text"/>
         </template>
         <template slot="operation" slot-scope="text, record">
           <div class="icons-list">
@@ -191,6 +191,9 @@
       }
     },
     methods: {
+      goEdit(record){
+        this.$router.push('/system/reservoir/scene/scene_edit?hiddenId='+record.hiddenId)
+      },
       // 获取子组件返回的cityCode和cityType
       getDistData(distData) {
         this.queryParams.cityCode = distData.cityCode
@@ -250,6 +253,7 @@
         this.pagination.current = 1
         this.pagination.pageSize = 10
         // 重置查询参数
+        this.casdata = []
         this.queryParams = {}
         this.fetch({
           ...this.queryParams

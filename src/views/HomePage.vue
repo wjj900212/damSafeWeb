@@ -10,7 +10,9 @@
           <div class="info">详情</div>
         </div>
         <div class="line"></div>
-        <div style="display: flex;font-size: 1.4rem;margin-bottom:1.3rem;align-items: center;"><div class="circle"></div><div id="hhpp-location"></div><img src="static/img/定位-2.png"></div>
+        <div style="display: flex;font-size: 1.4rem;margin-bottom:1.3rem;align-items: center;">
+          <div class="circle"></div>
+          <div id="hhpp-location"></div><img src="static/img/定位-2.png"></div>
         <div id="hhpp-img"></div>
         <div id="hhpp-data"></div>
         <div id="hhpp-scene"></div>
@@ -300,6 +302,21 @@ export default {
     #hhpp-scene{
       font-size: 1.4rem;
       color: #C3CDE5;
+      .hhpp-scene-0{
+        color:#16D1AE;
+      }
+      .hhpp-scene-1{
+        color:#FF9500;
+      }
+      .hhpp-scene-2{
+        color:#FE5736;
+        background: url("../../static/img/数据异常.png") no-repeat;
+        background-position-x: left;
+        background-position-y: center;
+        width: 50px;
+        text-align: right;
+      }
+
     }
   }
 </style>

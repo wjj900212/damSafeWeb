@@ -5,7 +5,7 @@
         <div style="height: 5.4rem;display: flex;">
           <div style="display: flex;border-right:1px solid #2AA7D3;text-align: center;">
             <div style="margin-right:1rem;width:40%;">
-              <div><img style="width:3.8rem;height: 3.8rem;margin-top:-0.2rem;" src="static/img/weather/0@2x.png"/></div>
+              <div><img style="width:3.8rem;height: 3.8rem;margin-top:-0.2rem;" :src="'static/img/weather/'+weatherData.code+'@2x.png'"/></div>
               <div style="color:#289FC9;font-size: 1.4rem;margin-top:0.3rem;" v-if="cityName === '全国'">北京</div>
               <div style="color:#289FC9;font-size: 1.4rem;margin-top:0.3rem;" v-else>{{cityName}}</div>
             </div>
@@ -44,11 +44,11 @@
         </div>
       </div>
       <div :class="['global-header-right']">
-        <a-popover class="warnPopover" trigger="click" placement="bottomRight">
+        <a-popover class="warnPopover" trigger="click" placement="bottomRight" v-model="isShowPopover">
           <template slot="title">
             <div style="display: flex;justify-content: space-between;align-content: space-between;">
               <div>共{{RealTimeDynamic.length}}条消息</div>
-              <div><a>更多消息</a></div>
+              <div><a @click="toWarnMessage">更多消息</a></div>
             </div>
           </template>
           <template slot="content">
@@ -120,7 +120,8 @@ export default {
       RealTimeDynamic: [],
       data: [],
       loading: false,
-      busy: false
+      busy: false,
+      isShowPopover: false // 点击角标，弹出气泡框显隐
 
     }
   },
@@ -202,6 +203,10 @@ export default {
         this.time2 = hour + ':' + min + ':' + ss
       }, 1000)
     },
+    toWarnMessage () {
+      this.$router.push('/reservoir/warn/message')
+      this.isShowPopover = false
+    },
     selectNav (nav) {
       this.selectId = nav.id
       if (nav.id === 1) {
@@ -224,6 +229,7 @@ export default {
     },
     toRouterPath () {
       this.$router.push('/reservoir/reservoir/generalview')
+      this.isShowPopover = false
     },
     // 获取预警未读消息数量
     getUnreadCount () {

@@ -1,12 +1,14 @@
 <template>
   <!-- 水位库容曲线 -->
   <div class="storageCapacity">
-    <a-card>
-      <template slot="title">
-        <img src="static/img/水位库容曲线.png">
-        <span>水位库容曲线</span>
-      </template>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/水位库容曲线.png">
+          <span>水位库容曲线</span>
+        </div>
+      </div>
+      <div style="width: 100%; text-align: center; padding: 5px">
         <div class="trendCon">
           <div class="echartTU" ref="storageChart"></div>
           <div style="width:30%">
@@ -14,7 +16,7 @@
             </a-table>
           </div>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>
@@ -228,4 +230,5 @@
   .trendCon>>>.ant-table-tbody>tr>td {
     border-color: rgba(59, 173, 255, 0.12);
   }
+
 </style>

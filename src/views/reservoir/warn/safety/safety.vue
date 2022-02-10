@@ -48,7 +48,14 @@
       </a-card>
       <a-card :bordered="false" class="card-area" style="margin-top:10px;">
         <div>
-          <table-list :columns="columns" :dataSource="dataSource" :loading='loading' :pagination="pagination"></table-list>
+          <a-table
+            ref="TableInfo"
+            :columns="columns"
+            :dataSource="dataSource"
+            :pagination="pagination"
+            :loading="loading"
+            @change="handleTableChange"
+          ></a-table>
         </div>
       </a-card>
       <!--添加预案-->
@@ -70,12 +77,10 @@
 <script>
 import SafetyAdd from './model/safetyAdd'
 import SafetyEdit from './model/safetyEdit'
-import TableList from '@/components/table/TableList'
 export default {
   name: 'safety',
   components: {
     SafetyAdd,
-    TableList,
     SafetyEdit
   },
   data () {
@@ -121,8 +126,8 @@ export default {
         dataIndex: 'operation',
         customRender: (text, record) => (
           <div>
-            <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" class="icon-size" onClick={() => { this.edit(record) }} title="编辑"></a-icon>
-            <a-icon type="delete" theme="twoTone" twoToneColor="#4a9ff5" class="icon-size" onClick={() => { this.safetyDelete(record) }} title="删除"></a-icon>
+            <a onClick={() => { this.edit(record) }} style="margin-right:1rem;">编辑</a>
+            <a onClick={() => { this.safetyDelete(record) }}>删除</a>
           </div>
         )
       }]

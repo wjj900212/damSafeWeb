@@ -2,16 +2,18 @@
   <!-- 场景可视化 -->
   <div class="visual">
     <a-card :bodyStyle="{ padding: '5px' }">
-      <template slot="title">
-        <img src="static/img/数据可视化.png">
-        <span>场景可视化</span>
-      </template>
-      <a-select slot="extra" v-model="scene" placeholder="选择场景" option-filter-prop="children"
-        @change="handleSceneChange">
-        <a-select-option v-for="item in sceneData" :value="item.sceneId" :key="item.sceneId">
-          {{ item.sceneName }}
-        </a-select-option>
-      </a-select>
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/数据可视化.png">
+          <span>场景可视化</span>
+        </div>
+        <a-select slot="extra" v-model="scene" placeholder="选择场景" option-filter-prop="children"
+          @change="handleSceneChange">
+          <a-select-option v-for="item in sceneData" :value="item.sceneId" :key="item.sceneId">
+            {{ item.sceneName }}
+          </a-select-option>
+        </a-select>
+      </div>
       <div style="width: 100%; text-align: center; padding: 5px;overflow: auto;">
         <design :data="designData"></design>
       </div>
@@ -53,7 +55,7 @@
           hiddenId
         } = this
         if (!hiddenId) {
-          this.scene=''
+          this.scene = ''
           this.sceneData = []
           this.designData = {}
           return

@@ -59,7 +59,7 @@ let webSocketJS = {
           break
       }
       let typeName = ''
-      switch (data.warnType) {
+      switch (data.category) {
         case 1:
           typeName = '设备预警'
           break
@@ -71,6 +71,9 @@ let webSocketJS = {
           break
         case 4:
           typeName = '定量群测预警'
+          break
+        case 5:
+          typeName = '模型预警'
           break
       }
       const key = 'updatable'

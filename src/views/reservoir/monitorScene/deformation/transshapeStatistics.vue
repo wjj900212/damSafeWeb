@@ -1,28 +1,31 @@
 <template>
-  <a-card>
-    <template slot="title">
-      <img src="static/img/渗压监测趋势统计.png">
-      <span>变形监测趋势统计</span>
-    </template>
-    <div slot="extra">
-      <a-select v-model="monitor" placeholder="监测点" option-filter-prop="children" @change="handleMonitorChange">
-        <a-select-option v-for="item in List" :value="item.pnId" :key="item.pnId">
-          {{ item.pnName }}
-        </a-select-option>
-      </a-select>
-      <a-select style="width: 100px" v-model="dateModel" option-filter-prop="children" @change="handleDateModelChange">
-        <a-select-option v-for="item in dateModelData" :value="item.value" :key="item.value">
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-      <a-range-picker v-model="dateTimeValue" style="width: 240px" @change="onDateChange" />
+  <a-card :bodyStyle="{ padding: '10px' }">
+    <div class="safetyPlan">
+      <div class="card">
+        <img src="static/img/渗压监测趋势统计.png">
+        <span>变形监测趋势统计</span>
+      </div>
+      <div>
+        <a-select v-model="monitor" placeholder="监测点" option-filter-prop="children" @change="handleMonitorChange">
+          <a-select-option v-for="item in List" :value="item.pnId" :key="item.pnId">
+            {{ item.pnName }}
+          </a-select-option>
+        </a-select>
+        <a-select style="width: 100px" v-model="dateModel" option-filter-prop="children"
+          @change="handleDateModelChange">
+          <a-select-option v-for="item in dateModelData" :value="item.value" :key="item.value">
+            {{ item.name }}
+          </a-select-option>
+        </a-select>
+        <a-range-picker v-model="dateTimeValue" style="width: 240px" @change="onDateChange" />
 
-      <a-button @click="getChartInfo" type="primary"> 查询 </a-button>
-      <a-button @click="exportEXcel" type="primary"> 导出 </a-button>
+        <a-button @click="getChartInfo" type="primary"> 查询 </a-button>
+        <a-button @click="exportEXcel" type="primary"> 导出 </a-button>
+      </div>
     </div>
-    <a-card-grid style="width: 100%; text-align: left; height: 500px">
+    <div style="width: 100%; text-align: left;">
       <div
-        style="background: #F9FAFE;color:#5D6574;font-size:1.6rem;line-height:40px;width:calc(100% - 20px);margin:0 auto;padding:0 1rem;">
+        style="background: #F9FAFE;color:#5D6574;font-size:1.6rem;line-height:40px;width:calc(100% - 20px);margin:0 auto;padding:0 1rem;margin-top:1rem">
         当前： <span style="color:#007EFE;">{{monitorName}}</span>
         <span style="margin-right:10px;;color:#007EFE;">{{monitorCode}}</span>
       </div>
@@ -38,7 +41,7 @@
           </a-table>
         </div>
       </div>
-    </a-card-grid>
+    </div>
   </a-card>
 </template>
 <script>

@@ -1,12 +1,13 @@
 <template>
   <!-- 降水量趋势统计 -->
   <div class="trendStatistic">
-    <a-card>
-      <template slot="title">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
         <img src="static/img/渗流监测趋势统计.png">
         <span>渗流监测趋势统计</span>
-      </template>
-      <template slot="extra">
+      </div>
+      <div>
         <a-select v-model="queryParams.pnId" :style="{width:'20rem'}" @change="handleTrendChange">
           <a-select-option v-for="pn in pnList" :key="pn.pnId.toString()">{{pn.pnName}}</a-select-option>
         </a-select>
@@ -18,8 +19,9 @@
           <a-select-option value="4">近一月</a-select-option>
         </a-select>
         <a-button type="primary" @click="portData">数据导出</a-button>
-      </template>
-      <a-card-grid style="width: 100%; padding: 5px">
+      </div>
+      </div>
+      <div style="width: 100%; padding: 5px">
         <div
           style="background: #F9FAFE;color:#5D6574;font-size:1.6rem;line-height:40px;width:calc(100% - 20px);margin:0 auto;padding:0 1rem;">
           当前： <span style="color:#007EFE;">{{pnName}}</span>
@@ -34,7 +36,7 @@
             </a-table>
           </div>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>

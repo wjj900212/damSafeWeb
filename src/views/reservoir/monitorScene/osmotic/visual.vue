@@ -1,28 +1,30 @@
 <template>
   <!-- 浸润线可视化 -->
   <div class="visual">
-    <a-card>
-      <template slot="title">
-        <img src="static/img/数据可视化.png">
-        <span>浸润线预警模型</span>
-      </template>
-      <template slot="extra">
-        <a href="JavaScript:;" style="margin-right:10px;">指标安全说明</a>
-        <a-select v-model="sceneId" placeholder="选择断面" option-filter-prop="children" @change="sceneChange"
-          style="width:180px">
-          <a-select-option v-for="item in sceneList" :value="item.sceneId" :key="item.sceneId">
-            {{ item.sceneName }}
-          </a-select-option>
-        </a-select>
-      </template>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/数据可视化.png">
+          <span>浸润线预警模型</span>
+        </div>
+        <div>
+          <a href="JavaScript:;" style="margin-right:10px;">指标安全说明</a>
+          <a-select v-model="sceneId" placeholder="选择断面" option-filter-prop="children" @change="sceneChange"
+            style="width:180px">
+            <a-select-option v-for="item in sceneList" :value="item.sceneId" :key="item.sceneId">
+              {{ item.sceneName }}
+            </a-select-option>
+          </a-select>
+        </div>
+      </div>
+      <div style="width: 100%; text-align: center; padding: 5px">
         <div class="visWrap">
           <VueDragResize w="auto" h="auto" :isResizable="false">
             <canvas id="myCanvas" ref="canvas" @wheel.prevent="handleTableWheel($event)" width="765"
               height="398"></canvas>
           </VueDragResize>
         </div>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>
@@ -53,7 +55,7 @@
             this.sceneId = ''
             // 清空画布
             var c = document.getElementById("myCanvas");
-            if(c)c.height = c.height;
+            if (c) c.height = c.height;
           } else {
             this.sceneId = n[0].sceneId
             this.getSceneData()

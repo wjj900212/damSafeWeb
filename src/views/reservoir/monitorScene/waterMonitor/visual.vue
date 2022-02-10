@@ -1,18 +1,20 @@
 <template>
   <!-- 场景可视化 -->
   <div class="visual">
-    <a-card>
-      <template slot="title">
-        <img src="static/img/数据可视化.png">
-        <span>场景可视化</span>
-      </template>
-      <a-select slot="extra" v-model="currentScene" @change="sceneChange">
-        <a-select-option v-for="v,i in sceneDataArr" :key="i" :value="v.sceneId">{{v.sceneName}}</a-select-option>
-      </a-select>
-      <a-card-grid style="width: 100%; text-align: center; padding: 5px">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/数据可视化.png">
+          <span>场景可视化</span>
+        </div>
+        <a-select slot="extra" v-model="currentScene" @change="sceneChange">
+          <a-select-option v-for="v,i in sceneDataArr" :key="i" :value="v.sceneId">{{v.sceneName}}</a-select-option>
+        </a-select>
+      </div>
+      <div style="width: 100%; text-align: center;padding: 5px;">
         <!-- :activeKey="currentScene" -->
         <design :data="sceneData"></design>
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>

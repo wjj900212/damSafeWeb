@@ -69,14 +69,14 @@ export default {
             {
               show: true,
               realtime: true,
-              start: 65,
-              end: 85
+              start: 0,
+              end: 100
             },
             {
               type: 'inside',
               realtime: true,
-              start: 65,
-              end: 85
+              start: 0,
+              end: 100
             }
           ],
           xAxis: [
@@ -96,7 +96,7 @@ export default {
             {
               name: '降雨量(mm)',
               type: 'value',
-              max: 100
+              max: 200
             },
             {
               name: '累计雨量(mm)',

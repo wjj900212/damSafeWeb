@@ -1,25 +1,28 @@
 <template>
   <!-- 渗压监测趋势统计 -->
   <div class="trendStatistic">
-    <a-card>
-      <template slot="title">
-        <img src="static/img/渗压监测趋势统计.png">
-        <span>渗压监测趋势统计</span>
-      </template>
-      <template slot="extra">
-        <a-select v-model="queryParams.sceneId" :style="{width:'20rem'}" @change="sceneChange">
-          <a-select-option v-for="pn in pnList" :key="pn.sceneId" :value="pn.sceneId">{{pn.sceneName}}</a-select-option>
-        </a-select>
-        <a-range-picker @change="onDateChange" style="width:250px;" />
-        <a-select v-model="dateCurrent" @change="dateChange" style="width:100px;">
-          <a-select-option value="1">今日</a-select-option>
-          <a-select-option value="2">近三天</a-select-option>
-          <a-select-option value="3">近一周</a-select-option>
-          <a-select-option value="4">近一月</a-select-option>
-        </a-select>
-        <a-button type="primary" @click="portData">数据导出</a-button>
-      </template>
-      <a-card-grid style="width: 100%; padding: 5px">
+    <a-card :bodyStyle="{ padding: '10px' }">
+      <div class="safetyPlan">
+        <div class="card">
+          <img src="static/img/渗压监测趋势统计.png">
+          <span>渗压监测趋势统计</span>
+        </div>
+        <div>
+          <a-select v-model="queryParams.sceneId" :style="{width:'20rem'}" @change="sceneChange">
+            <a-select-option v-for="pn in pnList" :key="pn.sceneId" :value="pn.sceneId">{{pn.sceneName}}
+            </a-select-option>
+          </a-select>
+          <a-range-picker @change="onDateChange" style="width:250px;" />
+          <a-select v-model="dateCurrent" @change="dateChange" style="width:100px;">
+            <a-select-option value="1">今日</a-select-option>
+            <a-select-option value="2">近三天</a-select-option>
+            <a-select-option value="3">近一周</a-select-option>
+            <a-select-option value="4">近一月</a-select-option>
+          </a-select>
+          <a-button type="primary" @click="portData">数据导出</a-button>
+        </div>
+      </div>
+      <div style="width: 100%; padding: 5px">
         <div
           style="background: #F9FAFE;color:#5D6574;font-size:1.6rem;line-height:40px;width:calc(100% - 20px);margin:0 auto;padding:0 1rem;">
           当前： <span style="color:#007EFE;">{{sceneName}}</span>
@@ -35,7 +38,7 @@
           </div>
         </div>
 
-      </a-card-grid>
+      </div>
     </a-card>
   </div>
 </template>
