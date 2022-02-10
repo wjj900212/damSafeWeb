@@ -52,7 +52,11 @@
 <style scoped>
   /* @import url(); 引入公共css类 */
   .centerTotal {
+<<<<<<< HEAD
     background: url('../../../static/img/shujuzhanshi_bg.png') no-repeat;
+=======
+    background: url('../../../static/img/数据展示-bg.png') no-repeat;
+>>>>>>> 7d12fb222b103f49b407954bc9f90b41355cacb2
     background-size: 100% 100%;
     border-radius: 20px;
     line-height: 1;

@@ -4,7 +4,8 @@
     <a-row>
       <a-col :span="24">
         <div class="tipTit">
-          <span>{{isEditReservoir?'修改水库':'添加水库'}}</span>
+          <div>{{isEditReservoir?'修改水库':'添加水库'}}</div>
+          <div @click="toReservoir"><img src="static/img/返回.png"/></div>
         </div>
       </a-col>
       <a-col :span="24">
@@ -353,7 +354,10 @@
           })
         })
       },
-
+      // 跳转到水库管理列表页面
+      toReservoir(){
+        this.$router.replace("/system/reservoir/reservoir")
+      },
       // 保存
       handleSubmit(e) {
         e.preventDefault();
@@ -495,6 +499,8 @@
     padding-bottom: 5px;
     color: #5D6574;
     font-size: 1.6rem;
+    display: flex;
+    justify-content: space-between;
   }
 
   .title {

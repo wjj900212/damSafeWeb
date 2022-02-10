@@ -8,6 +8,7 @@
       <a-select
         v-model="defaultValue"
         placeholder="选择场景"
+        :style="{width:'15rem'}"
         option-filter-prop="children"
         @change="handleSceneChange"
       >

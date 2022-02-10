@@ -4,7 +4,8 @@
     <a-row>
       <a-col :span="24">
         <div class="tipTit">
-          <span>{{isEdit?'修改场景':'添加场景'}}</span>
+          <div>{{isEdit?'修改场景':'添加场景'}}</div>
+          <div @click="toScene"><img src="static/img/返回.png"/></div>
         </div>
       </a-col>
       <a-col :span="24">
@@ -338,6 +339,10 @@
           that.casdata.push(val.cityInfo[i].cityCode)
         }
       },
+      // 跳转到水库管理列表页面
+      toScene(){
+        this.$router.replace("/system/reservoir/scene?reservoirId=" + this.reservoirId)
+      },
       // 保存
       handleSubmit(e) {
         e.preventDefault()
@@ -520,6 +525,8 @@
     padding-bottom: 5px;
     color: #5D6574;
     font-size: 1.6rem;
+    display: flex;
+    justify-content: space-between;
   }
 
   .title {

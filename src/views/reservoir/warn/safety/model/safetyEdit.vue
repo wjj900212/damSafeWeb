@@ -40,7 +40,8 @@
         background: '#fff',
         textAlign: 'right',
         zIndex: 1,
-      }">
+      }"
+    >
       <a-button :style="{ marginRight: '8px' }" @click="handleCancel()">
         关闭
       </a-button>
@@ -52,108 +53,76 @@
 </template>
 
 <script>
-  import editorCom from '@/components/editor/editor'
-  export default {
-    name: 'safety-edit',
-    components: {
-      editorCom
-    },
-    props: {
-      visible: {
-        type: Boolean,
-        default: false
-      }
-    },
-    data() {
-      return {
-        randomKey: new Date().getTime(),
-        form: this.$form.createForm(this, {
-          name: 'safetyForm'
-        }),
-        formItemLayout: {
-          labelCol: {
-            span: 3
-          },
-          wrapperCol: {
-            span: 20
-          }
-        },
-        safetyTypeList: [{
-            typeId: '0',
-            typeName: '综合预案'
-          },
-          {
-            typeId: '11',
-            typeName: '渗流监测'
-          },
-          {
-            typeId: '12',
-            typeName: '渗压监测'
-          },
-          {
-            typeId: '13',
-            typeName: '大坝变形监测'
-          },
-          {
-            typeId: '14',
-            typeName: '大坝微动监测'
-          },
-          {
-            typeId: '15',
-            typeName: '雨情监测'
-          },
-          {
-            typeId: '16',
-            typeName: '水情监测'
-          }
-        ]
-      }
-    },
-    methods: {
-      handleCancel() {
-        this.$emit('onClose')
+import editorCom from '@/components/editor/editor'
+export default {
+  name: 'safety-edit',
+  components: {
+    editorCom
+  },
+  props: {
+    visible: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data () {
+    return {
+      randomKey: new Date().getTime(),
+      form: this.$form.createForm(this, { name: 'safetyForm' }),
+      formItemLayout: {
+        labelCol: {span: 3},
+        wrapperCol: {span: 20}
       },
-      setFormValues({
-        ...safetyInfo
-      }) {
-        let fields = ['reserveName', 'reserveType', 'description', 'details']
-        this.planId = safetyInfo.planId
-        Object.keys(safetyInfo).forEach((key) => {
-          if (fields.indexOf(key) !== -1) {
-            this.form.getFieldDecorator(key)
-            let obj = {}
-            obj[key] = safetyInfo[key]
-            this.form.setFieldsValue(obj)
-          }
-        })
-        setTimeout(() => {
-          this.$refs.editSafetyBox.content = safetyInfo.details
-        }, 300)
-      },
-      reset() {
-        this.form.resetFields()
-        this.$emit('onClose')
-      },
-      editSafety() {
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            let safetyInfo = this.form.getFieldsValue()
-            safetyInfo.details = this.$refs.editSafetyBox.content
-            safetyInfo.planId = this.planId
-            this.$post('web/reservoirPlan/editPlan', {
-              ...safetyInfo
-            }).then((r) => {
-              // 删除富文本图片
-              this.$refs.editSafetyBox.delPic()
-              this.$emit('fetch')
-              this.reset()
-            })
-          }
-        })
-      }
+      safetyTypeList: [
+        {typeId: '0', typeName: '综合预案'},
+        {typeId: '11', typeName: '渗流监测'},
+        {typeId: '12', typeName: '渗压监测'},
+        {typeId: '13', typeName: '大坝变形监测'},
+        {typeId: '14', typeName: '大坝微动监测'},
+        {typeId: '15', typeName: '雨情监测'},
+        {typeId: '16', typeName: '水情监测'}
+      ]
+    }
+  },
+  methods: {
+    handleCancel () {
+      this.$emit('onClose')
+    },
+    setFormValues ({...safetyInfo}) {
+      let fields = ['reserveName', 'reserveType', 'description', 'details']
+      this.planId = safetyInfo.planId
+      Object.keys(safetyInfo).forEach((key) => {
+        if (fields.indexOf(key) !== -1) {
+          this.form.getFieldDecorator(key)
+          let obj = {}
+          obj[key] = safetyInfo[key]
+          this.form.setFieldsValue(obj)
+        }
+      })
+      setTimeout(() => {
+        this.$refs.editSafetyBox.content = safetyInfo.details
+      }, 300)
+    },
+    reset () {
+      this.form.resetFields()
+      this.$emit('onClose')
+    },
+    editSafety () {
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          let safetyInfo = this.form.getFieldsValue()
+          safetyInfo.planId = this.planId
+          this.$post('web/reservoirPlan/editPlan', {
+            ...safetyInfo
+          }).then((r) => {
+            this.$emit('fetch')
+            this.reset()
+          })
+        }
+      })
     }
   }
-
+}
 </script>
 
 <style scoped>

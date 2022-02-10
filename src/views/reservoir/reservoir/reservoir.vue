@@ -16,7 +16,7 @@
             </div>
             <a-row>
               <a-col :span="5">
-                <img :src="info.images" v-if="info.images" width="300" height="200" style="border-radius: 10px;" alt="" />
+                <img :src="imgUrl" v-if="info.images" width="300" height="200" style="border-radius: 10px;" alt="" />
               </a-col>
               <a-col :span="19" :style="{ marginTop: '2em' }">
                 <div v-if="info.notes === ''">
@@ -110,7 +110,8 @@ export default {
         '2': '中型',
         '3': '小（1）型',
         '4': '小（2）型'
-      }
+      },
+      imgUrl: ''
     }
   },
   computed: {
@@ -144,9 +145,9 @@ export default {
             data.customParam = []
           }
           this.info = data
-          // data.safeLevelObj = this.getWarnText(data.safeLevel)
-          // this.reservoirInfo = data
-          // this.radarData = data.monitorList
+          if (data.images !== '') {
+            this.imgUrl = data.images.split('||')[0]
+          }
         }
       })
     }

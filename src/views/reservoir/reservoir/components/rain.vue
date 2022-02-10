@@ -102,9 +102,9 @@ export default {
       this.monitorData = this.select.pnList || []
       this.monitor =
         this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined
-      if (this.monitor) {
-        this.getStatistics(this.monitor)
-      }
+    },
+    monitor (val) {
+      this.getStatistics(this.monitor)
     }
   },
   methods: {
@@ -118,6 +118,9 @@ export default {
       this.getStatistics(value)
     },
     getStatistics (projPnId) {
+      if (projPnId === undefined) {
+        return
+      }
       const params = {
         projPnId: projPnId
       }

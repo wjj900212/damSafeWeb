@@ -230,5 +230,4 @@
   .trendCon>>>.ant-table-tbody>tr>td {
     border-color: rgba(59, 173, 255, 0.12);
   }
-
 </style>

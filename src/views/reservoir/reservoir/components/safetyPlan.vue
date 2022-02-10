@@ -2,11 +2,16 @@
   <a-card>
     <div class="safetyPlan">
       <div class="card">
-        <img src="static/img/control/预案.png" />
+        <img src="static/img/control/预案.png"/>
         <span>安全管理预案</span>
       </div>
-      <a-select style="width: 120px" v-model="plan" placeholder="预案类型" option-filter-prop="children"
-        @change="handlePlanChange">
+      <a-select
+        style="width: 120px"
+        v-model="plan"
+        placeholder="预案类型"
+        option-filter-prop="children"
+        @change="handlePlanChange"
+      >
         <a-select-option v-for="item in planData" :value="item.id" :key="item.id">
           {{ item.name }}
         </a-select-option>

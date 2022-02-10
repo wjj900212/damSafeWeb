@@ -140,10 +140,13 @@ export default {
   },
   watch: {
     '$route' (to, from) {
+      /* console.log('to', to.path)
+      console.log('from', from.path) */
       if (to.path === '/home') {
         this.homeVisible = true
       } else {
         this.homeVisible = false
+        this.setRoute(to.path)
       }
     }
   },
@@ -159,6 +162,7 @@ export default {
       this.homeVisible = true
     } else {
       this.homeVisible = false
+      this.setRoute(path)
     }
     this.getTime()
     this.getRealTimeWeather()
@@ -167,6 +171,27 @@ export default {
   methods: {
     getText (str) {
       return getText(str)
+    },
+    setRoute (path) {
+      let arr = path.split('/')
+      let pathname = this.getFirstValue(arr)
+      let nowPath = this.navList.find((item) => this.getFirstValue(item.path.split('/')) === pathname)
+      if (this.getFirstValue(nowPath.path.split('/')) === pathname) {
+        this.selectId = nowPath.id
+        if (nowPath.id === 1) {
+          this.navList[0].imgIcon = 'static/img/水库安全监测-selected.png'
+          this.navList[1].imgIcon = 'static/img/系统管理-normal.png'
+        } else {
+          this.navList[0].imgIcon = 'static/img/水库安全监测-normal.png'
+          this.navList[1].imgIcon = 'static/img/系统管理-selected.png'
+        }
+      }
+    },
+    getFirstValue (arr) {
+      var filtered = arr.filter(function (el) {
+        return el !== ''
+      })
+      return filtered[0]
     },
     // 当前城市天气接口
     getRealTimeWeather (params = {}) {

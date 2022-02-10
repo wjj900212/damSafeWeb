@@ -40,7 +40,7 @@
           偏移距离
       </a-col>
       <a-col :span="8" :order="4" class="info-value">
-          {{installInfo.offsetDist}}m
+          {{installInfo.offsetDist}} m
       </a-col>
     </a-row>
     <a-row type="flex" justify="center" align="middle">
@@ -178,7 +178,7 @@ export default {
     background: #F6F8FB;
   }
   .info-value{
-    color:#ffffff;
+    color:#747474;
     background: rgba(0, 0, 0, 0);
   }
 </style>

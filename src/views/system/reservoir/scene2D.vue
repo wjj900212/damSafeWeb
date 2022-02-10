@@ -285,12 +285,14 @@ export default {
     },
     onCheck (checkedKeys) {
       console.log('checkedKeys-----', checkedKeys)
-      let allEmle = checkedKeys.findIndex(item => typeof item === 'string')
-      console.log('选择多选框', allEmle)
-      if (allEmle >= 0) {
-        // checkedKeys.pop()
-        checkedKeys.splice(allEmle, 1)
+      for (let i = 0; i < checkedKeys.length; i++) {
+        let allEmle = checkedKeys.findIndex(item => typeof item === 'string')
+        if (allEmle >= 0) {
+          // checkedKeys.pop()
+          checkedKeys.splice(allEmle, 1)
+        }
       }
+
       this.checkedKeys = checkedKeys
     },
     resize (newRect) {

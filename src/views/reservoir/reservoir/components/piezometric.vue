@@ -134,20 +134,20 @@
   </a-card>
 </template>
 <script>
-import EchartsArr from "@/components/echarts/EchartsArr.vue";
-import { getText } from "@/utils/utils";
+import EchartsArr from '@/components/echarts/EchartsArr.vue'
+import { getText } from '@/utils/utils'
 export default {
-  name: "piezometric",
+  name: 'piezometric',
   components: {
-    EchartsArr,
+    EchartsArr
   },
   props: {
     List: {
       type: Array,
-      default: () => [],
+      default: () => []
     }
   },
-  data() {
+  data () {
     return {
       componentName: '',
       markLine: [],
@@ -156,41 +156,47 @@ export default {
       select: {},
       data: [],
       monitor: undefined,
-      monitorData: [],
-    };
+      monitorData: []
+    }
   },
   computed: {},
-  mounted() {
-    this.select = this.List.length > 0 ? this.List[0] : {};
-    this.monitorData = this.select.sceneList || [];
+  mounted () {
+    this.select = this.List.length > 0 ? this.List[0] : {}
+    this.monitorData = this.select.sceneList || []
     this.monitor =
-      this.monitorData.length > 0 ? this.monitorData[0].sceneId : undefined;
+      this.monitorData.length > 0 ? this.monitorData[0].sceneId : undefined
+    if (this.monitor) {
+      this.getStatistics(this.monitor)
+    }
   },
-  updated() {},
+  updated () {},
   watch: {
-    List(val) {
-      this.select = val.length > 0 ? val[0] : {};
-      this.monitorData = this.select.sceneList || [];
+    List (val) {
+      this.select = val.length > 0 ? val[0] : {}
+      this.monitorData = this.select.sceneList || []
       this.monitor =
-        this.monitorData.length > 0 ? this.monitorData[0].sceneId : undefined;
+        this.monitorData.length > 0 ? this.monitorData[0].sceneId : undefined
     },
     monitor (val) {
       this.getStatistics(this.monitor)
     }
   },
   methods: {
-    changeHidden(item) {
-      this.select = item;
+    changeHidden (item) {
+      this.select = item
     },
-    handleMonitorChange(value) {
+    handleMonitorChange (value) {
       this.getStatistics(value)
     },
     getStatistics (projPnId) {
+      if (projPnId === undefined) {
+        return
+      }
       const params = {
         projPnId: projPnId
       }
       this.$get('web/reservoirOverview/syStatistics', {
-        ...params,
+        ...params
       }).then((r) => {
         if (r.data.data !== null) {
           let data = r.data.data
@@ -206,8 +212,8 @@ export default {
         }
       })
     }
-  },
-};
+  }
+}
 </script>
 
 <style lang="less" scoped>

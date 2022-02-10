@@ -119,7 +119,7 @@ export default {
         color:#FFFFFF;
         padding:2rem;
         font-size: 1.4rem;
-        background: url("../../../../../static/img/control/组109.png") no-repeat;
+        background: url("../../../../../static/img/control/controlIcon.png") no-repeat;
         background-size: 100% 100%;
         margin-right:1.9rem;
         div{

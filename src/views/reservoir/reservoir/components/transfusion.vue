@@ -53,20 +53,20 @@
   </a-card>
 </template>
 <script>
-import EchartsoLine from "@/components/echarts/EchartsoLine.vue";
-import { getText } from "@/utils/utils";
+import EchartsoLine from '@/components/echarts/EchartsoLine.vue'
+import { getText } from '@/utils/utils'
 export default {
-  name: "transfusion",
+  name: 'transfusion',
   components: {
-    EchartsoLine,
+    EchartsoLine
   },
   props: {
     List: {
       type: Array,
-      default: () => [],
+      default: () => []
     }
   },
-  data() {
+  data () {
     return {
       componentName: '',
       markLine: [],
@@ -75,41 +75,47 @@ export default {
       select: {},
       data: [],
       monitor: undefined,
-      monitorData: [],
-    };
+      monitorData: []
+    }
   },
   computed: {},
-  mounted() {
-    this.select = this.List.length > 0 ? this.List[0] : {};
-    this.monitorData = this.select.pnList || [];
+  mounted () {
+    this.select = this.List.length > 0 ? this.List[0] : {}
+    this.monitorData = this.select.pnList || []
     this.monitor =
-      this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+      this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined
+    if (this.monitor) {
+      this.getStatistics(this.monitor)
+    }
   },
-  updated() {},
+  updated () {},
   watch: {
-    List(val) {
-      this.select = val.length > 0 ? val[0] : {};
-      this.monitorData = this.select.pnList || [];
+    List (val) {
+      this.select = val.length > 0 ? val[0] : {}
+      this.monitorData = this.select.pnList || []
       this.monitor =
-        this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined;
+        this.monitorData.length > 0 ? this.monitorData[0].projPnId : undefined
     },
-    monitor () {
+    monitor (val) {
       this.getStatistics(this.monitor)
     }
   },
   methods: {
-    changeHidden(item) {
-      this.select = item;
+    changeHidden (item) {
+      this.select = item
     },
-    handleMonitorChange(value) {
+    handleMonitorChange (value) {
       this.getStatistics(value)
     },
     getStatistics (projPnId) {
+      if (projPnId === undefined) {
+        return
+      }
       const params = {
         projPnId: projPnId
       }
       this.$get('web/reservoirOverview/slStatistics', {
-        ...params,
+        ...params
       }).then((r) => {
         if (r.data.data !== null) {
           let data = r.data.data
@@ -123,8 +129,8 @@ export default {
         }
       })
     }
-  },
-};
+  }
+}
 </script>
 
 <style lang="less" scoped>

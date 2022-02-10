@@ -95,11 +95,11 @@ export default {
     },
     setRoute () {
       let routers = this.$db.get('USER_ROUTER')
-      console.log(routers)
+     // console.log(routers)
       let path = this.$route.path
       let arr = path.split('/')
       let pathname = this.getFirstValue(arr)
-      console.log(routers)
+     // console.log(routers)
       console.log(pathname)
       this.mainMenu = pathname
       // let trees = routers.find((item) => item.path === '/').children

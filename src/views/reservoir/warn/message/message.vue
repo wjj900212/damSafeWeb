@@ -40,7 +40,7 @@
                     v-model="queryParams.dealWith"
                     style="width: 100%"
                     placeholder="请选择"
-                    @change="handleWarnChange">
+                    @change="handleDealChange">
                     <a-select-option v-for="g in disposalList" :key="(g.id).toString()">{{g.label}}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -253,14 +253,22 @@ export default {
   watch: {
     reservoirId (val) {
       if(val){
-        this.fetch()
-        this.groupStatistics()
+        this.fetch({
+          ...this.queryParams
+        })
+        this.groupStatistics({
+          ...this.queryParams
+        })
       }
     }
   },
   mounted () {
-    this.fetch()
-    this.groupStatistics()
+    this.fetch({
+      ...this.queryParams
+    })
+    this.groupStatistics({
+      ...this.queryParams
+    })
   },
   methods: {
     moment,
@@ -317,14 +325,29 @@ export default {
     },
     reset () {
       this.resetCond()
-      this.queryParams = {}
-      this.fetch()
+      this.queryParams = {
+        startTime: moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+        endTime: moment().format('YYYY-MM-DD HH:mm:ss')
+      }
+      this.fetch({
+        ...this.queryParams
+      })
+      this.groupStatistics({
+        ...this.queryParams
+      })
     },
     handleWarnChange (value) {
       if (value) {
         this.queryParams.warnLevel = value
       } else {
         delete this.queryParams.warnLevel
+      }
+    },
+    handleDealChange(value){
+      if (value) {
+        this.queryParams.dealWith = value
+      } else {
+        delete this.queryParams.dealWith
       }
     },
     handleTableChange (pagination) {
