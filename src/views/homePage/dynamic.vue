@@ -29,6 +29,7 @@
 <script>
   import borderCom from "./border.vue"
   export default {
+    props:['websocketData'],
     components: {
       borderCom
     },
@@ -36,6 +37,21 @@
       return {
         dynamicArr: []
       };
+    },
+    watch:{
+    websocketData (n, o) {
+      // console.log('websocketData',n, o)
+      let obj={
+        flag:1,
+        warnLevel:n.level,
+        title:n.level==1?'蓝色预警':n.level==2?'黄色预警':n.level==3?'橙色预警':n.level==4?'红色预警':'',
+        time:n.warningTime,
+        content:n.warnInformation,
+        pnId: n.pnId,
+        hiddenId:n.hiddenId
+      }
+      this.dynamicArr.unshift(obj)
+    }
     },
     methods: {
       getData() {
