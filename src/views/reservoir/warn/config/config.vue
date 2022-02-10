@@ -20,6 +20,7 @@
       <config-add
         :visible="isShowConfigAdd"
         :tabPane="tabPane"
+        :reservoirId="reservoir"
         @search="getWarnConfigList"
         @onClose="()=>{isShowConfigAdd=false}"
       ></config-add>
@@ -36,6 +37,9 @@
 </template>
 
 <script>
+import {
+  mapState
+} from 'vuex'
 import ConfigAdd from './configAdd'
 import ConfigEdit from './configEdit'
 export default {
@@ -62,10 +66,14 @@ export default {
       isShowConfigEdit: false,
       sceneTypeList: [],
       warnRule: {},
-      thresholdEditData: []
+      thresholdEditData: [],
+      reservoir: ''
     }
   },
   computed: {
+    ...mapState({
+      reservoirId: state => state.account.reservoirId
+    }),
     columns () {
       return [{
         title: '监测场景',
@@ -99,7 +107,15 @@ export default {
       }]
     }
   },
+  watch: {
+    reservoirId (val) {
+      console.log('水库id', val)
+      this.reservoir = val
+      this.getHiddenDangerTypeList()
+    }
+  },
   mounted () {
+    this.reservoir = this.reservoirId.toString()
     this.getHiddenDangerTypeList()
   },
   methods: {
@@ -140,6 +156,7 @@ export default {
         params.pageNum = this.pagination.defaultCurrent
       }
       params.type = tabPane
+      params.reservoirId = this.reservoirId
       this.$get('web/warnConfig/getWarnConfigList', {
         ...params
       }).then((r) => {

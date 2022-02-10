@@ -552,11 +552,12 @@ export default {
       this.warnInfo = item
     },
     chartAndListInit (item, type) {
+      console.log('this.warnDetailData', this.warnDetailData)
       this.devValueName = item.devValueName
       this.safetyIns = item.safetyIns
       if (type === '2D') {
         this.updateChart({
-          pnId: this.warnDetailData.pnId,
+          pnId: this.warnDetailData.projPnId,
           devValueId: item.devValueId,
           devValueName: item.devValueName,
           startDate: this.startDate,
@@ -729,7 +730,7 @@ export default {
       this.endDate = dateStrings[1]
       this.reset()
       this.updateChart({
-        pnId: this.warnDetailData.pnId,
+        pnId: this.warnDetailData.projPnId,
         devValueId: this.warnInfo.devValueId,
         devValueName: this.warnInfo.devValueName,
         startDate: this.startDate,
@@ -756,15 +757,16 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
-      params.pnId = this.warnDetailData.pnId
+      params.pnId = this.warnDetailData.projPnId
       this.$get('web/earlyWarningBasic/devValueDataList', {...params}).then((r) => {
         let data = r.data.data
         // if (data.result.length === 0) {
         //   return
         // }
         const pagination = { ...this.pagination }
-        pagination.total = data.count
-        this.sourceData = data.result
+        pagination.total = data.total
+        this.sourceData = data.records
+        console.log('this.sourceData', data.records)
         this.pagination = pagination
         // 数据加载完毕，关闭loading
         this.loading = false

@@ -10,6 +10,7 @@
         :devTypeList="devTypeList"-->
       <first
         :tabPane="tabPane"
+        :reservoirId="reservoirId"
         @updateThresholdDev="updateThresholdDev"
         :thresholdEditMoreObj="thresholdEditMoreObj"
         v-if="steps[current].index === '1'"></first>
@@ -98,6 +99,10 @@ export default {
     tabPane: {
       type: Number,
       default: -1
+    },
+    reservoirId: {
+      type: String,
+      default: ''
     }
   },
   watch: {
@@ -113,7 +118,7 @@ export default {
         third: {}
       }
       this.current = 0
-      this.$emit('search')
+      this.$emit('search', this.tabPane)
       this.$emit('onClose')
     },
     updateThresholdDev (dev) {

@@ -179,6 +179,7 @@ export default {
   },
   watch: {
     data (newVal) {
+     // console.log('data',newVal)
       this.dataSource = newVal
     }
   },

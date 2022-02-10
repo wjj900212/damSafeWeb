@@ -46,6 +46,10 @@ export default {
       type: Number,
       default: -1
     },
+    reservoirId: {
+      type: String,
+      default: ''
+    },
     thresholdEditMoreObj: {
       type: Object,
       default: () => {}
@@ -62,13 +66,16 @@ export default {
     this.findHiddenList()
   },
   watch: {
-
+    reservoirId (val) {
+      this.findHiddenList()
+    }
   },
   methods: {
     // 获取监测场景列表
     findHiddenList () {
       this.$get('web/warnConfig/findHiddenList', {
-        type: this.tabPane
+        type: this.tabPane,
+        reservoirId: this.reservoirId
       }).then((r) => {
         if (r.data.code === 1) {
           let data = r.data.data

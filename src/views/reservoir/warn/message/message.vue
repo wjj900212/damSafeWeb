@@ -86,18 +86,23 @@
           <span style="color:#FBDB05;">黄色预警：{{statisData.yellow}}</span>
           <span style="color:#1890FF;">蓝色预警：{{statisData.blue}}</span>
         </div>
-        <div style="display: flex;width:50%;">
+        <div style="display: flex;width:60%;">
           <a-select
             v-model="tabPane"
-            style="width: 100%;margin-right:1rem;"
+            style="width: 50%;margin-right:1rem;"
             placeholder="请选择"
             @change="handleTypeChange">
             <a-select-option v-for="g in tabPaneList" :key="g.key">{{g.tab}}</a-select-option>
           </a-select>
-          <a-range-picker @change="onChange" :style="{width:'100%',marginRight:'1rem'}"/>
+          <a-range-picker
+            :allowClear="false"
+            :value="[moment(queryParams.startTime, dateFormat), moment(queryParams.endTime, dateFormat)]"
+            :format="dateFormat"
+            @change="onChange"
+            :style="{width:'100%',marginRight:'1rem'}"/>
           <a-select
             v-model="flagTime"
-            :style="{width: '100%',marginRight:'1rem'}"
+            :style="{width: '50%',marginRight:'1rem'}"
             placeholder="请选择"
             @change="handleRadioChange">
             <a-select-option v-for="g in tagList" :key="g.id">{{g.name}}</a-select-option>
@@ -144,6 +149,7 @@ export default {
   data () {
     return {
       advanced: false,
+      dateFormat: 'YYYY-MM-DD HH:mm:ss',
       queryParams: {
         startTime: moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
         endTime: moment().format('YYYY-MM-DD HH:mm:ss')

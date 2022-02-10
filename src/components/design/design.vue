@@ -60,6 +60,9 @@ export default {
     }
   },
   watch: {
+    data (val) {
+      this.onClick()
+    }
   },
   data () {
     return {
@@ -79,6 +82,7 @@ export default {
     }
   },
   mounted () {
+
   },
   methods: {
     changeActive (active) {
